@@ -1,0 +1,13 @@
+.git
+.gitignore
+.DS_Store
+samples
+src
+sql
+tools
+netlify.toml
+README.md
+**/__pycache__
+**/*.pyc
+.env
+.env.*
