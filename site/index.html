@@ -1,0 +1,749 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>POCA 조직문화 진단 · Paul &amp; Mark</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&family=Noto+Serif+KR:wght@500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#F5F6F4;--surface:#FFFFFF;--surface2:#E9ECE8;--ink:#0F1B2D;--muted:#5E6A78;--line:#DCDFDB;--navy:#1F3F73;--navy2:#6F87AD;--amber:#C07A1E;--red:#A8141C;--accent-ink:#FFFFFF;--tA:#F6EFE4;--tR:#F5E6E6;color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0E141C;--surface:#161E29;--surface2:#212B38;--ink:#E9EDF2;--muted:#9AA6B4;--line:#2D3846;--navy:#8FA9D6;--navy2:#5E7AA6;--amber:#E0A04A;--red:#E06A6A;--accent-ink:#0E141C;--tA:#2A2418;--tR:#2E1C1C;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0E141C;--surface:#161E29;--surface2:#212B38;--ink:#E9EDF2;--muted:#9AA6B4;--line:#2D3846;--navy:#8FA9D6;--navy2:#5E7AA6;--amber:#E0A04A;--red:#E06A6A;--accent-ink:#0E141C;--tA:#2A2418;--tR:#2E1C1C;color-scheme:dark}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'Noto Sans KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif;font-size:16px;line-height:1.65}
+.wrap{max-width:820px;margin:0 auto;padding:28px 20px 80px}
+.serif{font-family:'Noto Serif KR','AppleMyungjo',serif}
+h1{font-family:'Noto Serif KR','AppleMyungjo',serif;font-size:31px;line-height:1.35;margin:0 0 12px;font-weight:600}
+h2{font-family:'Noto Serif KR','AppleMyungjo',serif;font-size:23px;line-height:1.4;margin:0 0 8px;font-weight:600}
+h3{font-size:16px;margin:0 0 6px;font-weight:700}
+p{margin:0 0 10px}
+.muted{color:var(--muted)} .small{font-size:14px}
+.label{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--muted);letter-spacing:.5px;margin:0 0 10px}
+.label::before{content:"";width:26px;height:2px;background:var(--red)}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:4px;padding:24px;margin:0 0 16px}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+button{font:inherit;cursor:pointer;border-radius:4px;border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:11px 18px}
+button.primary{background:var(--navy);color:var(--accent-ink);border-color:var(--navy);font-weight:600}
+button:disabled{opacity:.45;cursor:not-allowed}
+button:focus-visible,select:focus-visible,textarea:focus-visible,.opt:focus-visible,.chk input:focus-visible{outline:3px solid var(--navy);outline-offset:2px}
+select,textarea{font:inherit;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:4px;padding:10px 12px;width:100%}
+textarea{min-height:80px;resize:vertical}
+.progress{height:4px;background:var(--surface2);overflow:hidden;margin:0 0 20px}
+.progress>i{display:block;height:100%;background:var(--red);transition:width .25s}
+.q{padding:15px 0;border-top:1px solid var(--line)} .q:first-of-type{border-top:none}
+.qtext{margin:0 0 9px;font-weight:500}
+.scale{display:grid;grid-template-columns:repeat(10,1fr);gap:4px}
+.opt{border:1px solid var(--line);border-radius:4px;text-align:center;padding:9px 0;cursor:pointer;background:var(--surface);user-select:none;font-weight:500}
+.opt[aria-checked="true"]{background:var(--navy);color:var(--accent-ink);border-color:var(--navy)}
+.anchors{display:flex;justify-content:space-between;font-size:12.5px;color:var(--muted);margin-top:4px}
+.pair{display:grid;grid-template-columns:96px 1fr;gap:10px;align-items:center;margin:6px 0}
+.pair .lab{font-size:14px;color:var(--muted)}
+.chk{display:flex;gap:10px;align-items:flex-start;padding:9px 12px;border:1px solid var(--line);border-radius:4px;margin:6px 0;cursor:pointer}
+.chk input{margin-top:4px;width:18px;height:18px;accent-color:var(--navy)}
+.err{color:var(--red);font-size:14px;margin:8px 0 0}
+.bar{display:grid;grid-template-columns:170px 1fr 52px;gap:10px;align-items:center;margin:7px 0}
+.bar .t{height:12px;background:var(--surface2);overflow:hidden}
+.bar .t>i{display:block;height:100%}
+.bar .v{text-align:right;font-weight:700;font-variant-numeric:tabular-nums}
+.badge{display:inline-block;font-size:12.5px;font-weight:700;padding:1px 9px;border-radius:2px}
+.b-s{background:color-mix(in srgb,var(--navy) 16%,transparent);color:var(--navy)}
+.b-g{background:var(--surface2);color:var(--muted)}
+.b-w{background:color-mix(in srgb,var(--amber) 18%,transparent);color:var(--amber)}
+.b-r{background:color-mix(in srgb,var(--red) 15%,transparent);color:var(--red)}
+.kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin:14px 0 4px}
+.kpi{border-left:2px solid var(--navy);padding:2px 0 2px 16px}
+.kpi .n{font-family:'Noto Serif KR',serif;font-size:40px;font-weight:600;line-height:1.1}
+.kpi .l{font-weight:700;font-size:14px} .kpi .s{font-size:13px;color:var(--muted)}
+.three{display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid var(--line);margin-top:16px}
+.three>div{padding:14px 16px 0 0} .three>div+div{border-left:1px solid var(--line);padding-left:16px}
+.bal{display:grid;grid-template-columns:1fr 36px 1fr;gap:10px;align-items:stretch} .bal3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px} .lvn{display:inline-block;width:22px;height:22px;line-height:22px;border-radius:50%;background:var(--surface2);text-align:center;font-size:12px;margin-right:6px}
+.bun{background:var(--surface);border:1px solid var(--line);padding:16px 18px}
+.bun .big{font-family:'Noto Serif KR',serif;font-size:44px;font-weight:600;line-height:1.1}
+.bun .r{display:flex;justify-content:space-between;border-top:1px solid var(--line);padding:7px 0;font-size:14.5px}
+.approx{display:flex;align-items:center;justify-content:center;font-family:'Noto Serif KR',serif;font-size:34px;color:var(--muted)}
+.stack{display:flex;height:34px;overflow:hidden;font-size:13px;font-weight:700;color:#fff}
+.stack>div{display:flex;align-items:center;justify-content:center;white-space:nowrap;overflow:hidden}
+table{border-collapse:collapse;width:100%;font-size:13.5px}
+th,td{border-bottom:1px solid var(--line);padding:7px 6px;text-align:left}
+th{color:var(--muted);font-weight:600} td.n{text-align:center;font-variant-numeric:tabular-nums}
+.scroll{overflow-x:auto}
+.act{border-top:3px solid var(--navy);background:var(--surface);border-left:1px solid var(--line);border-right:1px solid var(--line);border-bottom:1px solid var(--line);padding:16px 18px;margin:12px 0}
+.act dl{display:grid;grid-template-columns:76px 1fr;gap:5px 12px;margin:8px 0 0}
+.act dt{font-family:'Noto Serif KR',serif;font-weight:600;color:var(--red)} .act dd{margin:0}
+.voice{border-left:2px solid var(--line);padding:2px 0 2px 12px;margin:8px 0}
+.notice{background:var(--surface2);padding:12px 14px;font-size:14px;margin:0 0 14px}
+.ai{white-space:pre-wrap}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+svg text{font-family:'Noto Sans KR',sans-serif}
+@media (max-width:640px){.grid2,.kpis,.three{grid-template-columns:1fr}.three>div+div{border-left:none;padding-left:0;border-top:1px solid var(--line)}.bar{grid-template-columns:120px 1fr 44px}.pair{grid-template-columns:1fr}.bal,.bal3{grid-template-columns:1fr}.approx{display:none}h1{font-size:25px}}
+@media (prefers-reduced-motion:reduce){.progress>i{transition:none}}
+a{color:var(--muted)}
+</style>
+</head>
+<body>
+<div class="wrap" id="app" aria-live="polite"></div>
+<script src="supabase.js"></script>
+<script>function koToEn(s){const M={'ㄱ':'r','ㄲ':'R','ㄴ':'s','ㄷ':'e','ㄸ':'E','ㄹ':'f','ㅁ':'a','ㅂ':'q','ㅃ':'Q','ㅅ':'t','ㅆ':'T','ㅇ':'d','ㅈ':'w','ㅉ':'W','ㅊ':'c','ㅋ':'z','ㅌ':'x','ㅍ':'v','ㅎ':'g','ㅏ':'k','ㅐ':'o','ㅑ':'i','ㅒ':'O','ㅓ':'j','ㅔ':'p','ㅕ':'u','ㅖ':'P','ㅗ':'h','ㅘ':'hk','ㅙ':'ho','ㅚ':'hl','ㅛ':'y','ㅜ':'n','ㅝ':'nj','ㅞ':'np','ㅟ':'nl','ㅠ':'b','ㅡ':'m','ㅢ':'ml','ㅣ':'l','ㄳ':'rt','ㄵ':'sw','ㄶ':'sg','ㄺ':'fr','ㄻ':'fa','ㄼ':'fq','ㄽ':'ft','ㄾ':'fx','ㄿ':'fv','ㅀ':'fg','ㅄ':'qt'};const L='ㄱㄲㄴㄷㄸㄹㅁㅂㅃㅅㅆㅇㅈㅉㅊㅋㅌㅍㅎ',V='ㅏㅐㅑㅒㅓㅔㅕㅖㅗㅘㅙㅚㅛㅜㅝㅞㅟㅠㅡㅢㅣ',T=['','ㄱ','ㄲ','ㄳ','ㄴ','ㄵ','ㄶ','ㄷ','ㄹ','ㄺ','ㄻ','ㄼ','ㄽ','ㄾ','ㄿ','ㅀ','ㅁ','ㅂ','ㅄ','ㅅ','ㅆ','ㅇ','ㅈ','ㅊ','ㅋ','ㅌ','ㅍ','ㅎ'];let o='';for(const ch of s){const c=ch.charCodeAt(0);if(c>=0xAC00&&c<=0xD7A3){const i=c-0xAC00;o+=M[L[Math.floor(i/588)]]+M[V[Math.floor(i%588/28)]]+(i%28?M[T[i%28]]:'')}else o+=M[ch]||ch}return o}</script>
+<script>
+const CFG = {"FN": ["권한부여와 책임", "능력개발", "일에 대한 정보 소통", "관계", "업무 체계", "제품·서비스 자신감", "리더십", "업무 환경"], "IDX": [{"n": 1, "name": "권한부여 및 자율성", "f": 0, "star": true, "codes": ["C01", "C02"], "what": "스스로 판단하고 결정할 수 있는 여지", "how": "팀별로 ‘알아서 해도 되는 일’ 목록을 합의합니다.", "later": "위임 전결 기준 재설계", "plain": "내 일을 스스로 정할 수 있는 자율", "q": "지난달 ‘이건 내가 정해도 될 텐데’ 싶었던 일은 무엇이었나요?", "d": "리더는 결과가 나빠질 걸 알아도 구성원이 선택하게 둬야만 한다."}, {"n": 2, "name": "책임", "f": 0, "star": false, "codes": ["C04", "C05"], "what": "맡은 일의 범위와 권한이 분명한 상태", "how": "핵심 업무 10개의 담당자와 결정권자를 한 장으로 정리합니다.", "later": "직무기술서와 성과 목표 재정렬", "plain": "분명한 역할과 책임", "q": "‘이건 누구 일이지?’ 하고 멈췄던 일이 있었나요?", "d": "책임은 권한이 주어진 만큼만 물어야만 한다."}, {"n": 3, "name": "능력개발지원", "f": 1, "star": true, "codes": ["C06", "C08"], "what": "회사가 내 성장을 함께 그리는 경험", "how": "리더와 구성원이 30분씩 성장 대화를 합니다.", "later": "개인 성장 계획과 학습 예산 연결", "plain": "성장을 위한 회사의 지원", "q": "1년 뒤 나는 이곳에서 무엇을 더 잘하게 되어 있을까요?", "d": "회사는 이직할 수도 있는 사람의 성장에도 투자해야만 한다."}, {"n": 4, "name": "능력개발기회", "f": 1, "star": true, "codes": ["C09", "C11", "C59", "C60"], "what": "도전하고 실패에서 배우는 기회", "how": "팀 회고에 ‘이번에 배운 것’ 한 줄을 추가합니다.", "later": "프로젝트 참여 제도와 실패 공유회", "plain": "새로운 도전과 배움의 기회", "q": "최근에 해 본 새로운 시도는 무엇이었고, 실패했다면 어떻게 다뤄졌나요?", "d": "성과가 급할 때도 익숙하지 않은 사람에게 일을 맡겨야만 한다."}, {"n": 5, "name": "회사의 방향과 소통", "f": 2, "star": true, "codes": ["C12", "C14"], "what": "회사의 방향을 알고 내 일과 잇는 것", "how": "경영진이 ‘올해 우리가 하지 않을 것 3가지’를 공유합니다.", "later": "전략과 팀 목표를 잇는 워크숍", "plain": "회사 방향에 대한 공유", "q": "우리 회사가 3년 뒤 어디에 있을지, 한 문장으로 말할 수 있나요?", "d": "경영진은 확정되지 않은 방향도 먼저 공유해야만 한다."}, {"n": 6, "name": "일 정보에 관한 소통", "f": 2, "star": true, "codes": ["C15", "C17"], "what": "결정과 그 이유가 제때 흐르는 소통", "how": "주간 회의에 ‘결정과 그 이유’ 1분 코너를 만듭니다.", "later": "의사결정 기록·공유 채널 표준화", "plain": "일에 필요한 정보와 결정 이유의 공유", "q": "최근 ‘왜 이렇게 정해졌지?’ 하고 궁금했던 결정은 무엇인가요?", "d": "모든 결정은 이유와 함께 공개되어야만 한다."}, {"n": 7, "name": "내 성공의 기준", "f": 2, "star": true, "codes": ["C18", "C19"], "what": "무엇이 잘한 것인지 분명한 기준", "how": "리더와 구성원이 ‘잘한 것의 모습’을 한 장으로 합의합니다.", "later": "목표·평가 기준 공개와 분기 점검", "plain": "무엇이 잘한 것인지에 대한 기준", "q": "내 일에서 ‘잘했다’는 어떤 모습인지, 리더와 같은 그림을 갖고 있나요?", "d": "성과 기준은 숫자로 측정할 수 있는 것만 담아야만 한다."}, {"n": 8, "name": "관계와 협동", "f": 3, "star": true, "codes": ["C21", "C23"], "what": "팀과 부서를 넘는 협력", "how": "다른 부서와 업무 공유 자리를 한 번 만듭니다.", "later": "부서 간 공동 목표 설정", "plain": "팀과 부서 간 협력", "q": "다른 팀과 일할 때 가장 자주 막히는 곳은 어디인가요?", "d": "다른 팀을 돕느라 우리 팀 목표가 늦어져도 도와야만 한다."}, {"n": 9, "name": "피드백과 인정", "f": 3, "star": true, "codes": ["C24", "C25"], "what": "기여가 보이고 인정받는 경험", "how": "회의 끝 2분, ‘고마운 일’을 나눕니다.", "later": "월 1회 1:1 피드백 루틴과 동료 인정 제도", "plain": "피드백과 인정", "q": "최근 누군가에게 ‘고맙다’는 말을 들은 일은 무엇이었나요?", "d": "피드백은 상대가 원하지 않아도 솔직하게 해야만 한다."}, {"n": 10, "name": "존중과 심리적 안전", "f": 3, "star": true, "codes": ["C27", "C28"], "what": "누구나 다른 의견과 실수를 말할 수 있는 안전함", "how": "리더가 먼저 자신의 실수 하나를 공유합니다.", "later": "반대 의견을 먼저 묻는 회의 규칙", "plain": "서로 존중하고 편하게 말할 수 있는 분위기", "q": "회의에서 말하려다 삼킨 말이 있었나요? 왜 삼켰나요?", "d": "실수한 사람의 이름은 회고에서 밝히지 않아야만 한다."}, {"n": 11, "name": "절차", "f": 4, "star": false, "codes": ["C30", "C32"], "what": "단순하고 효율적인 업무 절차", "how": "불필요한 보고 하나를 없애는 실험을 합니다.", "later": "업무 프로세스 간소화와 온보딩 키트", "plain": "단순하고 효율적인 업무 절차", "q": "없어져도 아무 문제 없을 보고나 절차는 무엇인가요?", "d": "절차를 줄여 생긴 실수는 개인이 아니라 조직이 책임져야만 한다."}, {"n": 12, "name": "역할과 결정 권한", "f": 4, "star": false, "codes": ["C33", "C34"], "what": "누가 무엇을 맡고 결정하는지 분명함", "how": "핵심 결정 10개의 결정권자 지도를 그립니다.", "later": "R&R 재정의와 의사결정 권한 규정", "plain": "분명한 역할 분담과 결정 권한", "q": "최근 ‘이건 누가 결정하지?’ 때문에 늦어진 일은 무엇인가요?", "d": "결정 권한은 직급이 아니라 정보를 가장 많이 가진 사람에게 있어야만 한다."}, {"n": 13, "name": "정책", "f": 4, "star": false, "codes": ["C36", "C37"], "what": "공정하게 적용되는 정책", "how": "자주 묻는 정책 10개를 한 장으로 정리합니다.", "later": "정책 정기 점검과 예외 기준 공개", "plain": "공정한 회사 정책", "q": "우리 회사 규정 중 사람마다 다르게 적용된다고 느낀 것이 있나요?", "d": "정책은 모두에게 예외 없이 똑같이 적용되어야만 한다."}, {"n": 14, "name": "자신감", "f": 5, "star": false, "codes": ["C38", "C39"], "what": "우리 제품·서비스에 대한 자부심", "how": "고객 성공 사례 1건을 전사에 공유합니다.", "later": "제품·서비스 개선 아이디어 채널", "plain": "우리 제품·서비스에 대한 자부심", "q": "친한 사람에게 우리 제품·서비스를 권할 수 있나요? 왜 그런가요?", "d": "제품의 약점은 고객보다 구성원이 먼저 솔직하게 말해야만 한다."}, {"n": 15, "name": "고객중심", "f": 5, "star": false, "codes": ["C40", "C41", "C61"], "what": "고객의 목소리가 결정에 닿는 것", "how": "고객 피드백 원문 5개를 팀 회의에서 함께 읽습니다.", "later": "VOC 정례 리뷰", "plain": "고객의 목소리 반영", "q": "최근 고객의 목소리가 우리 결정을 바꾼 적이 있나요?", "d": "고객이 원해도 우리 원칙과 맞지 않으면 거절해야만 한다."}, {"n": 16, "name": "상사의 리더십", "f": 6, "star": true, "codes": ["C42", "C43"], "what": "코칭하고 성장을 돕는 상사", "how": "리더에게 1:1 대화 질문 카드를 나눠 줍니다.", "later": "리더 코칭 교육과 리더 피드백", "plain": "상사의 코칭과 관심", "q": "리더와의 대화 중 가장 도움이 됐던 순간은 언제였나요?", "d": "리더는 성과가 낮은 구성원에게 더 많은 시간을 써야만 한다."}, {"n": 17, "name": "경영진의 리더십", "f": 6, "star": false, "codes": ["C45", "C47"], "what": "비전을 말하고 가치를 실천하는 경영진", "how": "경영진 타운홀에서 질문을 먼저 받습니다.", "later": "경영진 가치 실천 약속과 공개 점검", "plain": "경영진의 비전과 솔선", "q": "경영진에게 꼭 듣고 싶은 이야기 한 가지는 무엇인가요?", "d": "경영진은 불확실한 위기 상황도 구성원에게 그대로 알려야만 한다."}, {"n": 18, "name": "일과 삶의 균형", "f": 7, "star": false, "codes": ["C48", "C49"], "what": "감당할 수 있는 업무량과 쉼", "how": "팀별 ‘퇴근 후 연락 규칙’을 합의합니다.", "later": "업무량 재배분과 우선순위 조정", "plain": "일과 삶의 균형", "q": "지난주 퇴근 후 일 때문에 연락한 일 중, 다음 날 해도 됐던 것은 무엇인가요?", "d": "급한 일이 생기면 개인 시간보다 팀 일정이 우선해야만 한다."}, {"n": 19, "name": "도구와 공간", "f": 7, "star": false, "codes": ["C51", "C53"], "what": "일하기 좋은 도구와 공간", "how": "가장 불편한 도구나 공간 하나를 바로 해결합니다.", "later": "업무 특성별 유연근무 기준", "plain": "일하기 좋은 도구와 공간", "q": "일하면서 가장 불편한 도구나 공간 하나를 꼽는다면 무엇인가요?", "d": "유연근무는 모든 직무에 똑같이 허용되어야만 한다."}, {"n": 20, "name": "보상", "f": 7, "star": false, "codes": ["C54", "C55"], "what": "기여에 맞는 공정하고 투명한 보상", "how": "보상·승진 기준 설명회를 엽니다.", "later": "보상 체계 투명화와 기여 기반 인정", "plain": "공정한 보상", "q": "우리 회사에서 ‘보상받는 일’은 무엇이라고 생각하나요?", "d": "보상은 결과가 같다면 과정과 상관없이 같아야만 한다."}, {"n": 21, "name": "안정성", "f": 7, "star": false, "codes": ["C57", "C58"], "what": "불안하지 않은 일과 미래", "how": "경영진이 사업 현황을 솔직하게 공유합니다.", "later": "정기 사업 현황 브리핑", "plain": "고용과 회사의 안정", "q": "회사의 미래에 대해 가장 궁금하거나 불안한 것은 무엇인가요?", "d": "회사는 나쁜 소식일수록 빨리 알려야만 한다."}], "ITEMS": [{"c": "C01", "t": "내 일을 어떤 방식과 순서로 할지 스스로 정할 수 있다.", "r": false, "i": 1}, {"c": "C02", "t": "내 업무와 관련된 결정을 내릴 때 내 의견이 실제로 반영된다.", "r": false, "i": 1}, {"c": "C04", "t": "내가 맡은 일의 범위와 책임이 분명하다.", "r": false, "i": 2}, {"c": "C05", "t": "내 역할과 직급에 걸맞은 책임과 권한이 함께 주어진다.", "r": false, "i": 2}, {"c": "C06", "t": "회사는 내 커리어 성장에 관심을 갖고 실질적으로 지원한다.", "r": false, "i": 3}, {"c": "C08", "t": "앞으로 1~2년 동안 이곳에서 내가 어떻게 성장할 수 있을지 그려진다.", "r": false, "i": 3}, {"c": "C09", "t": "내 역량을 넓히는 새로운 도전 기회가 주어진다.", "r": false, "i": 4}, {"c": "C11", "t": "시도했다가 실패한 경험도 배움으로 인정받는다.", "r": false, "i": 4}, {"c": "C59", "t": "새로운 아이디어를 실험해 볼 시간과 여지가 있다.", "r": false, "i": 4}, {"c": "C60", "t": "더 나은 방법이 보이면, 지금의 방식을 바꾸는 데 주저하지 않는다.", "r": false, "i": 4}, {"c": "C12", "t": "회사가 앞으로 3~5년간 어디로 가려 하는지 알고 있다.", "r": false, "i": 5}, {"c": "C14", "t": "회사의 방향과 우리 팀의 목표가 연결되어 있다고 느낀다.", "r": false, "i": 5}, {"c": "C15", "t": "내 일에 영향을 주는 결정과 변경 사항을 제때 공유받는다.", "r": false, "i": 6}, {"c": "C17", "t": "중요한 결정이 내려진 이유를 설명 듣는다.", "r": false, "i": 6}, {"c": "C18", "t": "내 업무에서 무엇이 ‘잘한 것’인지 기준이 분명하다.", "r": false, "i": 7}, {"c": "C19", "t": "내 성과가 어떤 기준으로 평가되는지 알고 있다.", "r": false, "i": 7}, {"c": "C21", "t": "나는 우리 팀의 일원이라고 느낀다.", "r": false, "i": 8}, {"c": "C23", "t": "다른 팀(부서)과의 협업이 원활하다.", "r": false, "i": 8}, {"c": "C24", "t": "내 성장에 도움이 되는 구체적인 피드백을 정기적으로 받는다.", "r": false, "i": 9}, {"c": "C25", "t": "내가 기여한 일은 동료와 조직이 알아보고 인정해 준다.", "r": false, "i": 9}, {"c": "C27", "t": "이곳에서는 배경·직급·나이와 상관없이 모두가 존중받는다.", "r": false, "i": 10}, {"c": "C28", "t": "동료나 상사와 다른 의견을 불이익 걱정 없이 말할 수 있다.", "r": false, "i": 10}, {"c": "C30", "t": "일을 처리하는 절차가 명확하고 효율적이다.", "r": false, "i": 11}, {"c": "C32", "t": "불필요한 보고나 승인 단계 때문에 일이 늦어진다.", "r": true, "i": 11}, {"c": "C33", "t": "조직 구조와 역할 분담(R&R)이 명확하다.", "r": false, "i": 12}, {"c": "C34", "t": "무엇을 누가 결정하는지가 분명하다.", "r": false, "i": 12}, {"c": "C36", "t": "일하는 데 필요한 회사 정책(근무·휴가·평가 등)이 충분하고 공정하게 적용된다.", "r": false, "i": 13}, {"c": "C37", "t": "회사 정책과 규정은 변화에 맞춰 제때 업데이트된다.", "r": false, "i": 13}, {"c": "C38", "t": "나는 우리 회사의 제품·서비스에 자부심이 있다.", "r": false, "i": 14}, {"c": "C39", "t": "우리 회사의 강점과 차별점을 다른 사람에게 설명할 수 있다.", "r": false, "i": 14}, {"c": "C40", "t": "우리 회사는 고객의 목소리를 의사결정에 반영한다.", "r": false, "i": 15}, {"c": "C41", "t": "우리 조직은 고객의 요구에 시기적절하게 대응한다.", "r": false, "i": 15}, {"c": "C61", "t": "우리 조직은 바깥(고객, 업계, 다른 분야)에서 배운 것을 빠르게 일에 적용한다.", "r": false, "i": 15}, {"c": "C42", "t": "내 상사는 일에 필요한 코칭과 멘토링을 해준다.", "r": false, "i": 16}, {"c": "C43", "t": "내 상사는 내가 의견과 아이디어를 내도록 독려한다.", "r": false, "i": 16}, {"c": "C45", "t": "경영진은 회사의 비전과 방향을 분명하고 일관되게 제시한다.", "r": false, "i": 17}, {"c": "C47", "t": "경영진은 변화 상황에서 구성원이 이해하고 준비할 수 있도록 이끈다.", "r": false, "i": 17}, {"c": "C48", "t": "전반적으로 내 업무량은 감당할 수 있는 수준이다.", "r": false, "i": 18}, {"c": "C49", "t": "퇴근 후나 휴일에도 일 때문에 제대로 쉬지 못하는 경우가 많다.", "r": true, "i": 18}, {"c": "C51", "t": "일하는 데 필요한 도구·장비·디지털 환경이 충분히 지원된다.", "r": false, "i": 19}, {"c": "C53", "t": "근무 장소와 시간의 유연성이 업무 특성에 맞게 주어진다.", "r": false, "i": 19}, {"c": "C54", "t": "내 일에 대한 보상은 나의 기여에 비추어 공정하다.", "r": false, "i": 20}, {"c": "C55", "t": "보상과 승진이 어떤 기준으로 결정되는지 알고 있다.", "r": false, "i": 20}, {"c": "C57", "t": "이 회사에서 내 일과 자리가 안정적이라고 느낀다.", "r": false, "i": 21}, {"c": "C58", "t": "회사의 미래에 대해 불안해하지 않고 일할 수 있다.", "r": false, "i": 21}], "MOT": [{"c": "M01", "t": "일 자체가 재미있고 흥미롭기 때문에", "k": 0}, {"c": "M03", "t": "어려운 과제를 해냈을 때 느끼는 성취감 때문에", "k": 0}, {"c": "M04", "t": "이 일이 나라는 사람을 잘 드러내 주기 때문에", "k": 1}, {"c": "M05", "t": "이 일이 내 삶의 가치관과 잘 맞기 때문에", "k": 1}, {"c": "M07", "t": "내가 원하는 커리어 목표를 이루는 데 중요하기 때문에", "k": 2}, {"c": "M08", "t": "내 인생에서 이루고 싶은 목표에 다가가게 해주기 때문에", "k": 2}, {"c": "M10", "t": "잘해내지 못하면 스스로에게 부끄러울 것 같기 때문에", "k": 3}, {"c": "M12", "t": "일에서 밀리면 인생에서도 뒤처질 것 같기 때문에", "k": 3}, {"c": "M13", "t": "돈을 벌기 위해서", "k": 4}, {"c": "M14", "t": "생활의 안정을 위해서", "k": 4}, {"c": "M15", "t": "다른 사람(상사, 동료, 가족 등)에게 인정받기 위해서", "k": 5}, {"c": "M16", "t": "다른 사람에게 비난받지 않기 위해서", "k": 5}, {"c": "M17", "t": "솔직히 내가 왜 이 일을 하는지 잘 모르겠다", "k": 6}, {"c": "M18", "t": "일에서 요구하는 것이 너무 많아 의욕이 생기지 않는다", "k": 6}], "REASONS": ["일이 즐거워서", "내 가치·신념과 맞아서", "내 목표에 닿아서", "스스로 부끄럽지 않으려고", "먹고살려고", "남에게 인정받으려고", "이유를 모르겠어서"], "K": [{"c": "K1a", "q": 1, "t": "우리 조직은 구성원의 이야기를 듣고, 각자의 성장을 돌본다."}, {"c": "K1b", "q": 1, "t": "우리 조직은 사람과 아이디어를 연결하고, 아직 다듬어지지 않은 생각도 함께 키운다."}, {"c": "K2a", "q": 2, "t": "우리 조직은 결정하기 전에 바깥의 현실과 데이터를 충분히 모으고 살핀다."}, {"c": "K2b", "q": 2, "t": "우리 조직은 역할과 절차가 분명해서, 누가 무엇을 하는지 명확하다."}, {"c": "K3a", "q": 3, "t": "우리 조직은 매일의 일이 효율적으로, 흔들림 없이 돌아가도록 관리한다."}, {"c": "K3b", "q": 3, "t": "우리 조직은 결과와 책임을 분명히 묻고, 끝까지 실행하게 한다."}, {"c": "K4a", "q": 4, "t": "우리 조직은 밖으로 나가 필요한 자원과 기회를 끌어오고, 활동 반경을 넓힌다."}, {"c": "K4b", "q": 4, "t": "우리 조직은 지금의 방식에 질문을 던지고, 새로운 방식을 상상하고 시도한다."}], "FQ": ["내 일은 내가 정하고, 책임도 분명한가요?", "이곳에서 성장하고 있나요?", "방향과 정보, 잘했다는 기준을 알고 있나요?", "함께 일하고, 인정받고, 존중받나요?", "일이 돌아가는 체계가 명확한가요?", "우리 제품과 고객에 자부심이 있나요?", "상사와 경영진이 잘 이끌어 주나요?", "이곳에서 오래, 건강하게 일할 수 있나요?"], "FS": ["자율과 책임", "성장", "방향과 정보", "관계와 존중", "일의 틀", "제품 자부심", "리더십", "일하기 좋은 환경"], "RES": [{"c": "R01", "t": "이 회사를 친구에게 일터로 추천하겠다.", "scale": 11}, {"c": "R02", "t": "1년 뒤에도 이 회사에서 일하고 있을 것 같다.", "scale": 10}]};
+const MIN_N = 3;
+const QN = {1:'관계형',2:'질서형',3:'성과형',4:'혁신형'};
+const QW = {1:'Why',2:'What',3:'How',4:'If'};
+const QP = {1:'함께 성장하는 문화',2:'체계와 원칙의 문화',3:'실행과 결과의 문화',4:'도전과 변화의 문화'};
+const DEPTS = ['경영진·임원','기획·경영지원','영업·마케팅','운영·생산','연구·개발','교육·컨설팅','기타'];
+const ROLES = ['사원·주임·대리','과장·차장','부장 이상','임원'];
+const TENURE = ['1년 미만','1~3년','3~5년','5~10년','10년 이상'];
+const GROUPS = ['좋아서 일하는 사람','먹고살려고 일하는 사람','이유가 흔들리는 사람','남의 눈 때문에 일하는 사람'];
+const GCOL = ['var(--navy)','var(--amber)','var(--red)','#D8B27A'];
+const GORD=[0,3,1,2];
+const LV={0:6,1:7,2:5,3:4,4:2,5:3,6:1}; const LORD=[1,0,2,3,5,4,6];
+const KCOL=k=>k<=2?'var(--navy)':k===4?'var(--amber)':k===6?'var(--red)':'#D8B27A';
+function stages(A){const m=a=>{const v=a.map(n=>A.idx[n]).filter(x=>!isNaN(x));return v.length?avg(v):NaN};
+ const five=[{k:'하고 싶다',en:'Vill',d:'의미와 하고 싶은 마음',src:'나의 업무 동기 (좋아서)',v:A.like},{k:'안다',en:'Vet',d:'방향과 정보',src:'회사의 방향과 소통 · 일 정보에 관한 소통 · 내 성공의 기준',v:m([5,6,7])},{k:'할 수 있다',en:'Kan',d:'역량과 성장',src:'능력개발지원 · 능력개발기회',v:m([3,4])},{k:'해도 된다',en:'Får',d:'권한과 여지',src:'권한부여 및 자율성',v:m([1])},{k:'해야 한다',en:'Bör',d:'책임과 주인의식',src:'책임',v:m([2])}];
+ const okf=five.filter(f=>!isNaN(f.v));
+ const st4=[{k:'나',en:'Me',q:'나는 일할 조건을 갖췄는가',src:'일할 다섯 조건 (하고 싶다 · 안다 · 할 수 있다 · 해도 된다 · 해야 한다)',v:okf.length?avg(okf.map(f=>f.v)):NaN},
+  {k:'나와 팀',en:'Me & Group',q:'함께 일하고, 인정받고, 말할 수 있는가',src:'관계와 협동 · 피드백과 인정 · 존중과 심리적 안전 · 상사의 리더십',v:m([8,9,10,16])},
+  {k:'나 없이 돌아가는 팀',en:'Group without Me',q:'사람이 바뀌어도 일이 돌아가는 체계와 바탕이 있는가',src:'절차 · 역할과 결정 권한 · 정책 · 일과 삶의 균형 · 도구와 공간 · 보상 · 안정성',v:m([11,12,13,18,19,20,21])},
+  {k:'미래',en:'Future',q:'우리는 어디로 가고, 무엇을 만들어 내는가',src:'제품·서비스 자신감 · 고객 중심 · 경영진의 리더십 + 조직의 현재와 미래',v:m([14,15,17])}];
+ const sorted=a=>[...a.filter(x=>!isNaN(x.v))].sort((x,y)=>y.v-x.v);const f2=sorted(five),s2=sorted(st4);
+ return {five,st4,hi:f2[0],lo:f2[f2.length-1],shi:s2[0],slo:s2[s2.length-1]}}
+function motTitle(A){const base=A.money>=Math.max(A.like,A.eye)?'먹고살려고 일하는 바탕 위에, ':'';const d=A.like-A.eye;return base+(Math.abs(d)<5?'좋아서와 남의 눈의 무게가 비슷하다':d>0?'좋아서 일하는 힘이 남의 눈보다 크다':'남의 눈 때문에 일하는 힘이 좋아서보다 크다')}
+function motBal(A){const bun=(t,c,v,ks)=>`<div class="bun" style="border-top:3px solid ${c}"><b style="color:${c}">${t}</b><div class="big" style="color:${c}">${r0(v)}<span> 점</span></div>${ks.map(k=>`<div class="r"><span><b class="lvn">${LV[k]}</b>${CFG.REASONS[k]}</span><b>${A.yes[k]}명</b></div>`).join('')}</div>`;return `<div class="bal3">${bun('좋아서',GCOL[0],A.like,[1,0,2])}${bun('남의 눈 때문에',GCOL[3],A.eye,[3,5])}${bun('먹고살려고',GCOL[1],A.money,[4])}</div>`}
+const HERZ_M=[1,2,3,4,7,9], HERZ_H=[11,12,13,18,19,20,21];
+const FULL_STEPS = ['info','mot',...CFG.FN.map((_,i)=>'f'+i),'k','u'];
+const PULSE_BASE=['M01','M13','M17','R01','R02','C01','C08','C17','C28','C33','C38','C42','C48'];
+const isPulse=()=>!!(st.org&&st.org.type==='pulse');
+const pulseCodes=(org)=>{const ex=((org&&org.extra)||[]).map(n=>IDXN[n]&&IDXN[n].codes[0]).filter(c=>c&&!PULSE_BASE.includes(c));return [...PULSE_BASE,...ex]};
+const STEPS=new Proxy([],{get:(t,k)=>{const a=isPulse()?['info','pulse']:FULL_STEPS;const v=a[k];return typeof v==='function'?v.bind(a):v}});
+const PAGE_URL='https://claude.ai/artifact/3fxnc6Aa3itsJ2KcsugAzn';
+let st = {org:null,orgs:[],orgErr:'',screen:'intro',step:0,r:{},dept:'',role:'',ten:'',u:[],o1:'',o2:'',err:'',mine:null,saved:null,R:null,src:''};
+let caps = {db:null,user:null,downloads:null,sample:null,canEdit:false};
+
+const $=(h)=>{const d=document.createElement('div');d.innerHTML=h.trim();return d.firstElementChild};
+const esc=(s)=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const avg=(a)=>{const v=a.filter(x=>typeof x==='number'&&!isNaN(x));return v.length?v.reduce((s,x)=>s+x,0)/v.length:NaN};
+const sd=(a)=>{const v=a.filter(x=>typeof x==='number'&&!isNaN(x));if(v.length<2)return NaN;const m=avg(v);return Math.sqrt(avg(v.map(x=>(x-m)**2)))};
+const r0=(x)=>isNaN(x)?'–':Math.round(x);
+const r1=(x)=>isNaN(x)?'–':(Math.round(x*10)/10).toFixed(1);
+const pct=(x)=>x*10;
+function J(w,a,b){w=String(w);const c=w.charCodeAt(w.length-1);if(c<0xAC00||c>0xD7A3)return w+a+'('+b+')';return w+((c-0xAC00)%28?a:b)}
+function band(x){if(isNaN(x))return['–','b-g'];if(x>=90)return['A 매우 좋음','b-s'];if(x>=80)return['B 좋음','b-s'];if(x>=70)return['C 보통','b-g'];if(x>=60)return['D 개선 필요','b-w'];return['E 개선 시급','b-r']}
+const GRADE_TXT='A 90 이상 · B 80~89 · C 70~79 · D 60~69 · E 60 미만';
+function devCol(d){return isNaN(d)?'transparent':d>=5?'#DCE4F0':d<=-5?'#F2D9D9':'transparent'}
+const bandCol=(x)=>x>=80?'var(--navy)':x>=70?'var(--navy2)':x>=60?'var(--amber)':'var(--red)';
+const IDXN = Object.fromEntries(CFG.IDX.map(x=>[x.n,x]));
+const ITEMC = Object.fromEntries(CFG.ITEMS.map(x=>[x.c,x]));
+
+/* ---------- scoring ---------- */
+function score(r){
+ const it=(c)=>{const v=r[c];if(typeof v!=='number')return NaN;const p=pct(v);return ITEMC[c]&&ITEMC[c].r?110-p:p};
+ const s={item:{},idx:{},fac:{},rs:{},yes:{},cur:{},des:{}};
+ CFG.ITEMS.forEach(x=>s.item[x.c]=it(x.c));
+ CFG.IDX.forEach(x=>s.idx[x.n]=avg(x.codes.map(c=>s.item[c])));
+ CFG.FN.forEach((f,i)=>s.fac[i]=avg(CFG.IDX.filter(x=>x.f===i).map(x=>s.idx[x.n])));
+ s.total=avg(Object.values(s.fac));
+ CFG.REASONS.forEach((nm,k)=>{const raw=avg(CFG.MOT.filter(m=>m.k===k).map(m=>r[m.c]));s.rs[k]=isNaN(raw)?NaN:pct(raw);s.yes[k]=isNaN(raw)?null:raw>=7?2:raw>=5?1:0});
+ s.like=avg([s.rs[0],s.rs[1],s.rs[2]]); s.eye=avg([s.rs[3],s.rs[5]]); s.money=s.rs[4]; s.must=avg([s.eye,s.money]); s.lost=s.rs[6]; {let a=0,b=0;[0,1,2,3,4,5,6].forEach(k=>{if(!isNaN(s.rs[k])){a+=LV[k]*s.rs[k];b+=s.rs[k]}});s.level=b?a/b:NaN}
+ s.group=isNaN(s.like)?null:(s.lost>=55?2:(()=>{const top=s.like>=s.eye?0:3,tv=Math.max(s.like,s.eye);if(tv>=70)return top;if(s.money>=70)return 1;return s.money>tv?1:top})());
+ [1,2,3,4].forEach(q=>{const ks=CFG.K.filter(k=>k.q===q);s.cur[q]=avg(ks.map(k=>typeof r[k.c+'_n']==='number'?pct(r[k.c+'_n']):NaN));s.des[q]=avg(ks.map(k=>typeof r[k.c+'_d']==='number'?pct(r[k.c+'_d']):NaN))});
+ s.rec=typeof r.R01==='number'?r.R01:NaN; s.stay=typeof r.R02==='number'?r.R02:NaN;
+ s.hm=avg(HERZ_M.map(n=>s.idx[n])); s.hh=avg(HERZ_H.map(n=>s.idx[n]));
+ return s;
+}
+function aggregate(recs){
+ const S=recs.map(x=>({rec:x,s:score(x.r||{})})); const n=recs.length;
+ const A={n,idx:{},fac:{},item:{},itemSd:{},rs:{},yes:{},cur:{},des:{}};
+ CFG.ITEMS.forEach(x=>{const v=S.map(o=>o.s.item[x.c]);A.item[x.c]=avg(v);A.itemSd[x.c]=sd(v)});
+ CFG.IDX.forEach(x=>A.idx[x.n]=avg(S.map(o=>o.s.idx[x.n])));
+ CFG.FN.forEach((f,i)=>A.fac[i]=avg(S.map(o=>o.s.fac[i])));
+ A.total=avg(S.map(o=>o.s.total));
+ CFG.REASONS.forEach((nm,k)=>{A.rs[k]=avg(S.map(o=>o.s.rs[k]));A.yes[k]=S.filter(o=>o.s.yes[k]===2).length;A['mid'+k]=S.filter(o=>o.s.yes[k]===1).length});
+ A.like=avg(S.map(o=>o.s.like)); A.must=avg(S.map(o=>o.s.must)); A.eye=avg(S.map(o=>o.s.eye)); A.money=avg(S.map(o=>o.s.money)); A.level=avg(S.map(o=>o.s.level)); A.lost=avg(S.map(o=>o.s.lost));
+ A.groups=[0,1,2,3].map(g=>S.filter(o=>o.s.group===g).length);
+ A.bothFunMoney=S.filter(o=>o.s.yes[0]===2&&o.s.yes[4]===2).length;
+ const enps=(arr)=>{const v=arr.filter(x=>!isNaN(x));if(!v.length)return NaN;return Math.round((v.filter(x=>x>=9).length-v.filter(x=>x<=6).length)/v.length*100)};
+ A.res=[0,1,2,3].map(g=>{const ss=S.filter(o=>o.s.group===g).map(o=>o.s);const st2=ss.map(x=>x.stay).filter(x=>!isNaN(x));return {n:ss.length,rec:avg(ss.map(x=>x.rec)),enps:enps(ss.map(x=>x.rec)),stay:st2.length?Math.round(st2.filter(x=>x>=7).length/st2.length*100):NaN}});
+ A.enps=enps(S.map(o=>o.s.rec)); {const st2=S.map(o=>o.s.stay).filter(x=>!isNaN(x));A.stay=st2.length?Math.round(st2.filter(x=>x>=7).length/st2.length*100):NaN}
+ [1,2,3,4].forEach(q=>{A.cur[q]=avg(S.map(o=>o.s.cur[q]));A.des[q]=avg(S.map(o=>o.s.des[q]))});
+ A.hm=avg(S.map(o=>o.s.hm)); A.hh=avg(S.map(o=>o.s.hh));
+ A.pri=CFG.IDX.map(x=>{const c=recs.filter(rc=>(rc.u||[]).includes(x.n)).length;return {n:x.n,c,rate:n?c/n:0}});
+ const avgIdx=avg(Object.values(A.idx)); A.avgIdx=avgIdx;
+ A.pri.forEach(p=>{const sc=A.idx[p.n];p.score=sc;p.quad=sc<avgIdx?(p.rate>=3/21?1:2):(p.rate>=3/21?3:4)});
+ const by=(key)=>{const m={};S.forEach(o=>{const d=o.rec[key]||'기타';(m[d]=m[d]||[]).push(o)});return Object.entries(m).map(([d,os])=>{const arr=os.map(o=>o.s);const pri={};os.forEach(o=>(o.rec.u||[]).forEach(n=>pri[n]=(pri[n]||0)+1));return {d,n:arr.length,fac:Object.fromEntries(CFG.FN.map((f,i)=>[i,avg(arr.map(s=>s.fac[i]))])),total:avg(arr.map(s=>s.total)),groups:[0,1,2,3].map(g=>arr.filter(s=>s.group===g).length),hm:avg(arr.map(s=>s.hm)),hh:avg(arr.map(s=>s.hh)),idx:Object.fromEntries(CFG.IDX.map(x=>[x.n,avg(arr.map(s=>s.idx[x.n]))])),cur:Object.fromEntries([1,2,3,4].map(q=>[q,avg(arr.map(s=>s.cur[q]))])),des:Object.fromEntries([1,2,3,4].map(q=>[q,avg(arr.map(s=>s.des[q]))])),rs:Object.fromEntries(CFG.REASONS.map((r,k)=>[k,avg(arr.map(s=>s.rs[k]))])),yes:Object.fromEntries(CFG.REASONS.map((r,k)=>[k,arr.filter(s=>s.yes[k]===2).length])),like:avg(arr.map(s=>s.like)),must:avg(arr.map(s=>s.must)),eye:avg(arr.map(s=>s.eye)),money:avg(arr.map(s=>s.money)),level:avg(arr.map(s=>s.level)),pri:Object.entries(pri).map(([n,c])=>({n:+n,c})).sort((a,b)=>b.c-a.c)}}).sort((a,b)=>b.n-a.n)};
+ A.byDept=by('dept'); A.byRole=by('role'); A.byTen=by('ten');
+ A.itemYes={}; CFG.ITEMS.forEach(x=>{const v=recs.map(r=>r.r&&r.r[x.c]).filter(v=>typeof v==='number');A.itemYes[x.c]=v.length?(x.r?v.filter(y=>y<=4).length:v.filter(y=>y>=7).length)/v.length:NaN});
+ A.motItem={}; CFG.MOT.forEach(m=>{const v=recs.map(r=>r.r&&r.r[m.c]).filter(v=>typeof v==='number');A.motItem[m.c]={v:v.length?avg(v.map(pct)):NaN,yes:v.length?v.filter(y=>y>=7).length/v.length:NaN}});
+ {const xs=S.map(o=>o.s.total),ys=S.map(o=>o.s.like);const ok=xs.map((x,i)=>[x,ys[i]]).filter(([x,y])=>!isNaN(x)&&!isNaN(y));A.pts=ok;if(ok.length>2){const mx=avg(ok.map(a=>a[0])),my=avg(ok.map(a=>a[1]));const sxy=ok.reduce((t,[x,y])=>t+(x-mx)*(y-my),0),sx=Math.sqrt(ok.reduce((t,[x])=>t+(x-mx)**2,0)),sy=Math.sqrt(ok.reduce((t,[,y])=>t+(y-my)**2,0));A.corr=sx&&sy?sxy/(sx*sy):NaN}else A.corr=NaN}
+ A.voices={keep:recs.map(x=>x.o1).filter(Boolean),change:recs.map(x=>x.o2).filter(Boolean)};
+ A.recs=recs;
+ return A;
+}
+function pickFocus(A){
+ const pri=[...A.pri].sort((a,b)=>b.rate-a.rate);
+ const f=[];
+ const p1=pri[0]; const x1=IDXN[p1.n];
+ f.push({c:'var(--navy)',title:p1.score>=A.avgIdx?`점수보다 큰 ‘${x1.name}’의 아픔`:`가장 시급하다는 응답: ${x1.plain}`,
+  lines:[`${x1.name} ${r1(p1.score)}점(${band(p1.score)[0]}), ‘시급하다’고 응답한 비율은 ${Math.round(p1.rate*100)}%로 21개 지표 중 가장 높습니다.`,p1.score>=A.avgIdx?'점수는 괜찮은데 체감은 크다는 신호입니다. 어디서, 누구에게 아픈지 대화로 확인할 곳입니다.':'점수도 낮고 구성원도 아프다고 말하는 곳입니다.'],q:x1.q,d:x1.d,tag:x1.plain});
+ const low=[...CFG.IDX].sort((a,b)=>A.idx[a.n]-A.idx[b.n]).find(x=>x.n!==p1.n); const pl=A.pri.find(p=>p.n===low.n);
+ f.push({c:'var(--amber)',title:pl.rate<3/21?`말하지 않게 된 ‘${low.name}’`:`가장 낮은 ‘${low.name}’`,
+  lines:[`${low.name} ${r1(A.idx[low.n])}점으로 21개 지표 중 가장 낮습니다.`,pl.rate<3/21?`그런데 ‘시급하다’고 응답한 비율은 ${Math.round(pl.rate*100)}%뿐입니다. 익숙해져서 말하지 않게 된 문제일 수 있습니다.`:`‘시급하다’고 응답한 비율도 ${Math.round(pl.rate*100)}%입니다.`],q:low.q,d:low.d,tag:low.plain});
+ const shaky=A.byDept.filter(o=>o.n>=MIN_N).map(o=>({o,r:o.groups[2]/o.n})).sort((a,b)=>b.r-a.r)[0];
+ if(shaky&&shaky.r>=0.3){f.push({c:'var(--red)',title:`${shaky.o.d}의 흔들림`,lines:[`${shaky.o.n}명 중 ${shaky.o.groups[2]}명은 일하는 이유가 흔들리고 있습니다.`,'팀 단위로 먼저 만나, 무엇이 이유를 흔들고 있는지 듣는 것이 출발점입니다.'],q:'지금 이 자리에서 나를 일하게 하는 가장 큰 이유는 무엇인가요? 1년 뒤에도 같을까요?',d:'일의 의미는 회사가 아니라 각자가 찾아야만 한다.',tag:'일하는 이유'})}
+ else{f.push({c:'var(--red)',title:motTitle(A),lines:[`좋아서 ${r0(A.like)}점, 남의 눈 때문에 ${r0(A.eye)}점, 먹고살려고 ${r0(A.money)}점입니다. ${A.n}명 중 ${A.groups[0]}명이 좋아서 하는 쪽입니다.`,'무엇이 사람들을 일하게 하는지 함께 이야기해 볼 만합니다.'],q:'지금 이 자리에서 나를 일하게 하는 가장 큰 이유는 무엇인가요? 1년 뒤에도 같을까요?',d:'일의 의미는 회사가 아니라 각자가 찾아야만 한다.',tag:'일하는 이유'})}
+ return f;
+}
+
+function buildPrintHTML(A,full){
+ const N=A.n; const org=st.src==='real'&&st.repOrg?st.repOrg:{name:'예시 조직'};
+ const today=new Date(); const dstr=`${today.getFullYear()}년 ${today.getMonth()+1}월`;
+ const idxSorted=[...CFG.IDX].sort((a,b)=>A.idx[b.n]-A.idx[a.n]); const top3=idxSorted.slice(0,3), bot3=idxSorted.slice(-3).reverse();
+ const priTop=[...A.pri].sort((a,b)=>b.rate-a.rate)[0]; const focus=pickFocus(A);
+ const items=[...CFG.ITEMS].map(x=>({...x,v:A.item[x.c],s:A.itemSd[x.c]}));
+ const best=[...items].sort((a,b)=>b.v-a.v).slice(0,5), worst=[...items].sort((a,b)=>a.v-b.v).slice(0,5);
+ const split=[...items].filter(x=>x.s>=25).sort((a,b)=>b.s-a.s).slice(0,3);
+ const gaps=[1,2,3,4].map(q=>[q,A.des[q]-A.cur[q]]).sort((a,b)=>b[1]-a[1]); const curTop=[1,2,3,4].sort((a,b)=>A.cur[b]-A.cur[a])[0];
+ const show=o=>o.n>=MIN_N; const QP2={1:'함께 성장하는 문화',2:'체계와 원칙의 문화',3:'실행과 결과의 문화',4:'도전과 변화의 문화'};
+ const herzLab=(m,h)=>m>=70?(h>=70?'이상적':'의욕은 있으나 불만 누적'):(h>=70?'조건은 갖췄으나 의욕 낮음':'가장 시급');
+ const priPts=A.pri.map(p=>({x:p.score,y:p.rate*100,c:p.quad===1?'var(--red)':p.quad===2?'var(--amber)':p.quad===3?'var(--navy2)':'var(--muted)',t:String(p.n).padStart(2,'0'),r:5,left:p.score>A.avgIdx+6}));
+ const xs=A.pri.map(p=>p.score).filter(v=>!isNaN(v)); const xmin=Math.floor((Math.min(...xs)-3)/5)*5, xmax=Math.ceil((Math.max(...xs)+3)/5)*5;
+ const ymax=Math.max(40,Math.ceil(Math.max(...A.pri.map(p=>p.rate*100))/10)*10+5);
+ let pg=0; const pages=[];
+ const P=(chapter,label,title,body,dark)=>{pg++;pages.push(`<section class="page${dark?' dark':''}">${dark?body:`<div class="lab">${label}</div><h2>${title}</h2><div class="body">${body}</div><div class="foot"><span>Paul &amp; Mark · POCA 조직문화 진단 · ${esc(org.name)}</span><span>${chapter} <b>${String(pg).padStart(2,'0')}</b></span></div>`}</section>`)};
+ const BAND=(vis,lines,how)=>`${how?`<p class="how">이렇게 읽으세요 · ${how}</p>`:''}<div class="vis full">${vis}</div><div class="band">${lines.filter(Boolean).map(l=>`<div>${l}</div>`).join('')}</div>`;
+ const HOW=t=>`<p class="how">이렇게 읽으세요 · ${t}</p>`;
+ const FDEF=[['내 일을 내가 정하고, 그만큼 책임도 분명한가','자율성은 사람이 스스로 일하게 만드는 첫 번째 조건입니다 (자기결정이론).'],['이곳에서 배우고 성장하고 있는가','성장하고 있다는 감각(유능감)이 있어야 일에 몰입합니다.'],['회사의 방향, 내 일의 정보, 잘했다는 기준을 알고 있는가','방향과 기준을 알아야 스스로 판단하고 움직일 수 있습니다 (Denison의 사명).'],['함께 일하고, 인정받고, 존중받는가','연결되어 있고 말해도 안전하다고 느낄 때 사람은 배우고 협력합니다 (관계성 · 심리적 안전감).'],['일이 돌아가는 절차 · 역할과 결정 권한 · 정책이 명확한가','필수 조건입니다. 부족하면 불만이 쌓이고, 다른 노력의 효과가 줄어듭니다 (Herzberg).'],['우리 제품과 고객에 자부심이 있는가','내 일이 누구에게 어떤 가치를 주는지 알 때 일의 의미가 생깁니다 (Denison의 적응성).'],['상사와 경영진이 잘 이끌어 주는가','상사는 다른 모든 요인을 매일 경험하게 하는 통로입니다.'],['이곳에서 오래, 건강하게 일할 수 있는가','필수 조건입니다. 업무량, 도구, 보상, 안정이 무너지면 의욕도 함께 무너집니다 (Herzberg).']];
+ const SPLIT=(vis,lines)=>`<div class="split"><div class="vis">${vis}</div><div class="ins">${lines.filter(Boolean).map(l=>`<p>${l}</p>`).join('')}</div></div>`;
+ const D=(num,title,sub)=>{if(!full)return;pg++;pages.push(`<section class="page dark"><div class="redbar"></div><p class="dnum">${num}</p><div><h1 style="font-size:34pt">${title}</h1><p class="meta" style="margin-top:5mm;color:#AEB8C6">${sub}</p></div><p></p></section>`)};
+ P('','','',`<div class="redbar"></div><p class="brand">PAUL &amp; MARK</p><div><p class="sub">POCA Organizational Culture Assessment</p><h1>조직문화 진단<br>결과보고서</h1><div class="rule"></div><p class="meta">${esc(org.name)} · ${dstr} · 응답 ${N}명${org.headcount?` (참여율 ${Math.round(N/org.headcount*100)}%)`:''}</p></div><p class="copy">© Paul &amp; Mark Co.</p>`,true);
+const heat=(rows,label)=>`<table><tr><th>${label}</th><th class="n">종합</th>${CFG.FN.map(f=>`<th class="n">${f.replace('제품·서비스 자신감','제품 자신감').replace('일에 대한 정보 소통','정보 소통').replace('권한부여와 책임','권한·책임')}</th>`).join('')}</tr>${rows.map(o=>show(o)?`<tr><td>${esc(o.d)} (${o.n})</td><td class="n"><b>${r0(o.total)}</b></td>${CFG.FN.map((f,i)=>`<td class="n" style="background:${devCol(o.fac[i]-A.fac[i])}">${r0(o.fac[i])}</td>`).join('')}</tr>`:`<tr><td>${esc(o.d)} (${o.n})</td><td colspan="9" class="muted">비공개</td></tr>`).join('')}</table>`;
+ P('개요','이 보고서 사용법','처음 보는 분도 이렇게 읽으면 됩니다',`<div class="cols3"><div class="fc" style="border-top-color:var(--navy)"><p class="num">1</p><h3>제목이 곧 결론입니다</h3><p>각 쪽의 큰 제목은 그 쪽의 결론을 한 문장으로 쓴 것입니다. 제목만 넘겨 읽어도 전체 흐름이 보입니다.</p></div><div class="fc" style="border-top-color:var(--navy)"><p class="num">2</p><h3>‘이렇게 읽으세요’를 먼저</h3><p>그래프 위의 한 줄이 그래프 읽는 법입니다. 아래 칸은 숫자에서 읽어 낸 의미입니다.</p></div><div class="fc" style="border-top-color:var(--navy)"><p class="num">3</p><h3>점수와 색</h3><p>점수는 0~100점입니다. 기본 기준은 <b style="color:var(--navy)">A 90 이상 · B 80~89</b>, <b style="color:var(--navy2)">C 70~79</b>, <b style="color:var(--amber)">D 60~69</b>, <b style="color:var(--red)">E 60 미만</b>. ‘그렇다’는 10점 중 7점 이상입니다. 기준은 부록에 자세히 있습니다.</p></div></div><p style="margin-top:8mm">${full?'앞의 ‘핵심 요약’ 다섯 쪽만 읽어도 결론과 제언이 보입니다. 그 뒤는 필요할 때 찾아보는 상세 자료입니다.':'이 요약판은 경영진 보고용입니다. 부서별·요인별 상세는 전체판에 있습니다.'}</p>`);
+ P('개요','진단 지도','무엇을, 어떻게 쟀나: 80개의 질문이 세 영역으로 모입니다',`<div class="map"><div class="mcol"><div class="mbox h">나의 업무 동기<br><span>14문항 + 2문항</span></div><div class="mlist">일곱 가지 이유 = 동기 수준 1~7<br>→ 좋아서 · 남의 눈 때문에 · 먹고살려고 · 이유가 흔들림<br><br><b>추천·잔류 의향</b> 2문항<br>일터로 추천하겠다 · 1년 뒤에도 있겠다</div></div><div class="mcol wide"><div class="mbox h">현재 조직 분석<br><span>45문항</span></div><div class="mlist">문항 → <b>21개 지표</b> → <b>8요인</b><div class="fgrid">${CFG.FN.map((fn,fi)=>`<div class="${fi===4||fi===7?'hyg':''}"><b>${fn}</b><br><span>${CFG.IDX.filter(x=>x.f===fi).map(x=>x.name).join(' · ')}</span></div>`).join('')}</div><span class="muted" style="font-size:10pt">점선 칸은 필수 조건(업무 체계 · 업무 환경)</span></div></div><div class="mcol"><div class="mbox h">조직의 현재와 미래<br><span>16문항</span></div><div class="mlist">문화 문장 8개를<br>현재 · 지향으로<br>→ 네 가지 문화</div></div></div><p class="note" style="margin-top:4mm">이 밖에 <b>우선순위 투표 1문항</b>(21개 지표 중 가장 시급한 3개)과 <b>열린 질문 2문항</b>(지키고 싶은 것 · 바꾸고 싶은 것)이 있습니다. 모두 80문항, 약 11분. 시작할 때 부서 · 직급 · 근속을 고르며 이름은 받지 않습니다.</p>`);
+ if(full){
+ P('개요','진단 개요','누가, 언제, 무엇으로 진단했나',`<div class="cols2"><div><table><tr><th>항목</th><th>내용</th></tr><tr><td>대상</td><td>${esc(org.name)}</td></tr><tr><td>시점</td><td>${dstr}</td></tr><tr><td>응답</td><td>${N}명${org.headcount?` / 대상 ${org.headcount}명 (참여율 ${Math.round(N/org.headcount*100)}%)`:''}</td></tr><tr><td>구성</td><td>80문항 · 약 11분 (오른쪽 표)</td></tr><tr><td>익명성</td><td>이름은 받지 않았으며, ${MIN_N}명 미만 그룹은 공개하지 않습니다.</td></tr></table></div><div><table class="dense"><tr><th>영역</th><th class="n" style="white-space:nowrap">문항</th><th>무엇을 보나</th></tr><tr><td>나의 업무 동기</td><td class="n">14</td><td>일곱 가지 이유 → 동기 수준 1~7, 네 부류</td></tr><tr><td>추천·잔류 의향</td><td class="n">2</td><td>일터로 추천하겠다(0~10) · 1년 뒤에도 있겠다</td></tr><tr><td><b>현재 조직 분석</b></td><td class="n"><b>45</b></td><td>21지표 → 8요인</td></tr><tr><td>조직의 현재와 미래</td><td class="n">16</td><td>문화 문장 8개 × 현재 · 지향</td></tr><tr><td>우선순위 투표</td><td class="n">1</td><td>21지표 중 가장 시급한 3개</td></tr><tr><td>열린 질문</td><td class="n">2</td><td>지키고 싶은 것 · 바꾸고 싶은 것</td></tr><tr><td><b>합계</b></td><td class="n"><b>80</b></td><td>시작할 때 부서 · 직급 · 근속 선택 (문항 수 제외)</td></tr></table></div></div></div>`);
+ P('개요','8요인 사전 (1)','요인마다 무엇을 묻는가',`<table><tr><th style="width:44mm">요인</th><th>쉽게 말하면</th><th>이루는 지표 (문항 수)</th></tr>${CFG.FN.slice(0,4).map((fn,fi)=>`<tr><td><b>${fn}</b></td><td>${FDEF[fi][0]}</td><td>${CFG.IDX.filter(x=>x.f===fi).map(x=>`${x.name} (${x.codes.length})`).join('<br>')}</td></tr>`).join('')}</table>`);
+ P('개요','8요인 사전 (2)','요인마다 무엇을 묻는가',`<table><tr><th style="width:44mm">요인</th><th>쉽게 말하면</th><th>이루는 지표 (문항 수)</th></tr>${CFG.FN.slice(4).map((fn,k)=>{const fi=k+4;return `<tr><td><b>${fn}</b>${fi===4||fi===7?'<br><span class="muted" style="font-size:10pt">필수 조건</span>':''}</td><td>${FDEF[fi][0]}</td><td>${CFG.IDX.filter(x=>x.f===fi).map(x=>`${x.name} (${x.codes.length})`).join('<br>')}</td></tr>`}).join('')}</table><p class="note">문항 → 지표 → 요인 순서로 점수를 모읍니다. 각 문항이 어느 지표에 속하는지는 ‘요인 상세’ 쪽마다 실제 질문과 함께 보여줍니다.</p>`);
+ }
+ if(full){const cnt=(rows)=>rows.map(o=>`<div class="bar" style="grid-template-columns:52mm 1fr 18mm"><div>${esc(o.d)}</div><div class="t"><i style="width:${o.n/N*100}%;background:var(--navy2)"></i></div><div class="v">${o.n}명</div></div>`).join('');
+  P('개요','진단 참여',`${N}명이 응답했습니다${org.headcount?` · 참여율 ${Math.round(N/org.headcount*100)}%`:''}`,`<div class="cols3"><div><h3>부서별</h3>${cnt(A.byDept)}</div><div><h3>직급별</h3>${cnt(A.byRole)}</div><div><h3>근속별</h3>${cnt(A.byTen)}</div></div><p class="note">참여율이 70% 이상이면 조직 전체의 경향으로 읽을 수 있습니다. ${MIN_N}명 미만 그룹은 이후 쪽에서 결과를 공개하지 않습니다.</p>`)}
+ D('01','핵심 요약','결론과 제언을 다섯 쪽으로');
+ P('핵심 요약','한 장 요약',`${top3.some(x=>[8,9,10,16].includes(x.n))?'관계는 단단하고':'강점은 '+esc(top3[0].name)+'이고'}, ${esc(bot3[0].name)}${HERZ_H.includes(bot3[0].n)?' 같은 일의 조건이 버겁다':'에서 가장 막혀 있다'}`,
+  `<div class="kpis"><div class="kpi"><div class="n">${r1(A.total)}</div><div class="l">종합 문화점수</div><div class="s">8요인 평균 · ${band(A.total)[0]}</div></div><div class="kpi"><div class="n">${A.groups[0]}<span class="of"> / ${N}</span></div><div class="l">좋아서 일하는 사람</div><div class="s">남의 눈 ${A.groups[3]}명 · 먹고살려고 ${A.groups[1]}명 · 흔들림 ${A.groups[2]}명</div></div><div class="kpi r"><div class="n">${Math.round(priTop.rate*100)}%</div><div class="l">‘${esc(IDXN[priTop.n].plain)}’ 개선이 가장 시급하다는 응답</div><div class="s">${esc(IDXN[priTop.n].name)} 지표 · 21개 지표 중 가장 높은 응답 비율</div></div></div>
+  <div class="three"><div><h3 class="cn">지켜야 할 강점</h3><p>${top3.map(x=>`${esc(x.name)} ${r1(A.idx[x.n])}`).join('<br>')}</p></div><div><h3 class="ca">바꿔야 할 기회</h3><p>${bot3.map(x=>`${esc(x.name)} ${r1(A.idx[x.n])}`).join('<br>')}</p></div><div><h3 class="cr">핵심 과제</h3><p>${focus.map((f,i)=>`${'①②③'[i]} ${esc(f.title)}`).join('<br>')}</p></div></div>`);
+ if(full){const cr=A.corr;P('핵심 요약','핵심 발견',isNaN(cr)?'조직문화와 내적 동기':cr>=0.3?`조직문화 점수가 높을수록 내적 동기로 일한다 (r = ${cr.toFixed(2)})`:cr>=0.1?`조직문화 점수가 높을수록 내적 동기도 높은 편이다 (r = ${cr.toFixed(2)})`:`조직문화 점수와 내적 동기 사이에 뚜렷한 관계는 없다 (r = ${cr.toFixed(2)})`,`<div class="chart" style="width:170mm;max-width:100%">${scatter(A.pts.map(([x,y])=>({x,y,c:'var(--navy)',t:'',r:4})),{x:[20,100],y:[0,100],xt:[20,40,60,80,100],yt:[0,25,50,75,100],xl:'조직문화 평가 점수 (개인별 종합)',yl:'내적 동기 점수',aria:'조직문화 평가 점수와 내적 동기 점수'})}</div><p class="note">점 하나가 한 사람입니다. 가로는 그 사람이 매긴 조직문화 종합 점수(8요인 평균), 세로는 내적 동기 점수(동기 수준 5~7: 목표 · 즐거움 · 가치와 신념)입니다. r은 두 점수가 함께 움직이는 정도(0~1)입니다. 상관은 인과가 아니지만, 문화를 바꾸는 일이 일하는 마음을 바꾸는 일과 이어져 있다는 근거로 씁니다.</p>`)}
+ D('02','왜 일하는가','좋아서, 남의 눈 때문에, 먹고살려고, 혹은 이유가 흔들려서');
+ P('왜 일하는가','01 · 왜 일하는가',motTitle(A),
+  `${motBal(A)}<div class="side" style="flex-direction:row;gap:8mm;border-left:none;padding:4mm 0 0"><p>‘이유를 모르겠다’ 그렇다 <b>${A.yes[6]}명</b>, 보통 이상까지 ${A.yes[6]+A.mid6}명</p><p>‘즐거워서’와 ‘먹고살려고’에 모두 그렇다 <b>${A.bothFunMoney}명</b></p>${isNaN(A.stay)?'':`<p>직원 추천 지수 <b>${A.enps>0?'+':''}${A.enps}</b> · 1년 뒤에도 있을 것 같다 <b>${A.stay}%</b></p>`}</div>
+  <p class="note">원 안의 숫자는 동기 수준(1~7)입니다. 클수록 스스로 원해서 일합니다. 점수는 10점 응답 × 10의 평균, 사람 수는 ‘그렇다’(7점 이상)라고 답한 인원입니다. 한 사람이 여러 이유에 답하므로 합계는 전체 인원을 넘습니다.</p>`);
+ P('왜 일하는가','동기 수준',`우리 회사의 동기 수준은 7단계 중 ${r1(A.level)}`,SPLIT(bars(LORD.map(k=>[`${LV[k]} · ${CFG.REASONS[k]}`,A.rs[k],KCOL(k)])),[`<b>7~5 좋아서</b> · 가치와 신념이 맞아서(7), 일이 즐거워서(6), 목표에 닿아서(5)`,`<b>4~3 남의 눈 때문에</b> · 스스로 부끄럽지 않으려고(4), 남에게 인정받으려고(3)`,`<b>2 먹고살려고</b> · 어쩔 수 없이 하는 일, 가장 바깥의 압박`,`<b>1 이유가 흔들림</b>`,`<span class="muted" style="font-size:11pt">동기 수준은 한 사람이 일곱 이유에 답한 점수를 수준 번호로 가중 평균한 값입니다. ${A.byDept.filter(show).map(o=>`${esc(o.d)} ${r1(o.level)}`).join(' · ')}</span>`]));
+ P('왜 일하는가','02 · 일하는 이유로 본 사람들',`${N}명 중 ${A.groups[0]}명은 좋아서, ${A.groups[3]}명은 남의 눈 때문에, ${A.groups[1]}명은 먹고살려고 일하고, ${A.groups[2]}명은 이유가 흔들린다`,
+  `${stack(A.groups,N)}<div class="leg">${GORD.map(i=>[GROUPS[i],i]).map(([g,i])=>`<span><i style="background:${GCOL[i]}"></i>${g}</span>`).join('')}</div>
+  <h3 style="margin-top:8mm">부서별</h3>${A.byDept.map(o=>`<div class="bar" style="grid-template-columns:52mm 1fr 18mm"><div>${esc(o.d)} (${o.n})</div>${show(o)?stack(o.groups,o.n):'<div class="muted">비공개</div>'}<div class="v">${show(o)?Math.round(o.groups[0]/o.n*100)+'%':''}</div></div>`).join('')}
+  `);
+ if(full){P('왜 일하는가','일하는 이유 · 직급과 근속','직급과 근속에 따라 일하는 이유는 어떻게 다른가',`<div class="cols2">${[['직급',A.byRole],['근속',A.byTen]].map(([lab,rows])=>`<div><h3>${lab}별</h3>${rows.map(o=>`<div class="bar" style="grid-template-columns:40mm 1fr 14mm"><div>${esc(o.d)} (${o.n})</div>${show(o)?stack(o.groups,o.n):'<div class="muted">비공개</div>'}<div class="v">${show(o)?Math.round(o.groups[0]/o.n*100)+'%':''}</div></div>`).join('')}</div>`).join('')}</div><div class="leg" style="margin-top:4mm">${GORD.map(i=>[GROUPS[i],i]).map(([g,i])=>`<span><i style="background:${GCOL[i]}"></i>${g}</span>`).join('')}</div><p class="note">오른쪽 숫자는 좋아서 하는 사람의 비율입니다.</p>`)}
+ if(full){const mt=(rows,lab)=>`<table><tr><th>${lab} (명)</th><th class="n" style="color:var(--navy)">좋아서</th><th class="n" style="color:#B98A3E">남의 눈</th><th class="n" style="color:var(--amber)">먹고살려고</th><th class="n">동기 수준</th><th class="n">좋아서 하는 사람</th><th class="n">흔들리는 사람</th><th>‘그렇다’ 응답이 가장 많은 이유</th></tr>${rows.map(o=>{if(!show(o))return `<tr><td>${esc(o.d)} (${o.n})</td><td colspan="7" class="muted">비공개</td></tr>`;const tk=[0,1,2,3,4,5].sort((a,b)=>o.yes[b]-o.yes[a])[0];return `<tr><td>${esc(o.d)} (${o.n})</td><td class="n"><b>${r0(o.like)}</b></td><td class="n">${r0(o.eye)}</td><td class="n">${r0(o.money)}</td><td class="n">${r1(o.level)}</td><td class="n">${Math.round(o.groups[0]/o.n*100)}%</td><td class="n" style="color:${o.groups[2]?'var(--red)':'inherit'}">${o.groups[2]}명</td><td>${CFG.REASONS[tk]} <span class="muted">(${o.yes[tk]}명)</span></td></tr>`}).join('')}<tr><td><b>전체 (${N})</b></td><td class="n"><b>${r0(A.like)}</b></td><td class="n"><b>${r0(A.eye)}</b></td><td class="n"><b>${r0(A.money)}</b></td><td class="n"><b>${r1(A.level)}</b></td><td class="n"><b>${Math.round(A.groups[0]/N*100)}%</b></td><td class="n"><b>${A.groups[2]}명</b></td><td></td></tr></table><p class="note">좋아서 · 남의 눈 · 먹고살려고는 점수(0~100), 동기 수준은 1~7, 나머지는 사람 수입니다. 이유별 상세 점수는 부록의 전체 문항 점수에 있습니다.</p>`;
+  P('왜 일하는가','일하는 이유 · 부서별','부서마다 사람들을 움직이는 이유는 어떻게 다른가',mt(A.byDept,'부서'));
+  P('왜 일하는가','일하는 이유 · 직급별','직급에 따라 일하는 이유는 어떻게 다른가',mt(A.byRole,'직급'));}
+ D('03','조직문화','8요인과 21지표, 조직의 현재와 미래, 우선순위');
+ P('조직문화','03 · 조직문화 8요인',`종합 ${r1(A.total)}점 · ${band(A.total)[0]}`,(()=>{const fs=CFG.FN.map((f,i)=>[f,A.fac[i]]).sort((a,b)=>b[1]-a[1]);const st2=v=>v>=70?'충족':v>=60?'보완 필요':'미흡';return BAND(bars(fs),[`가장 높은 요인은 <b>${fs[0][0]}</b>(${r1(fs[0][1])}), 가장 낮은 요인은 <b>${fs[7][0]}</b>(${r1(fs[7][1])})입니다.`,`필수 조건은 업무 체계 <b>${r0(A.fac[4])}</b>(${st2(A.fac[4])}), 업무 환경 <b>${r0(A.fac[7])}</b>(${st2(A.fac[7])})입니다.`,`8요인 중 <b>${fs.filter(x=>x[1]>=70).length}개</b>가 C(70점) 이상입니다. 회사 안에서 가장 큰 차이는 <b>${fs[0][0]}</b>와 <b>${fs[7][0]}</b> 사이 ${r0(fs[0][1]-fs[7][1])}점입니다.`],'막대가 길수록 좋습니다. 기본 기준은 A 90 · B 80 · C 70 · D 60입니다. 파랑은 C 이상, 주황은 D, 빨강은 E입니다.')})());
+ P('조직문화','04 · 21지표 순위',`가장 낮은 지표는 ${esc(bot3[0].name)}(${r1(A.idx[bot3[0].n])})`,`<div class="cols2">${[idxSorted.slice(0,11),idxSorted.slice(11)].map(col=>`<div>${bars(col.map(x=>[x.name+(x.star?' ★':''),A.idx[x.n]]))}</div>`).join('')}</div><p class="note">★는 사람들이 좋아서 일하게 만드는 세 조건(자율성 · 유능감 · 관계성)과 이어진 지표입니다.</p>`);
+ if(A.prev){const PV=A.prev;const dch=(a,b)=>{const d=a-b;return `<b style="color:${d>=5?'var(--navy)':d<=-5?'var(--red)':'var(--muted)'}">${d>=0?'+':''}${r0(d)}</b>`};const chs=CFG.IDX.map(x=>({x,d:A.idx[x.n]-PV.idx[x.n]})).filter(o=>!isNaN(o.d)).sort((a,b)=>b.d-a.d);
+  P('조직문화','지난 진단과 비교',`종합 ${r1(PV.total)} → ${r1(A.total)} (${A.total-PV.total>=0?'+':''}${r1(A.total-PV.total)}점)`,HOW('지난 진단과 같은 문항, 같은 계산으로 비교합니다. 5점 이상 오르면 파랑, 5점 이상 내리면 빨강으로 표시합니다. 5점은 10점 응답으로 평균 0.5점, 구성원 절반의 답이 한 칸씩 움직인 정도입니다.')+`<div class="cols2"><div><table class="dense"><tr><th>8요인</th><th class="n">지난</th><th class="n">이번</th><th class="n">변화</th></tr>${CFG.FN.map((f,i)=>`<tr><td>${f}</td><td class="n">${r0(PV.fac[i])}</td><td class="n"><b>${r0(A.fac[i])}</b></td><td class="n">${dch(A.fac[i],PV.fac[i])}</td></tr>`).join('')}<tr><td><b>종합</b></td><td class="n">${r1(PV.total)}</td><td class="n"><b>${r1(A.total)}</b></td><td class="n">${dch(A.total,PV.total)}</td></tr></table><p class="note">지난 진단 응답 ${PV.n}명 · 이번 ${N}명</p></div><div><h3 class="cn">가장 많이 오른 지표</h3>${chs.slice(0,4).map(o=>`<p class="it" style="margin:0 0 1.5mm">${esc(o.x.name)} <span class="muted">${r0(PV.idx[o.x.n])} → ${r0(A.idx[o.x.n])}</span> ${dch(A.idx[o.x.n],PV.idx[o.x.n])}</p>`).join('')}<h3 class="cr" style="margin-top:5mm">가장 많이 내린 지표</h3>${chs.slice(-4).reverse().map(o=>`<p class="it" style="margin:0 0 1.5mm">${esc(o.x.name)} <span class="muted">${r0(PV.idx[o.x.n])} → ${r0(A.idx[o.x.n])}</span> ${dch(A.idx[o.x.n],PV.idx[o.x.n])}</p>`).join('')}</div></div>`)}
+ P('조직문화','05 · 강점과 기회 문항','가장 높게, 가장 낮게 답한 문항',`<div class="cols2"><div><h3 class="cn">강점 문항</h3>${best.map(x=>`<p class="it"><b>${r0(x.v)}</b> ${esc(x.t)}</p>`).join('')}</div><div><h3 class="cr">기회 문항</h3>${worst.map(x=>`<p class="it"><b style="color:var(--red)">${r0(x.v)}</b> ${esc(x.t)}${x.r?' (역문항)':''}</p>`).join('')}</div></div>`);
+ if(full){CFG.FN.forEach((f,fi)=>{const xs=CFG.IDX.filter(x=>x.f===fi);const low=[...xs].sort((a,b)=>A.idx[a.n]-A.idx[b.n])[0];
+  P('조직문화',`요인 상세 ${fi+1} / 8`,`${f}: ${FDEF[fi][0]}?`.replace('??','?'),`<div class="fdef"><b>${f} ${r1(A.fac[fi])}점</b> <span class="badge ${band(A.fac[fi])[1]}">${band(A.fac[fi])[0]}</span><span class="muted"> · 왜 중요한가: ${FDEF[fi][1]}</span></div>
+  <div class="split"><div class="vis">${xs.map(x=>`<div class="ix"><div class="bar" style="grid-template-columns:62mm 1fr 16mm;font-weight:700"><div>${x.name}${x.star?' ★':''}</div><div class="t"><i style="width:${A.idx[x.n]}%;background:${bandCol(A.idx[x.n])}"></i></div><div class="v">${r0(A.idx[x.n])}</div></div>${x.codes.map(c=>`<p class="qline"><span class="qs">${r0(A.item[c])}</span> “${esc(ITEMC[c].t)}”${ITEMC[c].r?' <span class="muted">(반대로 묻는 문항)</span>':''} <span class="muted">· 긍정률 ${isNaN(A.itemYes[c])?'–':Math.round(A.itemYes[c]*100)+'%'}</span></p>`).join('')}</div>`).join('')}</div>
+  <div class="ins"><p class="small-h">부서별</p>${A.byDept.filter(show).map(o=>`<p style="margin:0 0 2mm;font-size:12pt">${esc(o.d)} <b style="float:right;color:${o.fac[fi]-A.fac[fi]>=5?'var(--navy)':o.fac[fi]-A.fac[fi]<=-5?'var(--red)':'var(--ink)'}">${r0(o.fac[fi])} <span class="muted" style="font-weight:400;font-size:10pt">(${o.fac[fi]-A.fac[fi]>=0?'+':''}${r0(o.fac[fi]-A.fac[fi])})</span></b></p>`).join('')}<p style="margin-top:5mm"><b>가장 낮은 지표: ${esc(low.name)}</b><br><span class="muted">함께 볼 질문 · ${esc(low.q)}</span></p></div></div>`)})}
+ P('조직문화','06 · 동기요인 × 필수 조건',`${herzLab(A.hm,A.hh)}: 동기요인 ${r0(A.hm)}, 필수 조건 ${r0(A.hh)}`,BAND(`<div class="chart">${scatter([...A.byDept.filter(show).map(o=>({x:o.hm,y:o.hh,c:'var(--navy2)',t:o.d,r:4+Math.min(o.n,12)})),{x:A.hm,y:A.hh,c:'var(--ink)',t:'전체 평균',r:6,below:true}],{x:[40,100],y:[40,100],vx:70,hy:70,xt:[40,55,70,85,100],yt:[40,55,70,85,100],xl:'동기요인 (자율·책임·성장·인정)',yl:'필수 조건 (업무 체계·업무 환경)',aria:'동기요인과 필수 조건',corners:[['이상적',546,26,'end','var(--muted)'],['조건은 갖췄으나 의욕 낮음',52,26,'start','var(--muted)'],['의욕은 있으나 불만 누적',546,312,'end','var(--muted)'],['가장 시급',52,312,'start','var(--muted)']]})}</div>`,(()=>{const sh=A.byDept.filter(show);const lo=[...sh].sort((a,b)=>a.hh-b.hh)[0];return [`전체 평균은 <b>‘${herzLab(A.hm,A.hh)}’</b> 칸에 있습니다.`,lo?`필수 조건이 가장 낮은 부서는 <b>${esc(lo.d)}</b>(${r0(lo.hh)})입니다.`:'',`필수 조건이 무너지면 동기요인에 대한 투자 효과도 줄어듭니다.`]})(),'오른쪽 위로 갈수록 좋습니다. 가로는 사람을 움직이는 힘(동기요인), 세로는 일의 기본 조건(필수 조건)입니다. 동그라미 하나가 한 부서이고, 클수록 인원이 많습니다.'));
+ P('조직문화','07 · 조직의 현재와 미래',`지금은 ${QP2[curTop]}가 가장 두드러지고, 가장 바라는 변화는 ${QP2[gaps[0][0]]}(+${r0(gaps[0][1])})`,BAND(`<div class="cols2">${[1,2,3,4].map(q=>`<div><p class="qh"><b>${QP2[q]}</b> <span class="muted">(${QN[q]}) 현재 ${r0(A.cur[q])} → 지향 ${r0(A.des[q])} (${A.des[q]-A.cur[q]>=0?'+':''}${r0(A.des[q]-A.cur[q])})</span></p>${bars([['현재',A.cur[q],'var(--muted)'],['지향',A.des[q],'var(--navy)']])}</div>`).join('')}</div>`,(()=>{const neg=gaps.filter(g=>g[1]<0);return [`지금 가장 두드러진 문화는 <b>${QP2[curTop]}</b>(${r0(A.cur[curTop])})입니다.`,`가장 바라는 변화는 <b>${QP2[gaps[0][0]]}</b>(+${r0(gaps[0][1])})입니다.`,neg.length?`<b>${QP2[neg[neg.length-1][0]]}</b>는 지금보다 덜어내기를 바랍니다(${r0(neg[neg.length-1][1])}).`:'줄이기를 바라는 문화는 없습니다. 지금의 강점 위에 더하기를 원합니다.']})(),'회색은 현재 우리 조직, 파랑은 구성원이 바라는 모습(지향)입니다. 두 막대의 차이가 클수록 변화를 원하는 방향입니다.'));
+ if(full){P('조직문화','조직의 현재와 미래 · 부서별','부서마다 바라는 방향은 같은가',`<table><tr><th>부서 (명)</th>${[1,2,3,4].map(q=>`<th class="n">${({1:'함께 성장',2:'체계와 원칙',3:'실행과 결과',4:'도전과 변화'})[q]}<br><span class="muted" style="font-weight:400">현재 → 지향</span></th>`).join('')}<th>가장 큰 간극</th></tr>${A.byDept.map(o=>{if(!show(o))return `<tr><td>${esc(o.d)} (${o.n})</td><td colspan="5" class="muted">비공개</td></tr>`;const g=[1,2,3,4].sort((a,b)=>(o.des[b]-o.cur[b])-(o.des[a]-o.cur[a]))[0];return `<tr><td>${esc(o.d)} (${o.n})</td>${[1,2,3,4].map(q=>`<td class="n">${r0(o.cur[q])} → <b>${r0(o.des[q])}</b></td>`).join('')}<td>${QP2[g]} (+${r0(o.des[g]-o.cur[g])})</td></tr>`}).join('')}</table>`)}
+ P('조직문화','08 · 우선순위 지도','점수와 ‘시급하다’는 목소리를 함께 보면',HOW('오른쪽으로 갈수록 점수가 높고, 위로 갈수록 ‘가장 시급하다’고 표를 준 사람이 많습니다. 구성원은 21개 지표 중 3개에 한 표씩 줍니다. 세로 점선은 21개 지표의 평균 점수, 가로 점선은 평균 득표율 14%입니다. 표가 21개 지표에 고르게 퍼지면 지표마다 14%의 사람이 표를 주게 되므로, 점선 위에 있으면 평균보다 표를 많이 받은 지표입니다. 왼쪽 위(즉시 개선)가 가장 먼저 볼 곳입니다.')+SPLIT(`<div class="chart">${scatter(priPts,{x:[xmin,xmax],y:[0,ymax],vx:A.avgIdx,hy:100*3/21,xt:Array.from({length:Math.floor((xmax-xmin)/5)+1},(_,i)=>xmin+i*5),yt:[0,10,20,30,40].filter(v=>v<=ymax),yfmt:v=>v+'%',xl:'지표 점수',yl:'시급하다고 표를 준 사람 비율',aria:'우선순위 지도',corners:[['① 즉시 개선',52,26,'start','var(--red)'],['③ 체감 이슈',546,26,'end','var(--navy)'],['② 숨은 약점',52,312,'start','var(--amber)'],['④ 유지 강점',546,312,'end','var(--muted)']]})}</div><p class="note" style="columns:3;column-gap:6mm;margin-top:2mm;font-size:8.5pt;line-height:1.35">${CFG.IDX.map(x=>`<span style="display:block">${String(x.n).padStart(2,'0')} ${esc(x.name)}</span>`).join('')}</p>`,(()=>{const q=k=>A.pri.filter(p=>p.quad===k).sort((a,b)=>b.rate-a.rate).slice(0,3).map(p=>esc(IDXN[p.n].name)).join(', ')||'없음';return [`<b style="color:var(--red)">① 즉시 개선</b><br>${q(1)}`,`<b style="color:var(--navy)">③ 체감 이슈</b><br>${q(3)}`,`<b style="color:var(--amber)">② 숨은 약점</b><br>${q(2)}`,`<span class="muted" style="font-size:10pt">점선: 평균 점수 ${r1(A.avgIdx)}점 · 평균 득표율 14%</span>`]})()));
+ if(full){const ur=(rows,lab)=>`<div class="cols2">${rows.filter(show).map(o=>`<div class="fc" style="border-top-color:var(--red);margin-bottom:4mm;padding:4mm 5mm"><h3>${esc(o.d)} <span class="muted" style="font-weight:400">(${o.n}명)</span></h3>${o.pri.slice(0,3).map((x,i)=>`<p style="margin:0">${i+1}. ${esc(IDXN[x.n].plain)} <span class="muted">(${esc(IDXN[x.n].name)}) · ${x.c}명, ${Math.round(x.c/o.n*100)}%</span></p>`).join('')||'<p class="muted">응답 없음</p>'}</div>`).join('')}</div>`;
+  P('조직문화','긴급하게 바뀌어야 할 것 · 부서별','부서마다 가장 시급하다고 응답한 것',ur(A.byDept,'부서'));
+  P('조직문화','긴급하게 바뀌어야 할 것 · 직급별','직급마다 가장 시급하다고 응답한 것',ur(A.byRole,'직급'));}
+ P('조직문화','09 · 부서별 8요인','같은 회사, 다른 경험',`<table><tr><th>부서 (명)</th><th class="n">종합</th>${CFG.FN.map(f=>`<th class="n">${f.replace('제품·서비스 자신감','제품 자신감').replace('일에 대한 정보 소통','정보 소통').replace('권한부여와 책임','권한·책임')}</th>`).join('')}</tr>${A.byDept.map(o=>show(o)?`<tr><td>${esc(o.d)} (${o.n})</td><td class="n"><b>${r0(o.total)}</b></td>${CFG.FN.map((f,i)=>`<td class="n" style="background:${devCol(o.fac[i]-A.fac[i])}">${r0(o.fac[i])}</td>`).join('')}</tr>`:`<tr><td>${esc(o.d)} (${o.n})</td><td colspan="9" class="muted">비공개</td></tr>`).join('')}<tr><td><b>전체 (${N})</b></td><td class="n"><b>${r0(A.total)}</b></td>${CFG.FN.map((f,i)=>`<td class="n"><b>${r0(A.fac[i])}</b></td>`).join('')}</tr></table><p class="note"><span style="background:#DCE4F0;padding:0 2mm">파란 칸</span>은 회사 전체보다 5점 이상 높고, <span style="background:#F2D9D9;padding:0 2mm">빨간 칸</span>은 5점 이상 낮습니다. ${MIN_N}명 미만 부서는 결과를 공개하지 않습니다.</p>`);
+ if(full){P('조직문화','직급별 · 근속별 8요인','직급과 근속에 따라 보는 조직은 어떻게 다른가',`<div class="cols2"><div><h3>직급별</h3>${heat(A.byRole,'직급')}</div><div><h3>근속별</h3>${heat(A.byTen,'근속')}</div></div><p class="note"><span style="background:#DCE4F0;padding:0 2mm">파란 칸</span>은 회사 전체보다 5점 이상 높고, <span style="background:#F2D9D9;padding:0 2mm">빨간 칸</span>은 5점 이상 낮습니다. </p>`)}
+ P('조직문화','10 · 합의도와 구성원의 목소리',split.length?'평균은 같아도, 누군가에게는 다르게 느껴진다':'의견이 크게 갈리는 문항은 없다',`<div class="cols2"><div><h3>의견이 갈린 문항</h3>${split.map(x=>`<p class="it"><b>${esc(x.t)}</b><br><span class="muted">평균 ${r0(x.v)} · 편차 ${r0(x.s)}</span></p>`).join('')||'<p class="muted">없음</p>'}</div><div><h3>지키고 싶은 것</h3>${A.voices.keep.slice(0,4).map(v=>`<p class="voice">${esc(v)}</p>`).join('')||'<p class="muted">응답 없음</p>'}<h3 style="margin-top:4mm">바꾸고 싶은 것</h3>${A.voices.change.slice(0,4).map(v=>`<p class="voice">${esc(v)}</p>`).join('')||'<p class="muted">응답 없음</p>'}</div></div>`);
+ D('04','진단 결과 종합 분석 및 제언','종합 분석, 부서별 한 장 요약, 핵심 과제와 향후 추진 방향');
+ if(full){
+  const strongR=[0,1,2,3,4,5].sort((a,b)=>A.yes[b]-A.yes[a])[0];const shakyD=A.byDept.filter(show).map(o=>({o,r:o.groups[2]/o.n})).sort((a,b)=>b.r-a.r)[0];
+  const likeD=A.byDept.filter(show).map(o=>({o,r:o.groups[0]/o.n})).sort((a,b)=>b.r-a.r)[0];
+  P('종합 분석 및 제언','종합 분석 ① 일하는 이유','사람들은 무엇으로 일하고 있는가',`<div class="cols2"><div><h3 class="cn">강점</h3><p>‘그렇다’고 응답한 사람이 가장 많은 일하는 이유는 ‘${CFG.REASONS[strongR]}’(${A.yes[strongR]}명)입니다. ${N}명 중 ${A.groups[0]}명(${Math.round(A.groups[0]/N*100)}%)이 일 자체나 자기 가치·목표에서 힘을 얻는 ‘좋아서 하는 사람’입니다.</p>${likeD?`<p>부서 가운데 ${esc(J(likeD.o.d,'은','는'))} ${Math.round(likeD.r*100)}%가 좋아서 하는 사람으로 가장 높습니다. 이 부서가 무엇을 다르게 하는지 살펴볼 만합니다.</p>`:''}${isNaN(A.stay)?'':`<p>좋아서 하는 사람의 직원 추천 지수는 ${A.res[0].n>=MIN_N?(A.res[0].enps>0?'+':'')+A.res[0].enps:'—'}로, 일하는 이유가 회사에 대한 애착과 이어져 있습니다.</p>`}</div><div><h3 class="ca">기회</h3><p>좋아서 ${r0(A.like)}점, 남의 눈 때문에 ${r0(A.eye)}점, 먹고살려고 ${r0(A.money)}점입니다. ${motTitle(A)}는 뜻입니다. 동기 수준은 7단계 중 ${r1(A.level)}입니다.</p><p>‘${CFG.REASONS[2]}’에 그렇다고 답한 사람은 ${A.yes[2]}명입니다. 일과 커리어가 이어진다는 감각을 키울 여지가 있습니다.</p>${shakyD&&shakyD.r>0?`<p>${esc(J(shakyD.o.d,'은','는'))} ${shakyD.o.n}명 중 ${shakyD.o.groups[2]}명이 일하는 이유가 흔들리고 있어, 팀 단위로 먼저 만나야 할 곳입니다.</p>`:''}</div></div>`);
+  const hy=[['업무 체계',A.fac[4]],['업무 환경',A.fac[7]]];
+  P('종합 분석 및 제언','종합 분석 ② 조직문화','조직문화는 무엇이 단단하고 무엇이 버거운가',`<div class="cols2"><div><h3 class="cn">강점</h3><p>종합 점수는 ${r1(A.total)}점(${band(A.total)[0]})입니다. 가장 높은 지표는 ${top3.map(x=>`${esc(x.name)}(${r1(A.idx[x.n])})`).join(', ')}입니다.</p><p>지금 가장 두드러진 문화는 ${QP2[curTop]}이며, 구성원들은 이 모습을 ${A.des[curTop]>=A.cur[curTop]?'앞으로도 유지하거나 더 강하게':'조금 덜어내기를'} 바랍니다.</p></div><div><h3 class="ca">기회</h3><p>가장 낮은 지표는 ${bot3.map(x=>`${esc(x.name)}(${r1(A.idx[x.n])})`).join(', ')}입니다. 필수 조건은 ${hy.map(([n,v])=>`${n} ${r0(v)}점(${v>=70?'충족':v>=60?'보완 필요':'미흡'})`).join(', ')}입니다.</p><p>가장 시급하게 바뀌어야 한다고 응답한 것은 ‘${esc(IDXN[priTop.n].plain)}’(${esc(IDXN[priTop.n].name)} 지표, 응답 비율 ${Math.round(priTop.rate*100)}%)입니다. ${priTop.score>=A.avgIdx?'점수는 평균 이상인데 체감은 크다는 신호입니다.':'점수도 낮고 구성원도 아프다고 말하는 곳입니다.'}</p><p>가장 바라는 변화는 ${QP2[gaps[0][0]]}(+${r0(gaps[0][1])})입니다. 지금의 강점 위에 이 방향을 더하는 것이 다음 단계의 과제입니다.</p></div></div>`);
+  const shown=A.byDept.filter(show);const hiD=[...shown].sort((a,b)=>b.total-a.total)[0],loD=[...shown].sort((a,b)=>a.total-b.total)[0];
+  const rng=CFG.FN.map((f,i)=>{const v=shown.map(o=>o.fac[i]).filter(x=>!isNaN(x));return [f,v.length?Math.max(...v)-Math.min(...v):0]}).sort((a,b)=>b[1]-a[1])[0];
+  P('종합 분석 및 제언','종합 분석 ③ 부서','같은 회사, 다른 경험',shown.length>=2?`<p>부서 가운데 ${esc(J(hiD.d,'이','가'))} ${r0(hiD.total)}점으로 가장 높고, ${esc(J(loD.d,'이','가'))} ${r0(loD.total)}점으로 가장 낮습니다. 두 부서의 차이는 ${r0(hiD.total-loD.total)}점입니다.</p><p>부서 간 차이가 가장 큰 요인은 ${rng[0]}(최대 ${r0(rng[1])}점 차이)입니다. 같은 회사 안에서도 이 영역은 부서에 따라 전혀 다르게 경험되고 있습니다.</p><p>점수가 낮은 부서를 사람이나 부서 탓으로 읽지 말고, 그 부서가 놓인 조건과 구조로 읽어야 합니다. 다음 쪽부터는 부서마다 한 장씩 결과를 정리했습니다. 팀장이 이 한 장을 들고 팀원과 대화하는 것이 WFG 팀 대화의 출발점입니다.</p>`:'<p class="muted">비교할 수 있는 부서가 둘 이상이 아니어서 부서 종합은 생략합니다.</p>');
+  shown.forEach(o=>{const lowI=[...CFG.IDX].sort((a,b)=>o.idx[a.n]-o.idx[b.n])[0];
+   P('종합 분석 및 제언',`부서별 한 장 요약 · ${esc(o.d)}`,`${esc(o.d)} · 종합 ${r0(o.total)}점 (${o.n}명)`,`<div class="cols2"><div><h3>일하는 이유</h3>${stack(o.groups,o.n)}<div class="leg">${GORD.map(i=>[GROUPS[i],i]).map(([g,i])=>`<span><i style="background:${GCOL[i]}"></i>${g} ${o.groups[i]}명</span>`).join('')}</div><h3 style="margin-top:5mm">가장 시급하다고 응답한 것</h3>${o.pri.slice(0,3).map((x,i)=>`<p style="margin:0">${i+1}. ${esc(IDXN[x.n].name)} <span class="muted">· ${x.c}명</span></p>`).join('')||'<p class="muted">없음</p>'}<div class="fc" style="border-top-color:var(--red);margin-top:5mm;padding:4mm 5mm"><p style="margin:0 0 1mm"><b>가장 낮은 지표: ${esc(lowI.name)} ${r0(o.idx[lowI.n])}</b></p><p class="muted" style="margin:0">팀 대화 질문 · ${esc(lowI.q)}</p></div></div><div><h3>8요인 (전체 대비)</h3>${CFG.FN.map((f,i)=>`<div class="bar" style="grid-template-columns:44mm 1fr 22mm"><div>${f}</div><div class="t"><i style="width:${o.fac[i]}%;background:${bandCol(o.fac[i])}"></i></div><div class="v">${r0(o.fac[i])} <span class="muted" style="font-weight:400">(${o.fac[i]-A.fac[i]>=0?'+':''}${r0(o.fac[i]-A.fac[i])})</span></div></div>`).join('')}</div></div>`)});
+ }
+ P('종합 분석 및 제언','제언 ① 핵심 과제','진단이 가리키는 곳은 세 군데다',`<div class="cols3">${focus.map((f,i)=>`<div class="fc" style="border-top-color:${f.c}"><p class="num" style="color:${f.c}">0${i+1}</p><h3>${esc(f.title)}</h3>${f.lines.map(l=>`<p>${esc(l)}</p>`).join('')}</div>`).join('')}</div>`);
+ P('종합 분석 및 제언','제언 ② 대화를 위한 질문','답을 정하기 전에, 먼저 함께 묻는다',`<table class="q"><tr><th>핵심 과제</th><th>대화를 위한 질문</th><th>딜레마 명제</th></tr>${focus.map((f,i)=>`<tr><td><b>${'①②③'[i]} ${esc(f.tag)}</b></td><td>${esc(f.q)}</td><td class="dl">“${esc(f.d)}”</td></tr>`).join('')}</table><p class="note">질문은 팀 대화에서, 딜레마 명제는 워크숍에서 찬반으로 서 보며 씁니다. 실행 계획은 이 대화를 거쳐 각 팀이 직접 만듭니다.</p>`);
+ P('종합 분석 및 제언','제언 ③ 향후 추진 방향','진단은 여기까지, 이제 함께 이야기할 차례다',`<div class="cols3 steps"><div><p class="muted">2주 안에</p><p class="num">01</p><h3>결과 공유회</h3><p>경영진 → 리더 → 전체 순서로, 핵심 과제를 함께 읽습니다.</p></div><div><p class="muted">1~2개월</p><p class="num">02</p><h3>팀별 대화 워크숍 (WFG)</h3><p>질문과 딜레마 명제로 대화하고, 팀이 시작 · 계속 · 멈춤을 정합니다.</p></div><div><p class="muted">6개월 뒤</p><p class="num">03</p><h3>재진단</h3><p>펄스 또는 같은 문항으로 다시 재고, 무엇이 바뀌었는지 돌아봅니다.</p></div></div><p style="margin-top:8mm">폴앤마크는 결과 공유회 진행, 대화 워크숍 설계와 퍼실리테이션, 재진단 리포트를 함께합니다.</p>`);
+ if(full){
+  const PG={1:['Viking Leadership','Smooth Team 진단 & 워크숍'],2:['Smooth Team 진단 & 워크숍','Viking Leadership'],3:['Coaching Communications','4MAT 진단 & Communication'],4:['4MAT 진단 & Communication','LTI 대화'],5:['비전 설정 및 목표 수립','5x5 조직개발진단 & Vision Alignment'],6:['Dino Dialogue','Communication Excellence'],7:['Viking Leadership','Feedback Workshop'],8:['Well Functioning Group (WFG)','Smooth Team 진단 & 워크숍'],9:['Feedback Workshop','Coaching Communications'],10:['Well Functioning Group (WFG)','Dino Dialogue'],11:['Lovak model 리뷰','4MAT 진단 & Communication'],12:['Lovak model 리뷰','Smooth Team 진단 & 워크숍'],13:['Lovak model 리뷰','경영진 결과 공유'],14:['브랜드메시지 워크숍','Lovak model 리뷰'],15:['브랜드메시지 워크숍','Lovak model 리뷰'],16:['Leadership Transformation','LTI 대화'],17:['Leadership Transformation','5x5 조직개발진단 & Vision Alignment'],18:['필수 조건 점검 워크숍','경영진 결과 공유'],19:['필수 조건 점검 워크숍','경영진 결과 공유'],20:['경영진 결과 공유','필수 조건 점검 워크숍'],21:['경영진 결과 공유','비전 설정 및 목표 수립']};
+  const shakyD=A.byDept.filter(show).map(o=>({o,r:o.groups[2]/o.n})).sort((a,b)=>b.r-a.r)[0];
+  const LEAD=[16,17,9,1];const fIdx=[...new Set(focus.map(f=>{const x=CFG.IDX.find(y=>y.name===f.tag);return x?x.n:null}).filter(Boolean))];
+  const low=[...CFG.IDX].sort((a,b)=>A.idx[a.n]-A.idx[b.n]).map(x=>x.n);
+  const pick=(ns,k)=>ns.map(n=>({n,p:PG[n][k]}));
+  const y1=[{q:'1분기',who:'경영진 → 전 직원',p:'결과 공유회',why:'핵심 과제'},...pick(fIdx.slice(0,1),0).map(x=>({q:'1분기',who:'전 직원',p:x.p,why:IDXN[x.n].name})),{q:'2분기',who:shakyD&&shakyD.r>=0.3?esc(shakyD.o.d)+' 먼저, 이어서 전 팀':'전 팀',p:'Well Functioning Group (WFG) 팀 대화',why:'대화를 위한 질문'},...pick(fIdx.slice(1,2),0).map(x=>({q:'2분기',who:'해당 부서',p:x.p,why:IDXN[x.n].name})),{q:'3분기',who:'리더 그룹',p:LEAD.map(n=>A.idx[n]).some(v=>v<70)?'LTI 대화 + '+PG[LEAD.sort((a,b)=>A.idx[a]-A.idx[b])[0]][0]:'LTI 대화',why:'상사의 리더십 · 피드백과 인정'},{q:'3분기',who:'전 직원',p:'POCA 펄스',why:'변화 확인'},{q:'4분기',who:'전 직원',p:'POCA 재진단 준비 · 2년차 계획',why:'—'}];
+  P('종합 분석 및 제언','제언 ④ 교육 · 1년차','진단이 가리키는 곳에서 시작하는 1년',`<table><tr><th>시기</th><th>대상</th><th>프로그램</th><th>연결 지표</th></tr>${y1.map(r=>`<tr><td>${r.q}</td><td>${r.who}</td><td><b>${r.p}</b></td><td class="muted">${esc(r.why)}</td></tr>`).join('')}</table><p class="note">프로그램은 폴앤마크의 기존 과정에서 ‘핵심 과제’와 가장 낮은 지표에 맞춰 자동으로 골랐습니다. 결과 공유회에서 함께 다듬는 초안입니다.</p>`);
+  const y2=low.filter(n=>!fIdx.includes(n)).slice(0,5);
+  P('종합 분석 및 제언','제언 ④ 교육 · 2년차','변화를 넓히고 뿌리내리는 해',`<table><tr><th>대상</th><th>프로그램</th><th>연결 지표 (현재 점수)</th></tr>${y2.map(n=>`<tr><td>${[16,17].includes(n)?'리더 그룹':[18,19,20,21,13].includes(n)?'경영진':'전 직원 · 해당 부서'}</td><td><b>${PG[n][0]}</b> <span class="muted">또는 ${PG[n][1]}</span></td><td>${esc(IDXN[n].name)} (${r1(A.idx[n])})</td></tr>`).join('')}<tr><td>전 직원</td><td><b>POCA 정식 재진단</b></td><td>1년 변화 확인</td></tr></table><p class="note">1년차에 다룬 지표를 제외하고, 점수가 낮은 순서로 다섯 지표를 골랐습니다.</p>`);
+ }
+ D('—','부록','읽는 법과 전체 문항 점수');
+ if(full){
+  P('부록','이론 1 · 자기결정이론','사람은 어떤 이유로 일하는가',`<div class="cols2"><div><p>자기결정이론(Self-Determination Theory, Deci & Ryan)은 사람이 행동하는 이유를 하나의 연속선 위에 놓습니다. 바깥에서 주어진 이유일수록 오래 가지 못하고, 스스로 받아들인 이유일수록 몰입과 성장, 창의성으로 이어집니다.</p><p>사람은 <b>자율성</b>(스스로 정한다), <b>유능감</b>(잘하고 성장한다), <b>관계성</b>(연결되어 있다)의 세 가지 기본 욕구가 채워질 때 스스로 일하게 됩니다. POCA의 ★ 지표가 이 세 조건과 이어진 지표입니다.</p><p>외적 보상이 지나치면 원래 즐겁던 일도 보상을 위한 일로 바뀌는 ‘과잉 정당화 효과’가 생길 수 있습니다. 내적 동기가 충족된 상태에서 적절한 외적 보상이 더해지는 것이 가장 바람직합니다.</p></div><div><table><tr><th class="n">수준</th><th>POCA의 말</th><th>학술 이름</th></tr><tr><td class="n">1</td><td>이유를 모르겠어서</td><td>무동기</td></tr><tr><td class="n">2</td><td>먹고살려고 (어쩔 수 없이 · 압박)</td><td>외적 조절 (물질)</td></tr><tr><td class="n">3</td><td>남에게 인정받으려고 (남의 눈)</td><td>외적 조절 (사회)</td></tr><tr><td class="n">4</td><td>스스로 부끄럽지 않으려고 (내 안의 남의 눈)</td><td>내사된 조절</td></tr><tr><td class="n">5</td><td>내 목표에 닿아서</td><td>확인된 조절</td></tr><tr><td class="n">6</td><td>일이 즐거워서</td><td>내적 동기</td></tr><tr><td class="n">7</td><td>내 가치·신념과 맞아서 (정말 좋아서)</td><td>통합된 조절</td></tr></table><p class="note">숫자가 클수록 스스로 원해서 하는 이유입니다. 폴앤마크는 가치와 신념이 일과 하나가 된 상태(통합된 조절)를 ‘정말 일이 좋아서’로 보고 가장 높은 수준에 둡니다. 문항은 WEIMS(일 동기 척도)를 바탕으로 했습니다.</p></div></div>`);
+  P('부록','이론 2 · Herzberg의 2요인 이론','불만이 없는 것과 만족하는 것은 다르다',`<div class="cols2"><div><p>Herzberg는 일터에서 만족을 만드는 요인과 불만을 만드는 요인이 서로 다르다는 것을 보였습니다. 성취, 인정, 성장, 일 자체 같은 <b>동기요인</b>은 채워질수록 사람을 움직입니다. 보상, 정책, 근무 조건 같은 <b>위생요인</b>은 부족하면 불만이 쌓이지만, 채워진다고 의욕이 생기지는 않습니다.</p><p>POCA는 위생요인을 <b>필수 조건</b>(업무 체계 · 업무 환경)이라 부릅니다. 필수 조건이 무너지면 다른 노력의 효과도 줄어들기 때문에, 먼저 바닥을 점검하고 그 위에서 사람을 움직이는 요인에 투자해야 합니다.</p></div><div><table><tr><th>구분</th><th>POCA 지표</th></tr><tr><td><b>동기요인</b></td><td>권한부여 및 자율성 · 책임 · 능력개발지원 · 능력개발기회 · 내 성공의 기준 · 피드백과 인정</td></tr><tr><td><b>필수 조건 · 업무 체계</b></td><td>절차 · 역할과 결정 권한 · 정책</td></tr><tr><td><b>필수 조건 · 업무 환경</b></td><td>일과 삶의 균형 · 도구와 공간 · 보상 · 안정성</td></tr></table></div></div>`);
+  P('부록','이론 3 · 경쟁가치모형과 4MAT','좋은 조직은 서로 반대되는 가치를 함께 다룬다',`<div class="cols2"><div><p>Quinn과 Cameron의 경쟁가치모형은 조직을 두 축으로 봅니다. 유연함과 안정, 그리고 안을 보는가 밖을 보는가입니다. 이 두 축이 네 가지 문화를 만듭니다. 어느 하나만 옳은 것이 아니라, 한 문화가 두드러지면서도 네 문화가 함께 있는 ‘균형 문화’가 바람직합니다.</p><p>이 네 문화는 4MAT 학습 사이클의 네 분면과 같은 구조입니다. 그래서 조직의 문화, 리더의 강점(LBI · LTI), 구성원의 학습 스타일(LTM)을 한 원 위에 겹쳐 볼 수 있습니다.</p></div><div><table><tr><th>4MAT</th><th>문화</th><th>Quinn의 리더십 과제</th></tr><tr><td>1 Why</td><td>함께 성장하는 문화 (관계형)</td><td>사람을 돌봄 · 상호작용 촉진</td></tr><tr><td>2 What</td><td>체계와 원칙의 문화 (질서형)</td><td>정보 수집 · 구조 제공</td></tr><tr><td>3 How</td><td>실행과 결과의 문화 (성과형)</td><td>운영 유지 · 실행 압박</td></tr><tr><td>4 If</td><td>도전과 변화의 문화 (혁신형)</td><td>자원 연결 · 현상에 도전</td></tr></table></div></div>`);
+  P('부록','이론 4 · 8요인의 뿌리','이론의 개념은 POCA에서 이런 이름으로 쓰입니다',`<div class="chart" style="width:250mm;max-width:100%"><svg viewBox="0 0 1000 495" style="width:100%;height:auto" role="img" aria-label="이론과 POCA 명칭의 연결"><text x="150" y="16" text-anchor="middle" font-size="13" fill="#5E6A78">이론과 원래 개념</text><text x="500" y="16" text-anchor="middle" font-size="13" font-weight="700" fill="#0F1B2D">POCA에서 쓰는 이름</text><text x="850" y="16" text-anchor="middle" font-size="13" fill="#5E6A78">이론과 원래 개념</text><path d="M300 70 C345 70,350 56.55,395 56.55" fill="none" stroke="#1F3F73" stroke-width="1.3" stroke-dasharray="4 3"/><circle cx="300" cy="70" r="2.5" fill="#1F3F73"/><path d="M300 91 C345 91,350 101.64999999999999,395 101.64999999999999" fill="none" stroke="#1F3F73" stroke-width="1.3" stroke-dasharray="4 3"/><circle cx="300" cy="91" r="2.5" fill="#1F3F73"/><path d="M300 112 C345 112,350 191.85000000000002,395 191.85000000000002" fill="none" stroke="#1F3F73" stroke-width="1.3" stroke-dasharray="4 3"/><circle cx="300" cy="112" r="2.5" fill="#1F3F73"/><path d="M300 133 C345 133,350 146.75,395 146.75" fill="none" stroke="#1F3F73" stroke-width="1.3" stroke-dasharray="4 3"/><circle cx="300" cy="133" r="2.5" fill="#1F3F73"/><path d="M300 154 C345 154,350 282.05,395 282.05" fill="none" stroke="#1F3F73" stroke-width="1.3" stroke-dasharray="4 3"/><circle cx="300" cy="154" r="2.5" fill="#1F3F73"/><path d="M300 175 C345 175,350 236.95000000000002,395 236.95000000000002" fill="none" stroke="#1F3F73" stroke-width="1.3" stroke-dasharray="4 3"/><circle cx="300" cy="175" r="2.5" fill="#1F3F73"/><path d="M300 242 C345 242,350 236.95000000000002,395 236.95000000000002" fill="none" stroke="#2E7D6B" stroke-width="1.3" stroke-dasharray="4 3"/><circle cx="300" cy="242" r="2.5" fill="#2E7D6B"/><path d="M300 263 C345 263,350 282.05,395 282.05" fill="none" stroke="#2E7D6B" stroke-width="1.3" stroke-dasharray="4 3"/><circle cx="300" cy="263" r="2.5" fill="#2E7D6B"/><path d="M300 284 C345 284,350 191.85000000000002,395 191.85000000000002" fill="none" stroke="#2E7D6B" stroke-width="1.3" stroke-dasharray="4 3"/><circle cx="300" cy="284" r="2.5" fill="#2E7D6B"/><path d="M300 305 C345 305,350 101.64999999999999,395 101.64999999999999" fill="none" stroke="#2E7D6B" stroke-width="1.3" stroke-dasharray="4 3"/><circle cx="300" cy="305" r="2.5" fill="#2E7D6B"/><path d="M300 393 C345 393,350 470.45000000000005,395 470.45000000000005" fill="none" stroke="#7A5BA6" stroke-width="1.3" stroke-dasharray="4 3"/><circle cx="300" cy="393" r="2.5" fill="#7A5BA6"/><path d="M300 460 C345 460,350 191.85000000000002,395 191.85000000000002" fill="none" stroke="#5E6A78" stroke-width="1.3" stroke-dasharray="4 3"/><circle cx="300" cy="460" r="2.5" fill="#5E6A78"/><path d="M700 70 C655 70,650 56.55,605 56.55" fill="none" stroke="#C07A1E" stroke-width="1.3" stroke-dasharray="4 3"/><circle cx="700" cy="70" r="2.5" fill="#C07A1E"/><path d="M700 91 C655 91,650 101.64999999999999,605 101.64999999999999" fill="none" stroke="#C07A1E" stroke-width="1.3" stroke-dasharray="4 3"/><circle cx="700" cy="91" r="2.5" fill="#C07A1E"/><path d="M700 112 C655 112,650 236.95000000000002,605 236.95000000000002" fill="none" stroke="#C07A1E" stroke-width="1.3" stroke-dasharray="4 3"/><circle cx="700" cy="112" r="2.5" fill="#C07A1E"/><path d="M700 133 C655 133,650 327.15000000000003,605 327.15000000000003" fill="none" stroke="#C07A1E" stroke-width="1.3" stroke-dasharray="4 3"/><circle cx="700" cy="133" r="2.5" fill="#C07A1E"/><path d="M700 154 C655 154,650 372.25,605 372.25" fill="none" stroke="#C07A1E" stroke-width="1.3" stroke-dasharray="4 3"/><circle cx="700" cy="154" r="2.5" fill="#C07A1E"/><path d="M700 221 C655 221,650 56.55,605 56.55" fill="none" stroke="#A8141C" stroke-width="1.3" stroke-dasharray="4 3"/><circle cx="700" cy="221" r="2.5" fill="#A8141C"/><path d="M700 242 C655 242,650 101.64999999999999,605 101.64999999999999" fill="none" stroke="#A8141C" stroke-width="1.3" stroke-dasharray="4 3"/><circle cx="700" cy="242" r="2.5" fill="#A8141C"/><path d="M700 263 C655 263,650 191.85000000000002,605 191.85000000000002" fill="none" stroke="#A8141C" stroke-width="1.3" stroke-dasharray="4 3"/><circle cx="700" cy="263" r="2.5" fill="#A8141C"/><path d="M700 263 C655 263,650 327.15000000000003,605 327.15000000000003" fill="none" stroke="#A8141C" stroke-width="1.3" stroke-dasharray="4 3"/><circle cx="700" cy="263" r="2.5" fill="#A8141C"/><path d="M700 284 C655 284,650 425.35,605 425.35" fill="none" stroke="#A8141C" stroke-width="1.3" stroke-dasharray="4 3"/><circle cx="700" cy="284" r="2.5" fill="#A8141C"/><path d="M700 351 C655 351,650 425.35,605 425.35" fill="none" stroke="#B07D2B" stroke-width="1.3" stroke-dasharray="4 3"/><circle cx="700" cy="351" r="2.5" fill="#B07D2B"/><path d="M700 372 C655 372,650 146.75,605 146.75" fill="none" stroke="#B07D2B" stroke-width="1.3" stroke-dasharray="4 3"/><circle cx="700" cy="372" r="2.5" fill="#B07D2B"/><path d="M700 393 C655 393,650 101.64999999999999,605 101.64999999999999" fill="none" stroke="#B07D2B" stroke-width="1.3" stroke-dasharray="4 3"/><circle cx="700" cy="393" r="2.5" fill="#B07D2B"/><path d="M700 414 C655 414,650 56.55,605 56.55" fill="none" stroke="#B07D2B" stroke-width="1.3" stroke-dasharray="4 3"/><circle cx="700" cy="414" r="2.5" fill="#B07D2B"/><path d="M700 435 C655 435,650 56.55,605 56.55" fill="none" stroke="#B07D2B" stroke-width="1.3" stroke-dasharray="4 3"/><circle cx="700" cy="435" r="2.5" fill="#B07D2B"/><rect x="0" y="34" width="300" height="160" fill="#fff" stroke="#1F3F73" stroke-width="1.2" rx="3"/><rect x="0" y="34" width="300" height="22" fill="#1F3F73" rx="3"/><text x="10" y="50" font-size="13.5" font-weight="700" fill="#fff">Denison 조직문화 모델</text><text x="12" y="74" font-size="12.5" fill="#0F1B2D">권한 위임 (Empowerment)</text><text x="12" y="95" font-size="12.5" fill="#0F1B2D">역량 개발 (Capability Development)</text><text x="12" y="116" font-size="12.5" fill="#0F1B2D">팀 지향 (Team Orientation)</text><text x="12" y="137" font-size="12.5" fill="#0F1B2D">비전 · 전략 방향 (Vision)</text><text x="12" y="158" font-size="12.5" fill="#0F1B2D">고객 중심 (Customer Focus)</text><text x="12" y="179" font-size="12.5" fill="#0F1B2D">조정과 통합 (Coordination)</text><rect x="0" y="206" width="300" height="139" fill="#fff" stroke="#2E7D6B" stroke-width="1.2" rx="3"/><rect x="0" y="206" width="300" height="22" fill="#2E7D6B" rx="3"/><text x="10" y="222" font-size="13.5" font-weight="700" fill="#fff">Lovak 모델 · 다섯 자본</text><text x="12" y="246" font-size="12.5" fill="#0F1B2D">구조 자본</text><text x="12" y="267" font-size="12.5" fill="#0F1B2D">고객 자본</text><text x="12" y="288" font-size="12.5" fill="#0F1B2D">관계 자본</text><text x="12" y="309" font-size="12.5" fill="#0F1B2D">개발 자본</text><text x="12" y="330" font-size="12.5" fill="#8A95A3">상징 자본 → 워크숍에서 다룸</text><rect x="0" y="357" width="300" height="55" fill="#fff" stroke="#7A5BA6" stroke-width="1.2" rx="3"/><rect x="0" y="357" width="300" height="22" fill="#7A5BA6" rx="3"/><text x="10" y="373" font-size="13.5" font-weight="700" fill="#fff">Quinn & Cameron 경쟁가치모형</text><text x="12" y="397" font-size="12.5" fill="#0F1B2D">네 가지 문화 (관계·질서·성과·혁신)</text><rect x="0" y="424" width="300" height="55" fill="#fff" stroke="#5E6A78" stroke-width="1.2" rx="3"/><rect x="0" y="424" width="300" height="22" fill="#5E6A78" rx="3"/><text x="10" y="440" font-size="13.5" font-weight="700" fill="#fff">Edmondson 심리적 안전감</text><text x="12" y="464" font-size="12.5" fill="#0F1B2D">말해도 안전하다는 느낌</text><rect x="700" y="34" width="300" height="139" fill="#fff" stroke="#C07A1E" stroke-width="1.2" rx="3"/><rect x="700" y="34" width="300" height="22" fill="#C07A1E" rx="3"/><text x="710" y="50" font-size="13.5" font-weight="700" fill="#fff">Herzberg 2요인 이론</text><text x="712" y="74" font-size="12.5" fill="#0F1B2D">동기요인: 성취 · 책임</text><text x="712" y="95" font-size="12.5" fill="#0F1B2D">동기요인: 성장</text><text x="712" y="116" font-size="12.5" fill="#0F1B2D">위생요인: 정책 · 관리</text><text x="712" y="137" font-size="12.5" fill="#0F1B2D">위생요인: 감독</text><text x="712" y="158" font-size="12.5" fill="#0F1B2D">위생요인: 근무 조건 · 보상 · 고용 안정</text><rect x="700" y="185" width="300" height="118" fill="#fff" stroke="#A8141C" stroke-width="1.2" rx="3"/><rect x="700" y="185" width="300" height="22" fill="#A8141C" rx="3"/><text x="710" y="201" font-size="13.5" font-weight="700" fill="#fff">자기결정이론 (Deci & Ryan)</text><text x="712" y="225" font-size="12.5" fill="#0F1B2D">자율성</text><text x="712" y="246" font-size="12.5" fill="#0F1B2D">유능감</text><text x="712" y="267" font-size="12.5" fill="#0F1B2D">관계성</text><text x="712" y="288" font-size="12.5" fill="#0F1B2D">동기의 연속선</text><rect x="700" y="315" width="300" height="139" fill="#fff" stroke="#B07D2B" stroke-width="1.2" rx="3"/><rect x="700" y="315" width="300" height="22" fill="#B07D2B" rx="3"/><text x="710" y="331" font-size="13.5" font-weight="700" fill="#fff">Agerus 일할 조건 다섯 가지</text><text x="712" y="355" font-size="12.5" fill="#0F1B2D">하고 싶다 (Vill)</text><text x="712" y="376" font-size="12.5" fill="#0F1B2D">안다 (Vet)</text><text x="712" y="397" font-size="12.5" fill="#0F1B2D">할 수 있다 (Kan)</text><text x="712" y="418" font-size="12.5" fill="#0F1B2D">해도 된다 (Får)</text><text x="712" y="439" font-size="12.5" fill="#0F1B2D">해야 한다 (Bör)</text><rect x="395" y="41.55" width="210" height="30" fill="#fff" stroke="#0F1B2D" stroke-width="1.3" rx="3"/><text x="500" y="61.55" text-anchor="middle" font-size="14" font-weight="700" fill="#0F1B2D">권한부여와 책임</text><rect x="395" y="86.64999999999999" width="210" height="30" fill="#fff" stroke="#0F1B2D" stroke-width="1.3" rx="3"/><text x="500" y="106.64999999999999" text-anchor="middle" font-size="14" font-weight="700" fill="#0F1B2D">능력개발</text><rect x="395" y="131.75" width="210" height="30" fill="#fff" stroke="#0F1B2D" stroke-width="1.3" rx="3"/><text x="500" y="151.75" text-anchor="middle" font-size="14" font-weight="700" fill="#0F1B2D">일에 대한 정보 소통</text><rect x="395" y="176.85000000000002" width="210" height="30" fill="#fff" stroke="#0F1B2D" stroke-width="1.3" rx="3"/><text x="500" y="196.85000000000002" text-anchor="middle" font-size="14" font-weight="700" fill="#0F1B2D">관계</text><rect x="395" y="221.95000000000002" width="210" height="30" fill="#fff" stroke="#0F1B2D" stroke-width="1.3" stroke-dasharray="5 3" rx="3"/><text x="500" y="241.95000000000002" text-anchor="middle" font-size="14" font-weight="700" fill="#0F1B2D">업무 체계 · 필수 조건</text><rect x="395" y="267.05" width="210" height="30" fill="#fff" stroke="#0F1B2D" stroke-width="1.3" rx="3"/><text x="500" y="287.05" text-anchor="middle" font-size="14" font-weight="700" fill="#0F1B2D">제품·서비스 자신감</text><rect x="395" y="312.15000000000003" width="210" height="30" fill="#fff" stroke="#0F1B2D" stroke-width="1.3" rx="3"/><text x="500" y="332.15000000000003" text-anchor="middle" font-size="14" font-weight="700" fill="#0F1B2D">리더십</text><rect x="395" y="357.25" width="210" height="30" fill="#fff" stroke="#0F1B2D" stroke-width="1.3" stroke-dasharray="5 3" rx="3"/><text x="500" y="377.25" text-anchor="middle" font-size="14" font-weight="700" fill="#0F1B2D">업무 환경 · 필수 조건</text><rect x="395" y="410.35" width="210" height="30" fill="#E9ECE8" stroke="#0F1B2D" stroke-width="1.3" rx="3"/><text x="500" y="430.35" text-anchor="middle" font-size="14" font-weight="700" fill="#0F1B2D">나의 업무 동기</text><rect x="395" y="455.45000000000005" width="210" height="30" fill="#E9ECE8" stroke="#0F1B2D" stroke-width="1.3" rx="3"/><text x="500" y="475.45000000000005" text-anchor="middle" font-size="14" font-weight="700" fill="#0F1B2D">조직의 현재와 미래</text><line x1="395" y1="394.25" x2="605" y2="394.25" stroke="#DCDFDB"/></svg></div><p class="note">점선은 왼쪽·오른쪽 이론의 개념이 가운데 POCA 이름으로 이어진다는 뜻입니다. 점선 테두리 칸은 필수 조건, 회색 칸은 8요인 밖의 두 영역입니다. 하나의 POCA 요인에 여러 이론이 함께 이어질수록 근거가 두텁습니다. Agerus의 일할 조건 다섯 가지는 스웨덴 Agerus의 연구(Pettersson · Torbiörn, 스톡홀름 대학교)를 참고했습니다.</p>`);
+ }
+ P('부록','부록 · 읽는 법','점수와 표시의 기준',`<table><tr><th>항목</th><th>기준</th></tr><tr><td>점수</td><td>10점 응답 × 10 (10점을 고르면 100점, 7점이면 70점)</td></tr><tr><td>점수 구간</td><td>A 90 이상 · B 80~89 · C 70~79 · D 60~69 · E 60 미만</td></tr><tr><td>‘그렇다’</td><td>10점 중 7점 이상. 5~6점은 보통</td></tr><tr><td>긍정률</td><td>그 문항에 조직에 좋은 쪽으로 응답한 사람의 비율. ‘그렇다’(7점 이상), 반대로 묻는 (R) 문항은 4점 이하</td></tr><tr><td>일하는 이유</td><td>‘이유를 모르겠다’ 평균 5.5점(가운데) 이상이면 이유가 흔들리는 사람, 아니면 좋아서(수준 5~7)와 남의 눈 때문에(3~4) 중 높은 쪽이 ‘그렇다’(70점) 이상이면 그쪽, 둘 다 70점에 못 미치면 먹고살려고(2). 누구나 먹고살려고 일하기 때문에, 그보다 높은 이유가 분명하지 않을 때만 먹고살려고로 셉니다. 동기 수준 = 일곱 이유 점수를 수준 번호로 가중 평균</td></tr><tr><td>필수 조건</td><td>업무 체계(절차·역할과 결정 권한·정책)와 업무 환경(균형·도구와 공간·보상·안정성). 부족하면 불만이 쌓이지만, 갖춰졌다고 의욕이 생기지는 않습니다.</td></tr><tr><td>우선순위 지도</td><td>세로 점선 = 21개 지표의 평균 점수 · 가로 점선 = 평균 득표율 14% (한 사람이 3표씩 21개 지표에 주므로, 표가 고르게 퍼지면 지표마다 3÷21 ≈ 14%)</td></tr><tr><td>익명성</td><td>이름은 받지 않으며, ${MIN_N}명 미만 그룹은 공개하지 않습니다.</td></tr></table>`);
+ P('부록','부록 · 점수 기준','점수는 세 가지 기준으로 봅니다',`<div class="cols3"><div class="fc" style="border-top-color:var(--navy)"><p class="num">1</p><h3>기본 기준</h3><p>100점 만점에 A 90 · B 80 · C 70 · D 60 · E 60 미만.</p></div><div class="fc" style="border-top-color:var(--navy)"><p class="num">2</p><h3>우리 회사 안에서 비교</h3><p>부서 · 직급 · 근속을 회사 전체와 견줍니다. 5점 이상 차이가 나면 표시합니다.</p></div><div class="fc" style="border-top-color:var(--navy)"><p class="num">3</p><h3>지난 진단과 비교</h3><p>두 번째 진단부터는 같은 문항의 변화를 봅니다. 5점 이상 오르내리면 표시합니다.</p></div></div>
+ <table class="dense" style="margin-top:6mm"><tr><th style="white-space:nowrap">등급</th><th>평균 응답으로 말하면 (10점 척도)</th><th>이렇게 읽습니다</th></tr>
+ <tr><td style="white-space:nowrap"><b style="color:var(--navy)">A 90 이상</b></td><td>평균 9점 이상</td><td>조직의 자랑입니다.</td></tr>
+ <tr><td style="white-space:nowrap"><b style="color:var(--navy)">B 80~89</b></td><td>평균 8점대</td><td>분명한 강점입니다.</td></tr>
+ <tr><td style="white-space:nowrap"><b style="color:var(--navy2)">C 70~79</b></td><td>평균 7점대</td><td>대체로 괜찮습니다. 더 좋아질 여지가 있습니다.</td></tr>
+ <tr><td style="white-space:nowrap"><b style="color:var(--amber)">D 60~69</b></td><td>평균 6점대</td><td>그렇다와 아니다가 섞여 있습니다. 어디서 갈리는지 대화로 확인합니다.</td></tr>
+ <tr><td style="white-space:nowrap"><b style="color:var(--red)">E 60 미만</b></td><td>평균 6점 미만</td><td>먼저 손봐야 할 곳입니다.</td></tr></table>
+ <p class="note">점수 = 10점 응답 × 10. 응답 점수가 그대로 등급이 됩니다(평균 8점대 = B). 참고로 폴앤마크가 2022년에 진단한 3개 조직의 지표 63개를 이 기준으로 옮기면 B 3개, C 34개, D 17개, E 9개입니다. C가 가장 흔한 ‘보통’입니다. 등급보다 회사 안의 차이와 시간에 따른 변화가 더 중요합니다.</p>`);
+ if(full){
+  const tbl=(rows)=>`<table class="dense"><tr><th>코드</th><th>문항</th><th class="n">점수</th><th class="n">긍정률</th><th class="n">편차</th></tr>${rows}</table>`;
+  P('부록','전체 문항 점수 · 나의 업무 동기','일하는 이유 14문항',tbl(CFG.MOT.map(m=>`<tr><td>${m.c}</td><td>${esc(m.t)} <span class="muted">· ${CFG.REASONS[m.k]}</span></td><td class="n">${r0(A.motItem[m.c].v)}</td><td class="n">${isNaN(A.motItem[m.c].yes)?'–':Math.round(A.motItem[m.c].yes*100)+'%'}</td><td class="n">—</td></tr>`).join('')));
+  const its=CFG.IDX.flatMap(x=>x.codes);const row=c=>`<tr><td>${c}</td><td>${esc(ITEMC[c].t)}${ITEMC[c].r?' (R)':''}</td><td class="n">${r0(A.item[c])}</td><td class="n">${isNaN(A.itemYes[c])?'–':Math.round(A.itemYes[c]*100)+'%'}</td><td class="n">${r0(A.itemSd[c])}</td></tr>`;
+  [[0,15],[15,30],[30,45]].forEach(([a,b],k)=>P('부록',`전체 문항 점수 · 현재 조직 분석 (${k+1})`,`문항 ${a+1}~${b}`,tbl(its.slice(a,b).map(row).join(''))));
+  {const R=A.recs||[];const kv=(c)=>{const v=R.map(r=>r.r&&r.r[c]).filter(x=>typeof x==='number');return v.length?avg(v.map(pct)):NaN};
+   const rv=(c)=>R.map(r=>r.r&&r.r[c]).filter(x=>typeof x==='number');const r1v=rv('R01'),r2v=rv('R02');
+   P('부록','전체 문항 점수 · 조직의 현재와 미래 · 추천·잔류 의향','문화 문장 16문항과 추천·잔류 2문항',`<table class="dense"><tr><th>문화</th><th>문장</th><th class="n">현재</th><th class="n">지향</th><th class="n">차이</th></tr>${CFG.K.map(k=>{const n=kv(k.c+'_n'),d=kv(k.c+'_d');return `<tr><td style="white-space:nowrap">${QP[k.q]}</td><td>${esc(k.t)}</td><td class="n">${r0(n)}</td><td class="n"><b>${r0(d)}</b></td><td class="n">${d-n>=0?'+':''}${r0(d-n)}</td></tr>`}).join('')}</table>
+   <table class="dense" style="margin-top:4mm"><tr><th>추천·잔류 의향</th><th class="n">평균</th><th>결과</th></tr><tr><td>${esc(CFG.RES[0].t)} <span class="muted">(0~10)</span></td><td class="n">${r1v.length?r1(avg(r1v)):'–'}</td><td>직원 추천 지수 <b>${isNaN(A.enps)?'–':(A.enps>0?'+':'')+A.enps}</b> (9~10점 비율 − 0~6점 비율)</td></tr><tr><td>${esc(CFG.RES[1].t)} <span class="muted">(1~10)</span></td><td class="n">${r2v.length?r1(avg(r2v)):'–'}</td><td>7점 이상 <b>${isNaN(A.stay)?'–':A.stay+'%'}</b></td></tr></table><p class="note">문화 문장은 각 문장마다 지금과 바라는 모습을 따로 답한 16문항입니다.</p>`);
+   P('부록','전체 문항 점수 · 우선순위 투표','21개 지표의 득표율',`<div class="cols2">${[0,1].map(h=>{const rows=[...A.pri].sort((a,b)=>b.rate-a.rate);const part=h?rows.slice(11):rows.slice(0,11);return `<table class="dense"><tr><th class="n">순위</th><th>지표</th><th class="n">표</th><th class="n">득표율</th><th class="n">점수</th></tr>${part.map((p,i)=>`<tr><td class="n">${(h?11:0)+i+1}</td><td>${esc(IDXN[p.n].name)}</td><td class="n">${p.c}</td><td class="n"><b>${Math.round(p.rate*100)}%</b></td><td class="n">${r0(p.score)}</td></tr>`).join('')}</table>`}).join('')}</div><p class="note">한 사람이 3표씩, 모두 ${N*3}표입니다. 평균 득표율은 14%(3÷21)입니다. 열린 질문 두 개(지키고 싶은 것 · 바꾸고 싶은 것)의 답은 ‘합의도와 구성원의 목소리’ 쪽에 대표 응답으로 실었고, 전체 답은 익명 보호를 위해 HR 담당자에게 따로 드립니다.</p>`);}
+ }
+ const css=`@page{size:A4 landscape;margin:0}:root{--bg:#F5F6F4;--surface:#FFFFFF;--surface2:#E9ECE8;--ink:#0F1B2D;--muted:#5E6A78;--line:#DCDFDB;--navy:#1F3F73;--navy2:#6F87AD;--amber:#C07A1E;--red:#A8141C}*{box-sizing:border-box}body{margin:0;background:#888;font-family:'Noto Sans KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif;color:var(--ink);-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.page{width:297mm;height:210mm;margin:8mm auto;background:var(--bg);padding:14mm 18mm 20mm;position:relative;overflow:hidden;page-break-after:always;break-after:page;display:flex;flex-direction:column}@media print{body{background:none}.page{margin:0}}
+.dark{background:var(--ink);color:#F2F3F0;padding:24mm 26mm 18mm 34mm;justify-content:space-between}.redbar{position:absolute;left:0;top:0;bottom:0;width:4mm;background:var(--red)}.brand{letter-spacing:5px;color:#C9A9A9;font-weight:500;margin:0}.sub{color:#AEB8C6;font-size:13pt;margin:0 0 6mm}h1{font-family:'Noto Serif KR',serif;font-size:40pt;line-height:1.15;font-weight:600;margin:0}.rule{width:30mm;height:1mm;background:var(--red);margin:8mm 0}.meta{font-size:14pt;color:#D6DCE4;margin:0}.copy{color:#8593A6;font-size:10pt;margin:0}
+.lab{display:flex;align-items:center;gap:4mm;color:var(--muted);font-size:11pt;letter-spacing:.5px}.lab::before{content:"";width:10mm;height:.7mm;background:var(--red)}h2{font-family:'Noto Serif KR',serif;font-size:23pt;font-weight:600;line-height:1.3;margin:3mm 0 6mm}h3{font-size:13pt;margin:0 0 2.5mm}.body{flex:1;font-size:13pt;line-height:1.55;display:flex;flex-direction:column;justify-content:center;padding-bottom:6mm}.split{display:grid;grid-template-columns:2.3fr 1fr;gap:9mm;align-items:center}.vis.full{width:100%}.vis.full .chart{max-width:185mm}.vis.full .chart svg{max-height:96mm}.split .chart svg{max-height:92mm}table.dense td,table.dense th{padding:1.4mm 3mm;font-size:10.5pt;line-height:1.35}.band{display:grid;grid-template-columns:repeat(3,1fr);gap:5mm;margin-top:5mm}.band>div{background:#fff;border:1px solid var(--line);border-top:.8mm solid var(--red);padding:3.5mm 4.5mm;font-size:12pt;line-height:1.5}.how{font-size:11pt;color:var(--navy);background:#E8EDF5;padding:2.2mm 4mm;margin:0 0 4mm;border-radius:1mm}.fdef{font-size:13pt;margin:0 0 4mm}.badge{display:inline-block;font-size:10pt;font-weight:700;padding:.5mm 2.5mm;margin-left:2mm}.b-s{background:#DCE4F0;color:var(--navy)}.b-g{background:var(--surface2);color:var(--muted)}.b-w{background:#F6EBD9;color:var(--amber)}.b-r{background:#F2D9D9;color:var(--red)}.ix{margin-bottom:3.5mm}.qline{margin:0 0 1.2mm 4mm;font-size:11.5pt;line-height:1.45}.qs{display:inline-block;min-width:9mm;font-weight:700;color:var(--navy)}.small-h{font-weight:700;margin:0 0 3mm}.map{display:grid;grid-template-columns:1fr 2.2fr 1fr;gap:6mm;align-items:stretch}.mcol{display:flex;flex-direction:column;gap:3mm}.mbox.h{background:var(--ink);color:#F2F3F0;padding:4mm;font-weight:700;font-size:14pt;text-align:center}.mbox.h span{font-weight:400;font-size:11pt;color:#AEB8C6}.mlist{background:#fff;border:1px solid var(--line);padding:4mm;font-size:12pt;line-height:1.55;flex:1}.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:2.5mm;margin:3mm 0}.fgrid>div{border:1px solid var(--line);padding:2mm 3mm;font-size:11pt}.fgrid>div span{color:var(--muted);font-size:9.5pt}.fgrid>div.hyg{border-style:dashed}.ins{border-left:.8mm solid var(--red);padding-left:6mm}.ins p{font-size:13.5pt;line-height:1.6;margin:0 0 5mm}.ins b{color:var(--ink)}.foot{position:absolute;left:18mm;right:18mm;bottom:9mm;border-top:1px solid var(--line);padding-top:2.5mm;display:flex;justify-content:space-between;font-size:9.5pt;color:var(--muted)}.foot b{font-family:'Noto Serif KR',serif;color:var(--ink)}
+.muted{color:var(--muted)}.note{font-size:10pt;color:var(--muted);margin-top:4mm}.kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:8mm;margin-bottom:8mm}.kpi{border-left:.8mm solid var(--navy);padding-left:5mm}.kpi.r{border-color:var(--red)}.kpi.r .n{color:var(--red)}.kpi .n{font-family:'Noto Serif KR',serif;font-size:42pt;font-weight:600;line-height:1.1;color:var(--navy)}.kpi .of{font-size:16pt;color:#8A95A3}.kpi .l{font-weight:700}.kpi .s{font-size:11pt;color:var(--muted)}
+.three{display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid var(--line)}.three>div{padding:5mm 6mm 0 0}.three>div+div{border-left:1px solid var(--line);padding-left:6mm}.cn{color:var(--navy)}.ca{color:var(--amber)}.cr{color:var(--red)}
+.bal{display:grid;grid-template-columns:1fr 12mm 1fr 70mm;gap:5mm;align-items:stretch}.bal3{display:grid;grid-template-columns:repeat(3,1fr);gap:6mm}.st4 .ag-row{grid-template-columns:96mm 1fr 14mm 30mm}.ag-row{display:grid;grid-template-columns:62mm 1fr 14mm 30mm;gap:5mm;align-items:center;padding:2.2mm 0;border-top:1px solid var(--line)}.ag-row .t{height:6mm;background:var(--surface2)}.ag-row .t i{display:block;height:100%}.ag-row .v{font-family:'Noto Serif KR',serif;font-size:17pt;font-weight:600;text-align:right}.lvn{display:inline-block;width:6.5mm;height:6.5mm;line-height:6.5mm;border-radius:50%;background:var(--surface2);text-align:center;font-size:10pt;margin-right:2mm}.bun{background:#fff;border:1px solid var(--line);border-top:1mm solid;padding:5mm 6mm}.bun .big{font-family:'Noto Serif KR',serif;font-size:30pt;font-weight:600}.bun .big span{font-size:11pt;color:var(--muted)}.bun .r{display:flex;justify-content:space-between;border-top:1px solid var(--line);padding:2.4mm 0;font-size:12.5pt}.approx{display:flex;align-items:center;justify-content:center;font-family:'Noto Serif KR',serif;font-size:26pt;color:var(--muted)}.side{display:flex;flex-direction:column;justify-content:center;gap:2mm;padding-left:4mm;border-left:1px solid var(--line)}
+.stack{display:flex;height:11mm;font-size:11pt;font-weight:700;color:#fff}.stack>div{display:flex;align-items:center;justify-content:center;overflow:hidden}.leg{display:flex;gap:6mm;font-size:11pt;margin-top:2mm}.leg i{display:inline-block;width:3mm;height:3mm;margin-right:1.5mm}
+.bar{display:grid;grid-template-columns:62mm 1fr 16mm;gap:3mm;align-items:center;margin:2.2mm 0;font-size:12.5pt}.bar .t{height:4.5mm;background:var(--surface2)}.bar .t>i{display:block;height:100%}.bar .v{text-align:right;font-weight:700}
+.cols2{display:grid;grid-template-columns:1fr 1fr;gap:10mm}.cols3{display:grid;grid-template-columns:repeat(3,1fr);gap:6mm}.fc{background:#fff;border:1px solid var(--line);border-top:1mm solid;padding:6mm}.dnum{font-family:'Noto Serif KR',serif;font-size:90pt;font-weight:300;color:#3A4A63;margin:0;line-height:1}.num{font-family:'Noto Serif KR',serif;font-size:24pt;font-weight:600;margin:0 0 2mm;color:var(--navy)}.steps>div{border-left:.6mm solid var(--line);padding-left:6mm}
+.it{margin:0 0 3mm}.voice{border-left:.6mm solid var(--line);padding-left:3mm;margin:0 0 2mm}.qh{margin:3mm 0 0}.chart{max-width:175mm;margin:0 auto}.vis .chart{max-width:100%}.chart svg{width:100%;height:auto}
+table{border-collapse:collapse;width:100%;font-size:11.5pt}th,td{border-bottom:1px solid var(--line);padding:2.6mm 3mm;text-align:left;vertical-align:top}th{color:var(--muted);font-weight:600;background:var(--surface2)}td.n,th.n{text-align:center}table.q td{font-size:12.5pt;line-height:1.5}td.dl{font-family:'Noto Serif KR',serif;font-weight:600;color:var(--red)}`;
+ return `<!doctype html><html lang="ko"><head><meta charset="utf-8"><title>POCA 조직문화 진단 결과보고서 — ${esc(org.name)}</title><link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&family=Noto+Serif+KR:wght@500;600&display=swap" rel="stylesheet"><style>${css}</style></head><body>${pages.join('\n')}</body></html>`;
+}
+async function downloadReport(A,full){
+ const b=document.getElementById(full?'dlFull':'dlRep');const nm=(st.src==='real'&&st.repOrg?st.repOrg.name:'예시');
+ try{if(b){b.disabled=true;b.textContent='만드는 중…'}await caps.downloads.save({filename:`POCA_결과보고서_${full?'전체판':'요약판'}_${nm}.html`,data:buildPrintHTML(A,full)});if(b)b.textContent=full?'전체판 내려받기 (HR용, 약 55쪽)':'요약판 내려받기 (경영진용, 16쪽)'}
+ catch(e){if(b)b.textContent='내려받지 못했습니다. 다시 눌러 주세요.'}finally{if(b)b.disabled=false}
+}
+
+/* ---------- small charts ---------- */
+function bars(rows,mx=100){return rows.map(([n,v,c,lab])=>`<div class="bar"><div class="small">${n}</div><div class="t"><i style="width:${isNaN(v)?0:Math.max(1.5,v/mx*100)}%;background:${c||bandCol(v)}"></i></div><div class="v">${lab??r0(v)}</div></div>`).join('')}
+function stack(counts,total,labels=true){if(!total)return '';const ord=counts.length===4?GORD:counts.map((_,i)=>i);return `<div class="stack">${ord.map(i=>[counts[i],i]).map(([c,i])=>c?`<div style="width:${c/total*100}%;background:${GCOL[i]}">${labels?c:''}</div>`:'').join('')}</div>`}
+function scatter(points,opt){
+ const W=560,H=360,L=46,B=40,T=14,Rt=14,[x0,x1]=opt.x,[y0,y1]=opt.y;
+ const X=v=>L+(v-x0)/(x1-x0)*(W-L-Rt), Y=v=>H-B-(v-y0)/(y1-y0)*(H-B-T);
+ let g=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(opt.aria)}" style="width:100%;height:auto">`;
+ g+=`<line x1="${L}" y1="${H-B}" x2="${W-Rt}" y2="${H-B}" stroke="var(--line)"/><line x1="${L}" y1="${T}" x2="${L}" y2="${H-B}" stroke="var(--line)"/>`;
+ if(opt.vx!=null)g+=`<line x1="${X(opt.vx)}" y1="${T}" x2="${X(opt.vx)}" y2="${H-B}" stroke="var(--muted)" stroke-dasharray="4 4" opacity=".6"/>`;
+ if(opt.hy!=null)g+=`<line x1="${L}" y1="${Y(opt.hy)}" x2="${W-Rt}" y2="${Y(opt.hy)}" stroke="var(--muted)" stroke-dasharray="4 4" opacity=".6"/>`;
+ (opt.corners||[]).forEach(([t,x,y,a,c])=>g+=`<text x="${x}" y="${y}" text-anchor="${a}" font-size="11.5" font-weight="700" fill="${c}">${t}</text>`);
+ opt.xt.forEach(v=>g+=`<text x="${X(v)}" y="${H-B+16}" text-anchor="middle" font-size="11" fill="var(--muted)">${v}</text>`);
+ opt.yt.forEach(v=>g+=`<text x="${L-6}" y="${Y(v)+4}" text-anchor="end" font-size="11" fill="var(--muted)">${opt.yfmt?opt.yfmt(v):v}</text>`);
+ g+=`<text x="${(L+W-Rt)/2}" y="${H-4}" text-anchor="middle" font-size="12" fill="var(--ink)">${opt.xl}</text>`;
+ g+=`<text x="12" y="${(T+H-B)/2}" text-anchor="middle" font-size="12" fill="var(--ink)" transform="rotate(-90 12 ${(T+H-B)/2})">${opt.yl}</text>`;
+ points.forEach(p=>{if(isNaN(p.x)||isNaN(p.y))return;const cx=Math.min(Math.max(X(p.x),L),W-Rt),cy=Math.min(Math.max(Y(p.y),T),H-B);g+=`<circle cx="${cx}" cy="${cy}" r="${p.r||6}" fill="${p.c}" stroke="var(--surface)" stroke-width="1.5"/>${p.below?`<text x="${cx}" y="${cy+20}" text-anchor="middle" font-size="11.5" font-weight="700" fill="var(--ink)">${esc(p.t)}</text>`:`<text x="${cx+(p.left?-9:9)}" y="${cy+4}" text-anchor="${p.left?'end':'start'}" font-size="11.5" fill="var(--ink)">${esc(p.t)}</text>`}`});
+ return g+'</svg>';
+}
+
+/* ---------- screens ---------- */
+function render(){const app=document.getElementById('app');app.innerHTML='';const v={intro:introView,survey:surveyView,result:resultView,report:reportView,admin:adminView,pulse:pulseView,login:loginView,privacy:privacyView}[st.screen];app.append(v());window.scrollTo({top:0})}
+function introView(){
+ const O=st.org;
+ const done=O?(()=>{try{return localStorage.getItem('poca_done_'+O.code)}catch(e){return null}})():null;
+ const closed=O&&O.open===false;
+ const el=$(`<div><div class="panel" style="padding:30px">
+  <p class="label">PAUL &amp; MARK · POCA 조직문화 진단</p>
+  ${O?`<p class="small" style="margin:0 0 6px"><b>${esc(O.name)}</b></p>`:''}
+  <h1>우리 조직은 지금 어떤 문화이고, 사람들은 왜 일하고 있을까요?</h1>
+  <p class="muted">${O&&O.type==='pulse'?'지난 진단 이후 달라진 것을 짧게 점검합니다. 약 3분.':'약 11분, 80문항입니다.'} 이름은 받지 않으며, 결과는 묶어서만 보입니다.</p>
+  <div class="three"><div><h3>나의 업무 동기</h3><p class="small muted">나의 업무 동기요인을 돌아봅니다.</p></div><div><h3>현재 조직 분석</h3><p class="small muted">여덟 가지 질문으로 우리 조직을 봅니다.</p></div><div><h3>조직의 현재와 미래</h3><p class="small muted">우리 문화가 어디에 있고, 어디로 가고 싶은지 봅니다.</p></div></div>
+  ${O?'<p class="small muted" style="margin-top:14px">한 사람당 한 응답이 저장됩니다. 다시 하면 이전 응답을 덮어씁니다.</p>':''}</div>
+  ${closed?'<div class="notice">이 진단은 마감되었습니다. 참여해 주셔서 감사합니다.</div>':done?'<div class="notice">이 기기에서 이미 응답하셨습니다. 다시 하면 이전 응답을 덮어씁니다.</div>':''}
+  ${O?'':`<div class="panel"><h3>회사에서 받은 진단 코드를 입력하세요</h3><div class="row"><input type="text" id="code" maxlength="8" style="max-width:200px;font-size:20px;letter-spacing:4px;text-transform:uppercase;font:inherit;padding:10px 12px;border:1px solid var(--line);border-radius:4px;background:var(--surface);color:var(--ink)" aria-label="진단 코드"><button id="enter">들어가기</button></div><p class="err" id="cerr">${esc(st.orgErr)}</p></div>`}
+  <div class="row">${O&&!closed?'<button class="primary" id="go">진단 시작하기</button>':''}${caps.canEdit?'<button id="smp">조직 리포트 예시 보기</button><button id="psmp">펄스 리포트 예시 보기</button>':''}<span id="adm"></span></div><p class="small muted" style="margin-top:18px"><a href="#" id="privacy">개인정보 처리 안내</a> · ${caps.canEdit?'<a href="#" id="logout">로그아웃</a>':'<a href="#" id="login">관리자 로그인</a>'}</p></div>`);
+ const go=el.querySelector('#go'); if(go)go.onclick=()=>{st={...st,screen:'survey',step:0,r:{},u:[],o1:'',o2:'',o3:'',t0:Date.now(),err:'',saved:null};render()};
+ const en=el.querySelector('#enter'); if(en){const sub=()=>{const c0=el.querySelector('#code').value.replace(/\s/g,'');const c2=koToEn(c0).toUpperCase();const c=c2;const ce=el.querySelector('#cerr');if(!c){ce.textContent='진단 코드를 적어 주세요.';return}ce.textContent='확인하는 중…';en.disabled=true;loadOrg(c,true).finally(()=>{en.disabled=false})};en.onclick=sub;el.querySelector('#code').onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();sub()}}};
+ {const sm=el.querySelector('#smp');if(sm)sm.onclick=()=>{st.R=aggregate(sampleData());st.R.prev=aggregate(sampleData(29,-0.25));st.src='sample';st.screen='report';render()};
+ }{const ps=el.querySelector('#psmp');if(ps)ps.onclick=()=>{st.P=samplePulse();st.src='sample';st.screen='pulse';render()};}
+ el.querySelector('#privacy').onclick=e=>{e.preventDefault();st.screen='privacy';render()};
+ {const li=el.querySelector('#login');if(li)li.onclick=e=>{e.preventDefault();st.screen='login';render()};const lo=el.querySelector('#logout');if(lo)lo.onclick=async e=>{e.preventDefault();try{await sb.auth.signOut()}catch(_){}caps.canEdit=false;st.screen='intro';render()};}
+ if(caps.canEdit){const b=$(`<button>진단 관리 (폴앤마크)</button>`);b.onclick=openAdmin;el.querySelector('#adm').append(b)}
+ return el;
+}
+async function loadOrg(code,manual){
+ st.orgErr='';
+ if(!caps.db){if(manual){st.orgErr='이 화면에서는 진단에 연결할 수 없습니다.';render()}return}
+ try{const sn=await caps.db.doc('poca_orgs/'+code).get();const d=sn&&sn.data?sn.data():null;
+  if(!d){st.org=null;st.orgErr='‘'+code+'’ 코드의 진단을 찾지 못했습니다. 코드를 다시 확인해 주세요.';render();return}
+  st.org={code,...d};if(st.screen==='intro')render()}
+ catch(e){st.orgErr='진단에 연결하지 못했습니다. 인터넷 연결을 확인하고 다시 시도해 주세요.';if(st.screen==='intro')render()}
+}
+async function openAdmin(){
+ st.screen='admin';render();
+ try{const [o,r]=await Promise.all([caps.db.collection('poca_orgs').limit(200).get(),caps.db.collection('poca_resp').limit(1000).get()]);
+  const resp=r.docs.map(d=>d.data()).filter(Boolean);
+  st.orgs=o.docs.map(d=>{const x=d.data()||{};return {code:d.id,...x,n:resp.filter(rr=>rr[d.id]).length}}).sort((a,b)=>(b.at||0)-(a.at||0));
+  st.resp=resp;render()}
+ catch(e){st.orgs=[];st.adminErr='진단 목록을 불러오지 못했습니다.';render()}
+}
+function adminView(){
+ const el=$(`<div><div class="panel"><p class="label">진단 관리</p><h2>새 진단 만들기</h2>
+  <label class="small" for="nm">회사(조직) 이름</label><input type="text" id="nm" maxlength="60" placeholder="예: 대덕전자" style="font:inherit;width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:4px;background:var(--surface);color:var(--ink)">
+  <div style="height:10px"></div><label class="small" for="dp">부서 목록 (한 줄에 하나)</label><textarea id="dp" placeholder="경영지원&#10;영업&#10;생산"></textarea>
+  <div style="height:10px"></div><label class="small" for="hc">대상 인원 (참여율 계산용, 선택)</label><input type="text" id="hc" inputmode="numeric" maxlength="6" style="font:inherit;max-width:160px;padding:10px 12px;border:1px solid var(--line);border-radius:4px;background:var(--surface);color:var(--ink)">
+  <div style="height:14px"></div><label class="chk" style="max-width:420px"><input type="checkbox" id="isPilot"><span><b>시범 운영</b> (응답 시간을 기록하고, 헷갈린 문항 의견을 받습니다)</span></label><div style="height:8px"></div><label class="chk" style="max-width:360px"><input type="checkbox" id="isP"><span><b>펄스로 만들기</b> (13문항 + 맞춤 문항, 약 3분)</span></label>
+  <div style="height:10px"></div><label class="small" for="base">비교할 이전 진단 (선택 · 펄스는 꼭 고르세요)</label><select id="base"><option value="">없음</option>${st.orgs.filter(o=>o.type!=='pulse').map(o=>`<option value="${esc(o.code)}">${esc(o.name)} (${esc(o.code)})</option>`).join('')}</select><div id="pbox" style="display:none">
+  <p class="small" style="margin:10px 0 4px">맞춤 지표 (지난 리포트의 ‘핵심 과제’, 최대 3개)</p><div style="columns:2;font-size:14px">${CFG.IDX.map(x=>`<label style="display:block"><input type="checkbox" class="ex" value="${x.n}"> ${String(x.n).padStart(2,'0')} ${esc(x.name)}</label>`).join('')}</div></div>
+  <p class="err" id="aerr"></p><div class="row"><button class="primary" id="mk">만들고 코드 받기</button></div></div>
+  <div class="panel"><h2>진행 중인 진단</h2>${st.adminErr?`<p class="err">${esc(st.adminErr)}</p>`:''}${st.orgs.length?st.orgs.map(o=>`<div class="act" style="border-top-color:${o.open===false?'var(--muted)':'var(--navy)'}"><div class="row" style="justify-content:space-between"><div><h3 style="margin:0">${esc(o.name)} <span class="small muted">· ${o.type==='pulse'?'펄스 · ':''}코드 ${esc(o.code)}${o.open===false?' · 마감':''}</span></h3><p class="small" style="margin:2px 0 0">링크: <code>${esc(location.origin+location.pathname+'#'+o.code)}</code></p><p class="small muted" style="margin:2px 0 0">응답 ${o.n}명${o.headcount?` / 대상 ${o.headcount}명 (${Math.round(o.n/o.headcount*100)}%)`:''}</p></div>
+   <div class="row"><button data-rep="${esc(o.code)}">리포트 보기</button><button data-tog="${esc(o.code)}">${o.open===false?'다시 열기':'마감하기'}</button></div></div>
+   <p class="small" style="margin:8px 0 0">공유 링크: <input type="text" readonly value="${PAGE_URL}#${esc(o.code)}" style="font:inherit;font-size:13px;width:100%;padding:6px 8px;border:1px solid var(--line);border-radius:4px;background:var(--surface2);color:var(--ink)" onclick="this.select()"></p></div>`).join(''):'<p class="small muted">아직 만든 진단이 없습니다.</p>'}</div>
+  <div class="row"><button id="home">처음으로</button></div></div>`);
+ const ip=el.querySelector('#isP');ip.onchange=()=>{el.querySelector('#pbox').style.display=ip.checked?'block':'none'};
+ el.querySelector('#home').onclick=()=>{st.screen='intro';render()};
+ el.querySelector('#mk').onclick=async()=>{
+  const name=el.querySelector('#nm').value.trim().slice(0,60);if(!name){el.querySelector('#aerr').textContent='회사 이름을 적어 주세요.';return}
+  const depts=el.querySelector('#dp').value.split('\n').map(x=>x.trim()).filter(Boolean).slice(0,40);
+  const hc=parseInt(el.querySelector('#hc').value,10)||null;
+  const isP=el.querySelector('#isP').checked;const pilot=el.querySelector('#isPilot').checked;const base=el.querySelector('#base').value;const extra=[...el.querySelectorAll('.ex:checked')].map(x=>+x.value);
+  if(isP&&!base){el.querySelector('#aerr').textContent='비교할 이전 진단을 고르세요.';return}
+  if(extra.length>3){el.querySelector('#aerr').textContent='맞춤 지표는 3개까지 고를 수 있습니다.';return}
+  const A='ACDEFGHJKMNPQRTUVWXY3479';const code=Array.from({length:5},()=>A[Math.floor(Math.random()*A.length)]).join('');
+  try{await caps.db.doc('poca_orgs/'+code).set({name,depts:depts.length?depts:DEPTS,headcount:hc,open:true,at:Date.now(),type:isP?'pulse':'full',base:base||null,extra:isP?extra:[],pilot});openAdmin()}catch(e){el.querySelector('#aerr').textContent='진단을 만들지 못했습니다.'}
+ };
+ el.querySelectorAll('[data-rep]').forEach(b=>b.onclick=()=>loadReport(b.dataset.rep));
+ el.querySelectorAll('[data-tog]').forEach(b=>b.onclick=async()=>{const o=st.orgs.find(x=>x.code===b.dataset.tog);try{await caps.db.doc('poca_orgs/'+o.code).update({open:o.open===false});openAdmin()}catch(e){}});
+ return el;
+}
+function scaleHTML(code,val,anch){return `<div><div class="scale" role="radiogroup" aria-label="${code}">${[1,2,3,4,5,6,7,8,9,10].map(n=>`<div class="opt" role="radio" tabindex="0" data-code="${code}" data-v="${n}" aria-checked="${val===n}">${n}</div>`).join('')}</div><div class="anchors"><span>${anch[0]}</span><span>${anch[1]}</span></div></div>`}
+const ANCH=['전혀 그렇지 않다','매우 그렇다'];
+function surveyView(){
+ const step=STEPS[st.step],total=STEPS.length;
+ const el=$(`<div><div class="progress" aria-hidden="true"><i style="width:${st.step/total*100}%"></i></div><div class="panel" id="body"></div><div class="row" style="justify-content:space-between"><button id="prev">이전</button><span class="small muted">${st.step+1} / ${total}</span><button class="primary" id="next">${st.step===total-1?'제출하고 결과 보기':'다음'}</button></div></div>`);
+ const body=el.querySelector('#body');
+ if(step==='info'){
+  const sel=(id,lab,opts,val)=>`<label class="small" for="${id}">${lab}</label><select id="${id}"><option value="">선택하세요</option>${opts.map(o=>`<option ${val===o?'selected':''}>${o}</option>`).join('')}</select><div style="height:12px"></div>`;
+  body.innerHTML=`<p class="label">시작하기 전에</p><h2>소속을 알려주세요</h2><p class="small muted">그룹별 결과는 응답이 ${MIN_N}명 이상일 때만 보입니다.</p>${sel('dept','부서',(st.org&&st.org.depts)||DEPTS,st.dept)}${sel('role','직급',ROLES,st.role)}${sel('ten','근속',TENURE,st.ten)}`;
+  body.querySelector('#dept').onchange=e=>{st.dept=e.target.value;clr(el)};body.querySelector('#role').onchange=e=>{st.role=e.target.value;clr(el)};body.querySelector('#ten').onchange=e=>{st.ten=e.target.value;clr(el)};
+ } else if(step==='pulse'){
+  const codes=pulseCodes(st.org);
+  const txt=c=>c.startsWith('M')?CFG.MOT.find(m=>m.c===c).t:c.startsWith('R')?CFG.RES.find(r=>r.c===c).t:ITEMC[c].t;
+  body.innerHTML=`<p class="label">펄스 · 짧은 점검</p><h2>지난 진단 이후, 지금은 어떤가요?</h2><p class="small muted">약 3분. 정식 진단과 같은 문항으로 변화를 봅니다.</p>`+codes.map(c=>c==='R01'?`<div class="q"><p class="qtext">${esc(txt(c))}</p><div><div class="scale" style="grid-template-columns:repeat(11,1fr)" role="radiogroup" aria-label="R01">${[0,1,2,3,4,5,6,7,8,9,10].map(n=>`<div class="opt" role="radio" tabindex="0" data-code="R01" data-v="${n}" aria-checked="${st.r.R01===n}">${n}</div>`).join('')}</div><div class="anchors"><span>전혀 추천하지 않는다</span><span>꼭 추천한다</span></div></div></div>`:`<div class="q"><p class="qtext">${esc(txt(c))}</p>${scaleHTML(c,st.r[c],ANCH)}</div>`).join('')+`<div class="q"><label class="qtext" for="o2">지난 진단 이후 가장 달라졌다고 느끼는 것 한 가지는? (선택)</label><textarea id="o2" maxlength="400">${esc(st.o2)}</textarea></div>`;
+  body.querySelector('#o2').oninput=e=>st.o2=e.target.value;
+ } else if(step==='mot'){
+  body.innerHTML=`<p class="label">1 · 나의 업무 동기</p><h2>나는 지금 하는 일을 이런 이유로 한다</h2>`+CFG.MOT.map(m=>`<div class="q"><p class="qtext">${esc(m.t)}</p>${scaleHTML(m.c,st.r[m.c],ANCH)}</div>`).join('')
+  +`<div class="q"><p class="qtext">${esc(CFG.RES[0].t)}</p><div><div class="scale" style="grid-template-columns:repeat(11,1fr)" role="radiogroup" aria-label="R01">${[0,1,2,3,4,5,6,7,8,9,10].map(n=>`<div class="opt" role="radio" tabindex="0" data-code="R01" data-v="${n}" aria-checked="${st.r.R01===n}">${n}</div>`).join('')}</div><div class="anchors"><span>전혀 추천하지 않는다</span><span>꼭 추천한다</span></div></div></div>`
+  +`<div class="q"><p class="qtext">${esc(CFG.RES[1].t)}</p>${scaleHTML('R02',st.r.R02,ANCH)}</div>`;
+ } else if(step.startsWith('f')){
+  const fi=+step.slice(1); const idxs=CFG.IDX.filter(x=>x.f===fi);
+  body.innerHTML=`<p class="label">2 · 현재 조직 분석 (${fi+1}/8)</p><h2>${CFG.FQ[fi]}</h2>`+idxs.flatMap(x=>x.codes).map(c=>`<div class="q"><p class="qtext">${esc(ITEMC[c].t)}</p>${scaleHTML(c,st.r[c],ANCH)}</div>`).join('');
+ } else if(step==='k'){
+  body.innerHTML=`<p class="label">3 · 조직의 현재와 미래</p><h2>지금 우리 조직, 그리고 바라는 우리 조직</h2><p class="small muted">각 문장이 지금 얼마나 해당하는지, 앞으로 얼마나 해당하길 바라는지 답해 주세요.</p>`+
+  CFG.K.map(k=>`<div class="q"><p class="qtext">${esc(k.t)}</p><div class="pair"><span class="lab">지금</span>${scaleHTML(k.c+'_n',st.r[k.c+'_n'],ANCH)}</div><div class="pair"><span class="lab">바라는 모습</span>${scaleHTML(k.c+'_d',st.r[k.c+'_d'],ANCH)}</div></div>`).join('');
+ } else {
+  body.innerHTML=`<p class="label">4 · 우선순위와 목소리</p><h2>가장 먼저 바뀌어야 할 것 세 가지</h2><p class="small muted">정확히 3개를 골라 주세요. (<span id="cnt">${st.u.length}</span>/3)</p>`+
+  CFG.IDX.map(x=>`<label class="chk"><input type="checkbox" value="${x.n}" ${st.u.includes(x.n)?'checked':''}><span>${x.plain}</span></label>`).join('')+
+  `<div class="q"><label class="qtext" for="o1">우리 조직이 앞으로도 꼭 지켰으면 하는 것 한 가지는?</label><textarea id="o1" maxlength="400">${esc(st.o1)}</textarea></div><div class="q"><label class="qtext" for="o2">내일 당장 하나를 바꿀 수 있다면 무엇을 바꾸고 싶으신가요?</label><textarea id="o2" maxlength="400">${esc(st.o2)}</textarea></div>${st.org&&st.org.pilot?`<div class="q" style="border-left:3px solid var(--amber);padding-left:12px"><label class="qtext" for="o3">시범 운영 질문 · 헷갈리거나 답하기 어려웠던 문항이 있었다면 알려 주세요. (선택)</label><textarea id="o3" maxlength="400">${esc(st.o3||'')}</textarea></div>`:''}`;
+  {const o3=body.querySelector('#o3');if(o3)o3.oninput=e=>st.o3=e.target.value;}
+  body.querySelectorAll('input[type=checkbox]').forEach(cb=>cb.onchange=e=>{const v=+e.target.value;if(e.target.checked){if(st.u.length>=3){e.target.checked=false;err(el,'세 개까지 고를 수 있습니다. 다른 항목을 먼저 해제하세요.');return}st.u.push(v)}else st.u=st.u.filter(x=>x!==v);body.querySelector('#cnt').textContent=st.u.length;clr(el)});
+  body.querySelector('#o1').oninput=e=>st.o1=e.target.value;body.querySelector('#o2').oninput=e=>st.o2=e.target.value;
+ }
+ body.append($(`<p class="err" id="err">${esc(st.err)}</p>`));
+ body.querySelectorAll('.opt').forEach(o=>{const pick=()=>{st.r[o.dataset.code]=+o.dataset.v;o.parentElement.querySelectorAll('.opt').forEach(x=>x.setAttribute('aria-checked',x===o));clr(el)};o.onclick=pick;o.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();pick()}}});
+ el.querySelector('#prev').disabled=st.step===0;
+ el.querySelector('#prev').onclick=()=>{st.step--;st.err='';render()};
+ el.querySelector('#next').onclick=()=>{const m=validate(step);if(m){err(el,m);return}st.err='';if(st.step<total-1){st.step++;render()}else submit()};
+ return el;
+}
+function err(el,m){st.err=m;const e=el.querySelector('#err');if(e)e.textContent=m}
+function clr(el){st.err='';const e=el.querySelector('#err');if(e)e.textContent=''}
+function validate(step){
+ if(step==='info')return(!st.dept||!st.role||!st.ten)?'부서, 직급, 근속을 모두 선택하세요.':'';
+ if(step==='u')return st.u.length!==3?'우선순위를 정확히 3개 고르세요.':'';
+ if(step==='pulse'){const miss=pulseCodes(st.org).filter(c=>typeof st.r[c]!=='number').length;return miss?`아직 답하지 않은 문항이 ${miss}개 있습니다.`:''}
+ let codes=step==='mot'?[...CFG.MOT.map(m=>m.c),'R01','R02']:step==='k'?CFG.K.flatMap(k=>[k.c+'_n',k.c+'_d']):CFG.IDX.filter(x=>x.f===+step.slice(1)).flatMap(x=>x.codes);
+ const miss=codes.filter(c=>typeof st.r[c]!=='number').length;
+ return miss?`아직 답하지 않은 문항이 ${miss}개 있습니다.`:'';
+}
+async function submit(){
+ const rec={v:2,at:Date.now(),dept:st.dept,role:st.role,ten:st.ten,r:{...st.r},u:[...st.u],o1:st.o1.trim().slice(0,400),o2:st.o2.trim().slice(0,400),dur:st.t0?Math.round((Date.now()-st.t0)/1000):null,o3:(st.o3||'').trim().slice(0,400)};
+ st.mine=rec;st.saved=null;st.screen='result';render();
+ if(sb&&st.org){try{const {data,error}=await sb.rpc('poca_submit',{p_code:st.org.code,p_key:deviceKey(st.org.code),p_data:rec});if(error||data!==true)throw error||new Error('closed');st.saved=true}catch(e){st.saved=false}}else st.saved=false;
+ try{if(st.org)localStorage.setItem('poca_done_'+st.org.code,'1')}catch(e){}
+ const n=document.getElementById('savenote');if(n)n.textContent=saveText();
+}
+function saveText(){return st.saved===null?'응답을 저장하는 중입니다…':st.saved?'응답이 저장되었습니다. 조직 리포트에 반영됩니다.':'응답을 저장하지 못했습니다. 인터넷 연결을 확인한 뒤 같은 기기에서 다시 제출해 주세요. 진단이 마감된 경우에도 저장되지 않습니다.'}
+function resultView(){
+ const s=score(st.mine.r); const g=s.group;
+ const fac=CFG.FN.map((f,i)=>[f,s.fac[i]]);
+ const low=[...CFG.IDX].sort((a,b)=>s.idx[a.n]-s.idx[b.n]).slice(0,3);
+ const gap=[1,2,3,4].map(q=>[q,s.des[q]-s.cur[q]]).sort((a,b)=>b[1]-a[1])[0];
+ const lvl=(k)=>s.yes[k]===2?'그렇다':s.yes[k]===1?'보통':'아니다';
+ const el=$(`<div><div class="notice" id="savenote">${saveText()}</div>
+ <div class="panel"><p class="label">나의 결과</p><h1>나는 <span style="color:${GCOL[g]}">${GROUPS[g]}</span>에 가깝습니다</h1>
+  <p class="muted">나의 동기 수준은 7단계 중 <b>${r1(s.level)}</b>입니다. 좋아서 ${r0(s.like)}점, 남의 눈 때문에 ${r0(s.eye)}점, 먹고살려고 ${r0(s.money)}점, 이유가 흔들림 ${r0(s.lost)}점.</p>
+  ${bars(LORD.map(k=>[`${LV[k]} · ${CFG.REASONS[k]}`,s.rs[k],KCOL(k),lvl(k)]))}</div>
+ <div class="panel"><p class="label">내가 보는 우리 조직</p><h2>현재 조직 분석 · 종합 ${r1(s.total)}점</h2>${bars(fac.map(([f,v],i)=>[CFG.FS[i],v]))}
+  <p class="small" style="margin-top:10px">가장 아쉽게 느끼는 부분: ${low.map(x=>`<b>${x.plain}</b> ${r0(s.idx[x.n])}`).join(' · ')}</p></div>
+ <div class="panel"><p class="label">조직의 현재와 미래</p><h2>가장 바라는 변화는 ‘${QP[gap[0]]}’ 쪽입니다</h2>${[1,2,3,4].map(q=>`<p class="small" style="margin:10px 0 2px"><b>${QP[q]}</b> <span class="muted">현재 ${r0(s.cur[q])} → 지향 ${r0(s.des[q])}</span></p>${bars([['현재',s.cur[q],'var(--muted)'],['지향',s.des[q],'var(--navy)']])}`).join('')}</div>
+ <div class="panel"><h3>스스로에게 던져볼 질문</h3><p class="small">· ‘${CFG.REASONS[[0,1,2,3,4,5].sort((a,b)=>s.rs[b]-s.rs[a])[0]]}’가 지금 나를 가장 크게 움직이고 있습니다. 1년 뒤에도 그럴까요?</p><p class="small">· ‘${low[0].plain}’${J(low[0].plain,'이','가').slice(-1)} 나아진다면 내 일은 어떻게 달라질까요?</p><p class="small">· 내가 바라는 ‘${QP[gap[0]]}’는 구체적으로 어떤 장면인가요?</p></div>
+ <div class="row"><button class="primary" id="smp">조직 리포트 예시 보기</button><button id="home">처음으로</button></div></div>`);
+ el.querySelector('#smp').onclick=()=>{st.R=aggregate(sampleData());st.R.prev=aggregate(sampleData(29,-0.25));st.src='sample';st.screen='report';render()};
+ el.querySelector('#home').onclick=()=>{st.screen='intro';render()};
+ return el;
+}
+
+/* ---------- org report ---------- */
+function pilotPanel(A){const R=A.recs||[];const ds=R.map(r=>r.dur).filter(x=>typeof x==='number'&&x>0).sort((a,b)=>a-b);const fb=R.map(r=>r.o3).filter(Boolean);if(!ds.length&&!fb.length)return '';
+ const med=ds.length?ds[Math.floor(ds.length/2)]:NaN;const mm=x=>isNaN(x)||x===undefined?'–':`${Math.floor(x/60)}분 ${x%60}초`;
+ const v=(r,c)=>{const x=r.r&&r.r[c];if(typeof x!=='number')return NaN;const p=x*10;return ITEMC[c]&&ITEMC[c].r?110-p:p};
+ const corr=(a,b)=>{const P=a.map((x,i)=>[x,b[i]]).filter(([x,y])=>!isNaN(x)&&!isNaN(y));if(P.length<5)return NaN;const mx=avg(P.map(p=>p[0])),my=avg(P.map(p=>p[1]));let sxy=0,sx=0,sy=0;P.forEach(([x,y])=>{sxy+=(x-mx)*(y-my);sx+=(x-mx)**2;sy+=(y-my)**2});return sx&&sy?sxy/Math.sqrt(sx*sy):NaN};
+ const pr=CFG.IDX.map(x=>({x,r:corr(R.map(r=>v(r,x.codes[0])),R.map(r=>v(r,x.codes[1])))}));const weak=pr.filter(p=>!isNaN(p.r)&&p.r<0.3);
+ return `<div class="panel" style="border-top:3px solid var(--amber)"><p class="label">시범 운영 점검</p><h2>응답 시간 · 문항 일관성 · 헷갈린 문항</h2>
+ <p>응답 시간 중앙값 <b>${mm(med)}</b> (가장 빠름 ${mm(ds[0])}, 가장 느림 ${mm(ds[ds.length-1])}, ${ds.length}명 기준). 목표는 11분 안팎입니다.</p>
+ <p style="margin-top:10px"><b>같은 지표 두 문항이 함께 움직이는가</b> <span class="muted small">(상관 0.3 미만이면 두 문항이 다른 것을 묻고 있을 수 있습니다. 응답 5명 이상일 때 계산)</span></p>
+ <p class="small">${pr.every(p=>isNaN(p.r))?'응답이 5명 이상 모이면 계산합니다.':weak.length?weak.map(p=>`${esc(p.x.name)} (r = ${p.r.toFixed(2)})`).join(' · '):'모든 지표에서 두 문항이 잘 함께 움직입니다.'}</p>
+ <p style="margin-top:10px"><b>헷갈린 문항 의견</b> <span class="muted small">(${fb.length}건)</span></p>${fb.length?fb.map(t=>`<p class="small" style="margin:4px 0">· ${esc(t)}</p>`).join(''):'<p class="small muted">아직 없습니다.</p>'}</div>`}
+function reportView(){
+ const A=st.R; const el=$(`<div></div>`);
+ if(!A||!A.n){{const pp=pilotPanel(A);if(pp)el.append($(pp));}
+ el.append($(`<div class="panel"><h2>아직 응답이 없습니다</h2><p class="muted">진단 링크를 공유하고 응답이 모이면 이 화면에서 조직 리포트를 볼 수 있습니다.</p><div class="row"><button class="primary" id="smp">예시 리포트 보기</button><button id="home">처음으로</button></div></div>`));el.querySelector('#smp').onclick=()=>{st.R=aggregate(sampleData());st.R.prev=aggregate(sampleData(29,-0.25));st.src='sample';render()};el.querySelector('#home').onclick=()=>{st.screen='intro';render()};return el}
+ const N=A.n; const idxSorted=[...CFG.IDX].sort((a,b)=>A.idx[b.n]-A.idx[a.n]);
+ const top3=idxSorted.slice(0,3), bot3=idxSorted.slice(-3).reverse();
+ const priTop=[...A.pri].sort((a,b)=>b.rate-a.rate)[0];
+ const focus=pickFocus(A);
+ const items=[...CFG.ITEMS].map(x=>({...x,v:A.item[x.c],s:A.itemSd[x.c]}));
+ const best=[...items].sort((a,b)=>b.v-a.v).slice(0,5), worst=[...items].sort((a,b)=>a.v-b.v).slice(0,5);
+ const split=[...items].filter(x=>x.s>=25).sort((a,b)=>b.s-a.s).slice(0,3);
+ const gaps=[1,2,3,4].map(q=>[q,A.des[q]-A.cur[q]]).sort((a,b)=>b[1]-a[1]);
+ const curTop=[1,2,3,4].sort((a,b)=>A.cur[b]-A.cur[a])[0];
+ const show=(o)=>o.n>=MIN_N;
+ const herzLab=(m,h)=>m>=70?(h>=70?'이상적':'의욕은 있으나 불만 누적'):(h>=70?'조건은 갖췄으나 의욕 낮음':'가장 시급');
+ const priPts=A.pri.map(p=>({x:p.score,y:p.rate*100,c:p.quad===1?'var(--red)':p.quad===2?'var(--amber)':p.quad===3?'var(--navy2)':'var(--muted)',t:String(p.n).padStart(2,'0'),r:5,left:p.score>A.avgIdx+6}));
+ const xs=A.pri.map(p=>p.score).filter(v=>!isNaN(v)); const xmin=Math.floor((Math.min(...xs)-3)/5)*5, xmax=Math.ceil((Math.max(...xs)+3)/5)*5;
+ const ymax=Math.max(40,Math.ceil(Math.max(...A.pri.map(p=>p.rate*100))/10)*10+5);
+ el.append($(`<div>${st.src==='sample'?'<div class="notice">가상의 응답 30명으로 만든 예시 리포트입니다. 실제 응답이 모이면 같은 형식으로 만들어집니다.</div>':''}
+ <div class="panel" style="padding:28px"><p class="label">${st.src==='real'&&st.repOrg?esc(st.repOrg.name)+' · ':''}조직 리포트 · 응답 ${N}명${st.src==='real'&&st.repOrg&&st.repOrg.headcount?` / 대상 ${st.repOrg.headcount}명 (참여율 ${Math.round(N/st.repOrg.headcount*100)}%)`:''}</p><h1>${top3.some(x=>[8,9,10,16].includes(x.n))?'관계는 단단하고':'강점은 '+top3[0].name+'이고'}, ${bot3[0].name}${HERZ_H.includes(bot3[0].n)?' 같은 일의 조건이 버겁다':'에서 가장 막혀 있다'}</h1>
+  <div class="kpis"><div class="kpi"><div class="n">${r1(A.total)}</div><div class="l">종합 문화점수</div><div class="s">8요인 평균 · ${band(A.total)[0]}</div></div>
+  <div class="kpi"><div class="n">${A.groups[0]}<span style="font-size:22px;color:var(--muted)"> / ${N}</span></div><div class="l">좋아서 일하는 사람</div><div class="s">남의 눈 ${A.groups[3]}명 · 먹고살려고 ${A.groups[1]}명 · 흔들림 ${A.groups[2]}명</div></div>
+  <div class="kpi" style="border-color:var(--red)"><div class="n" style="color:var(--red)">${Math.round(priTop.rate*100)}%</div><div class="l">‘${esc(IDXN[priTop.n].plain)}’ 개선이 가장 시급하다는 응답</div><div class="s">${esc(IDXN[priTop.n].name)} 지표 · 21개 지표 중 가장 높은 응답 비율</div></div></div>
+  <div class="three"><div><h3 style="color:var(--navy)">지켜야 할 강점</h3><p class="small">${top3.map(x=>`${x.name} ${r1(A.idx[x.n])}`).join('<br>')}</p></div><div><h3 style="color:var(--amber)">바꿔야 할 기회</h3><p class="small">${bot3.map(x=>`${x.name} ${r1(A.idx[x.n])}`).join('<br>')}</p></div><div><h3 style="color:var(--red)">핵심 과제</h3><p class="small">${focus.map((f,i)=>`${'①②③'[i]} ${esc(f.title)}`).join('<br>')}</p></div></div></div>
+
+ <div class="panel"><p class="label">01 · 왜 일하는가</p><h2>${motTitle(A)}</h2>
+  <div style="margin-top:12px">${motBal(A)}</div>
+  <p class="small" style="margin-top:8px">우리 회사의 동기 수준은 7단계 중 <b>${r1(A.level)}</b>입니다. 원 안의 숫자가 동기 수준이며, 클수록 스스로 원해서 일합니다.</p>
+  <p class="small" style="margin-top:12px">‘즐거워서’와 ‘먹고살려고’에 모두 그렇다고 한 사람 ${A.bothFunMoney}명 · ‘이유를 모르겠다’ 그렇다 ${A.yes[6]}명, 보통 이상까지 ${A.yes[6]+A.mid6}명</p>
+  <p class="small muted">점수는 10점 응답에 10을 곱한 평균, 사람 수는 ‘그렇다’(7점 이상)라고 답한 인원입니다. 한 사람이 여러 이유에 답하므로 합계는 전체 인원을 넘습니다.</p>
+  ${isNaN(A.stay)?'':`<h3 style="margin-top:16px">일하는 이유는 결과로 이어지는가</h3><div class="scroll"><table><tr><th></th><th class="n">인원</th><th class="n">추천 의향 (0~10)</th><th class="n">직원 추천 지수</th><th class="n">1년 뒤에도 있을 것 같다</th></tr>${GORD.map(i=>[GROUPS[i],i]).map(([g,i])=>A.res[i].n>=MIN_N?`<tr><td><b style="color:${GCOL[i]}">${g}</b></td><td class="n">${A.res[i].n}</td><td class="n">${r1(A.res[i].rec)}</td><td class="n">${A.res[i].enps>0?'+':''}${A.res[i].enps}</td><td class="n">${A.res[i].stay}%</td></tr>`:`<tr><td>${g}</td><td class="n">${A.res[i].n}</td><td colspan="3" class="muted">비공개</td></tr>`).join('')}<tr><td><b>전체</b></td><td class="n">${N}</td><td class="n">—</td><td class="n"><b>${A.enps>0?'+':''}${A.enps}</b></td><td class="n"><b>${A.stay}%</b></td></tr></table></div><p class="small muted">직원 추천 지수 = 추천 의향 9~10점 비율 − 0~6점 비율. ‘1년 뒤에도 있을 것 같다’는 7점 이상으로 답한 비율입니다.</p>`}</div>
+
+ <div class="panel"><p class="label">02 · 일하는 이유로 본 사람들</p><h2>${N}명 중 ${A.groups[0]}명은 좋아서, ${A.groups[3]}명은 남의 눈 때문에, ${A.groups[1]}명은 먹고살려고 일하고, ${A.groups[2]}명은 이유가 흔들린다</h2>${stack(A.groups,N)}
+  <div class="row small" style="margin:8px 0 14px">${GORD.map(i=>[GROUPS[i],i]).map(([g,i])=>`<span><span style="display:inline-block;width:10px;height:10px;background:${GCOL[i]}"></span> ${g}</span>`).join('')}</div>
+  <h3>부서별</h3>${A.byDept.map(o=>`<div class="bar" style="grid-template-columns:140px 1fr 52px"><div class="small">${esc(o.d)} (${o.n})</div>${show(o)?stack(o.groups,o.n):'<div class="small muted">비공개</div>'}<div class="v small">${show(o)?Math.round(o.groups[0]/o.n*100)+'%':''}</div></div>`).join('')}
+  <p class="small muted">오른쪽 숫자는 좋아서 하는 사람의 비율입니다. ${MIN_N}명 미만 부서는 가립니다.</p></div>
+
+ <div class="panel"><p class="label">03 · 조직문화 8요인</p><h2>종합 ${r1(A.total)}점 · ${band(A.total)[0]}</h2>${bars(CFG.FN.map((f,i)=>[f,A.fac[i]]).sort((a,b)=>b[1]-a[1]))}
+  <p class="small muted">A 90 이상 · B 80~89 · C 70~79 · D 60~69 · E 60 미만</p></div>
+
+ <div class="panel"><p class="label">04 · 21지표 순위</p><h2>가장 낮은 지표는 ${bot3[0].name}(${r1(A.idx[bot3[0].n])})</h2>${bars(idxSorted.map(x=>[x.name+(x.star?' ★':''),A.idx[x.n]]))}
+  <p class="small muted">★는 사람들이 좋아서 일하게 만드는 세 조건(자율성·유능감·관계성)과 바로 이어진 지표입니다.</p></div>
+
+ <div class="grid2"><div class="panel"><p class="label">05 · 강점 문항</p>${best.map(x=>`<p class="small"><b>${r0(x.v)}</b> ${esc(x.t)}</p>`).join('')}</div>
+ <div class="panel"><p class="label">05 · 기회 문항</p>${worst.map(x=>`<p class="small"><b style="color:var(--red)">${r0(x.v)}</b> ${esc(x.t)}${x.r?' (역문항)':''}</p>`).join('')}</div></div>
+
+ <div class="panel"><p class="label">06 · 동기요인 × 필수 조건</p><h2>${herzLab(A.hm,A.hh)}: 동기요인 ${r0(A.hm)}, 필수 조건 ${r0(A.hh)}</h2>
+  ${scatter([...A.byDept.filter(show).map(o=>({x:o.hm,y:o.hh,c:'var(--navy2)',t:o.d,r:4+Math.min(o.n,12)})),{x:A.hm,y:A.hh,c:'var(--ink)',t:'전체 평균',r:6,below:true}],{x:[40,100],y:[40,100],vx:70,hy:70,xt:[40,55,70,85,100],yt:[40,55,70,85,100],xl:'동기요인 (자율·책임·성장·인정)',yl:'필수 조건 (업무 체계·업무 환경)',aria:'부서별 동기요인과 필수 조건 위치',corners:[['이상적',546,26,'end','var(--muted)'],['조건은 갖췄으나 의욕 낮음',52,26,'start','var(--muted)'],['의욕은 있으나 불만 누적',546,312,'end','var(--muted)'],['가장 시급',52,312,'start','var(--muted)']]})}</div>
+
+ <div class="panel"><p class="label">07 · 조직의 현재와 미래</p><h2>지금은 ${QN[curTop]}이 가장 두드러지고, 가장 바라는 변화는 ${QN[gaps[0][0]]}(+${r0(gaps[0][1])})</h2>
+  ${[1,2,3,4].map(q=>`<p class="small" style="margin:10px 0 2px"><b>${QP[q]}</b> <span class="muted">현재 ${r0(A.cur[q])} → 지향 ${r0(A.des[q])} (${A.des[q]-A.cur[q]>=0?'+':''}${r0(A.des[q]-A.cur[q])})</span></p>${bars([['현재',A.cur[q],'var(--muted)'],['지향',A.des[q],'var(--navy)']])}`).join('')}</div>
+
+ <div class="panel"><p class="label">08 · 우선순위 지도</p><h2>점수와 ‘시급하다’는 목소리를 함께 보면</h2>
+  ${scatter(priPts,{x:[xmin,xmax],y:[0,ymax],vx:A.avgIdx,hy:100*3/21,xt:Array.from({length:Math.floor((xmax-xmin)/5)+1},(_,i)=>xmin+i*5),yt:[0,10,20,30,40].filter(v=>v<=ymax),yfmt:v=>v+'%',xl:'지표 점수',yl:'시급하다고 표를 준 사람 비율',aria:'21개 지표의 점수와 시급하다고 응답한 비율',corners:[['① 즉시 개선',52,26,'start','var(--red)'],['③ 체감 이슈',546,26,'end','var(--navy)'],['② 숨은 약점',52,312,'start','var(--amber)'],['④ 유지 강점',546,312,'end','var(--muted)']]})}
+  <p class="small muted" style="columns:2;column-gap:24px;font-size:12px;line-height:1.5;margin-top:6px">${CFG.IDX.map(x=>`<span style="display:block">${String(x.n).padStart(2,'0')} ${esc(x.name)}</span>`).join('')}</p><p class="small muted">점선: 세로는 21개 지표의 평균 점수(${r1(A.avgIdx)}점), 가로는 평균 득표율 14%입니다. 한 사람이 3표씩 주므로 표가 고르게 퍼지면 지표마다 14%가 됩니다. 점선 위는 평균보다 표를 많이 받은 지표입니다.</p></div>
+
+ <div class="panel"><p class="label">09 · 부서별 8요인</p><div class="scroll"><table><tr><th>부서 (명)</th><th class="n">종합</th>${CFG.FN.map(f=>`<th class="n">${f.replace('제품·서비스 자신감','제품 자신감').replace('일에 대한 정보 소통','정보 소통').replace('권한부여와 책임','권한·책임')}</th>`).join('')}</tr>
+  ${A.byDept.map(o=>show(o)?`<tr><td>${esc(o.d)} (${o.n})</td><td class="n"><b>${r0(o.total)}</b></td>${CFG.FN.map((f,i)=>`<td class="n" style="background:${devCol(o.fac[i]-A.fac[i])}">${r0(o.fac[i])}</td>`).join('')}</tr>`:`<tr><td>${esc(o.d)} (${o.n})</td><td colspan="9" class="muted">비공개</td></tr>`).join('')}
+  <tr><td><b>전체 (${N})</b></td><td class="n"><b>${r0(A.total)}</b></td>${CFG.FN.map((f,i)=>`<td class="n"><b>${r0(A.fac[i])}</b></td>`).join('')}</tr></table></div></div>
+
+ <div class="panel"><p class="label">10 · 합의도</p><h2>${split.length?'평균은 같아도, 누군가에게는 다르게 느껴진다':'의견이 크게 갈리는 문항은 없다'}</h2>${split.map(x=>`<p class="small"><b>${esc(x.t)}</b><br><span class="muted">평균 ${r0(x.v)} · 편차 ${r0(x.s)}</span></p>`).join('')}<p class="small muted">편차 25 이상을 ‘의견이 갈림’으로 봅니다.</p></div>
+
+ <div class="panel"><p class="label">11 · 구성원의 목소리</p><div class="grid2"><div><h3>지키고 싶은 것</h3>${A.voices.keep.slice(0,6).map(v=>`<p class="voice small">${esc(v)}</p>`).join('')||'<p class="small muted">응답 없음</p>'}</div><div><h3>바꾸고 싶은 것</h3>${A.voices.change.slice(0,6).map(v=>`<p class="voice small">${esc(v)}</p>`).join('')||'<p class="small muted">응답 없음</p>'}</div></div></div>
+
+ <div class="panel"><p class="label">12 · 핵심 과제</p><h2>진단이 가리키는 곳은 세 군데다</h2>
+  ${focus.map((f,i)=>`<div class="act" style="border-top-color:${f.c}"><h3>${'①②③'[i]} ${esc(f.title)}</h3>${f.lines.map(l=>`<p class="small">${esc(l)}</p>`).join('')}</div>`).join('')}</div>
+
+ <div class="panel"><p class="label">13 · 대화를 위한 질문</p><h2>답을 정하기 전에, 먼저 함께 묻는다</h2>
+  <div class="scroll"><table><tr><th>핵심 과제</th><th>대화를 위한 질문</th><th>딜레마 명제</th></tr>${focus.map((f,i)=>`<tr><td><b>${'①②③'[i]} ${esc(f.tag)}</b></td><td>${esc(f.q)}</td><td class="serif" style="color:var(--red);font-weight:600">“${esc(f.d)}”</td></tr>`).join('')}</table></div>
+  <p class="small muted" style="margin-top:10px">질문은 팀 대화에서, 딜레마 명제는 워크숍에서 찬반으로 서 보며 씁니다. 실행 계획은 이 대화를 거쳐 각 팀이 직접 만듭니다.</p></div>
+
+ <div class="panel"><p class="label">14 · 향후 추진 방향</p><h2>진단은 여기까지, 이제 함께 이야기할 차례다</h2>
+  <div class="three" style="border-top:none;margin-top:6px"><div><p class="small muted">2주 안에</p><h3>① 결과 공유회</h3><p class="small">경영진 → 리더 → 전체 순서로, 핵심 과제를 함께 읽습니다.</p></div><div><p class="small muted">1~2개월</p><h3>② 팀별 대화 워크숍</h3><p class="small">질문과 딜레마 명제로 대화하고, 팀이 직접 작은 실행 하나를 정합니다.</p></div><div><p class="small muted">6개월 뒤</p><h3>③ 재진단</h3><p class="small">같은 문항으로 다시 재고, 대화가 무엇을 바꿨는지 돌아봅니다.</p></div></div>
+  <p class="small" style="margin-top:12px">폴앤마크는 결과 공유회 진행, 대화 워크숍 설계와 퍼실리테이션, 재진단 리포트를 함께합니다.</p></div>
+
+ <div class="panel" id="aiPanel"><p class="label">Claude의 해석</p><p class="small muted">위 결과를 Claude가 읽고 해석과 워크숍 질문을 써 줍니다.</p><div class="row"><button id="aiBtn">해석 받기</button></div><div class="ai small" id="aiOut" style="margin-top:12px"></div></div>
+ <div class="row"><button class="primary" id="dlRep">요약판 내려받기 (경영진용, 16쪽)</button><button class="primary" id="dlFull">전체판 내려받기 (HR용, 약 55쪽)</button><button id="csv">원자료 내려받기 (CSV)</button><button id="home">처음으로</button></div><p class="small muted" style="margin-top:8px">내려받은 파일을 브라우저로 열고 인쇄에서 ‘PDF로 저장’을 고르면, A4 가로 리포트가 됩니다.</p></div>`));
+ el.querySelector('#home').onclick=()=>{if(st.src==='real'){openAdmin()}else{st.screen='intro';render()}};
+ const cb=el.querySelector('#csv'); if(!caps.downloads)cb.remove(); else cb.onclick=()=>downloadCSV(A);
+ const dr=el.querySelector('#dlRep'),df=el.querySelector('#dlFull'); if(!caps.downloads){dr.remove();df.remove()} else {dr.onclick=()=>downloadReport(A,false);df.onclick=()=>downloadReport(A,true)}
+ if(!caps.sample)el.querySelector('#aiPanel').remove(); else el.querySelector('#aiBtn').onclick=()=>askClaude(A,el,focus);
+ return el;
+}
+async function loadReport(code){
+ st.screen='report';st.src='real';st.R=null;st.repOrg=(st.orgs||[]).find(o=>o.code===code)||{code,name:code};
+ const app=document.getElementById('app');app.innerHTML='<div class="panel"><p>응답을 불러오는 중입니다…</p></div>';
+ let done=false;const t=setTimeout(()=>{if(!done)app.innerHTML='<div class="panel"><h2>응답을 불러오지 못했습니다</h2><p class="muted">연결이 느리거나 권한이 없습니다. 잠시 뒤 다시 열어 주세요.</p></div>'},10000);
+ try{const snap=await caps.db.collection('poca_resp').limit(1000).get();done=true;clearTimeout(t);const all=snap.docs.map(d=>d.data()).filter(Boolean);const pick=c=>all.filter(x=>x[c]).map(x=>x[c]);
+  if(st.repOrg.type==='pulse'){st.P=pulseAgg(pick(code),st.repOrg.base?pick(st.repOrg.base):[],st.repOrg);st.screen='pulse';render()}else{const R=aggregate(pick(code));if(st.repOrg.base){const pr=pick(st.repOrg.base);if(pr.length>=MIN_N)R.prev=aggregate(pr)}st.R=R;render()}}
+ catch(e){done=true;clearTimeout(t);app.innerHTML='<div class="panel"><h2>응답을 불러오지 못했습니다</h2><p class="muted">이 계정에는 조직 리포트를 볼 권한이 없습니다.</p></div>'}
+}
+function pulseAgg(recs,baseRecs,org){
+ const codes=pulseCodes(org);
+ const item=(rs,c)=>{const v=rs.map(r=>r.r&&r.r[c]).filter(x=>typeof x==='number');if(!v.length)return {n:0};if(c==='R01'){const e=Math.round((v.filter(x=>x>=9).length-v.filter(x=>x<=6).length)/v.length*100);return {n:v.length,v:avg(v),enps:e}}const pv=v.map(pct).map(x=>ITEMC[c]&&ITEMC[c].r?110-x:x);return {n:v.length,v:avg(pv),yes:v.filter(x=>x>=7).length/v.length}};
+ return {n:recs.length,bn:baseRecs.length,org,codes,now:Object.fromEntries(codes.map(c=>[c,item(recs,c)])),base:Object.fromEntries(codes.map(c=>[c,item(baseRecs,c)])),voices:recs.map(r=>r.o2).filter(Boolean)};
+}
+function pulseView(){
+ const P=st.P; const el=$(`<div></div>`);
+ const txt=c=>c.startsWith('M')?CFG.MOT.find(m=>m.c===c).t:c.startsWith('R')?CFG.RES.find(r=>r.c===c).t:ITEMC[c].t;
+ const lab=c=>c.startsWith('M')?'일하는 이유':c.startsWith('R')?'추천·잔류 의향':(PULSE_BASE.includes(c)?CFG.FN[IDXN[ITEMC[c].i].f]:'맞춤 · '+IDXN[ITEMC[c].i].name);
+ const d=(a,b)=>isNaN(a)||isNaN(b)?null:a-b;
+ const fmtD=(x,unit='')=>x==null?'—':`<b style="color:${x>=5?'var(--navy)':x<=-5?'var(--red)':'var(--muted)'}">${x>0?'+':''}${Math.round(x)}${unit}</b>`;
+ const big=(c)=>{const a=P.now[c],b=P.base[c];return c==='R01'?{v:a.enps,b:b.enps,u:''}:{v:a.yes*100,b:b.yes*100,u:'%'}};
+ const k1=big('M01'),k2=big('R01'),k3=big('R02');
+ const rows=P.codes.filter(c=>c!=='R01').map(c=>{const a=P.now[c],b=P.base[c];return `<tr><td class="small muted">${esc(lab(c))}</td><td>${esc(txt(c))}</td><td class="n">${b.n?Math.round(b.v):'—'}</td><td class="n"><b>${a.n?Math.round(a.v):'—'}</b></td><td class="n">${fmtD(d(a.v,b.v))}</td></tr>`}).join('');
+ el.append($(`<div>${st.src==='sample'?'<div class="notice">가상의 응답으로 만든 펄스 리포트 예시입니다.</div>':''}
+ <div class="panel" style="padding:28px"><p class="label">${esc(P.org.name)} · 펄스 리포트 · 응답 ${P.n}명 (지난번 ${P.bn}명)</p><h1>지난 진단 이후, 무엇이 움직였나</h1>
+  <div class="kpis"><div class="kpi"><div class="n">${isNaN(k1.v)?'—':Math.round(k1.v)+'%'}</div><div class="l">일이 재미있어서 일한다</div><div class="s">지난번 ${isNaN(k1.b)?'—':Math.round(k1.b)+'%'} · ${fmtD(d(k1.v,k1.b),'%p')}</div></div><div class="kpi"><div class="n">${isNaN(k2.v)?'—':(k2.v>0?'+':'')+k2.v}</div><div class="l">직원 추천 지수</div><div class="s">지난번 ${isNaN(k2.b)?'—':(k2.b>0?'+':'')+k2.b} · ${fmtD(d(k2.v,k2.b))}</div></div><div class="kpi"><div class="n">${isNaN(k3.v)?'—':Math.round(k3.v)+'%'}</div><div class="l">1년 뒤에도 있을 것 같다</div><div class="s">지난번 ${isNaN(k3.b)?'—':Math.round(k3.b)+'%'} · ${fmtD(d(k3.v,k3.b),'%p')}</div></div></div></div>
+ <div class="panel"><p class="label">문항별 변화</p><h2>±5점 이상 움직인 문항을 먼저 보세요</h2><div class="scroll"><table><tr><th>영역</th><th>문항</th><th class="n">지난번</th><th class="n">이번</th><th class="n">변화</th></tr>${rows}</table></div><p class="small muted" style="margin-top:8px">점수는 0~100. 파랑은 5점 이상 오름, 빨강은 5점 이상 내림.</p></div>
+ <div class="panel"><p class="label">구성원의 목소리</p><h2>지난 진단 이후 가장 달라진 것</h2>${P.voices.slice(0,8).map(v=>`<p class="voice small">${esc(v)}</p>`).join('')||'<p class="small muted">응답 없음</p>'}</div>
+ <div class="panel"><p class="label">다음 단계</p><p class="small">움직인 문항은 결과 공유회에서 함께 축하하고, 움직이지 않은 맞춤 문항은 WFG 팀 대화의 명제로 다시 꺼냅니다. 다음 정식 진단에서 전체를 다시 봅니다.</p></div>
+ <div class="row"><button id="home">처음으로</button></div></div>`));
+ el.querySelector('#home').onclick=()=>{if(st.src==='real')openAdmin();else{st.screen='intro';render()}};
+ return el;
+}
+function samplePulse(){
+ const base=sampleData();const org={name:'예시 조직',type:'pulse',extra:[6,18]};
+ let seed=21;const rnd=()=>{seed=(seed*16807)%2147483647;return(seed-1)/2147483646};
+ const lift={C17:0.8,C49:0,C48:0.5,C28:0.4,M01:0.3,R02:0.3,C15:0.6};
+ const now=base.map(r=>{const o={...r,r:{...r.r}};pulseCodes(org).forEach(c=>{if(typeof o.r[c]==='number'){if(c==='R01')o.r[c]=Math.max(0,Math.min(10,o.r[c]+(rnd()<0.5?1:0)));else o.r[c]=Math.max(1,Math.min(10,Math.round(o.r[c]+(lift[c]||0)*1.5+(rnd()-0.5)*0.8)))}});o.o2=['결정 이유를 회의에서 듣게 됐다','퇴근 후 연락이 조금 줄었다','팀장이 의견을 먼저 묻는다',''][Math.floor(rnd()*4)];return o});
+ return pulseAgg(now,base,org);
+}
+async function askClaude(A,el,focus){
+ const out=el.querySelector('#aiOut'),btn=el.querySelector('#aiBtn');btn.disabled=true;out.textContent='생각하는 중입니다…';
+ const data={응답자수:A.n,종합:r1(A.total),요인:Object.fromEntries(CFG.FN.map((f,i)=>[f,r0(A.fac[i])])),지표:Object.fromEntries(CFG.IDX.map(x=>[x.name,r0(A.idx[x.n])])),
+  일하는이유_그렇다인원:Object.fromEntries(CFG.REASONS.map((n,k)=>[n,A.yes[k]])),좋아서점수:r0(A.like),남의눈점수:r0(A.eye),먹고살려고점수:r0(A.money),동기수준:r1(A.level),부류:{좋아서:A.groups[0],남의눈:A.groups[3],먹고살려고:A.groups[1],흔들림:A.groups[2]},직원추천지수:A.enps,일년잔류그렇다비율:A.stay,부류별결과:GORD.map(i=>[GROUPS[i],i]).map(([g,i])=>({부류:g,n:A.res[i].n,추천지수:A.res[i].enps,잔류:A.res[i].stay})),
+  문화특성:Object.fromEntries([1,2,3,4].map(q=>[QN[q],{지금:r0(A.cur[q]),바라는:r0(A.des[q])}])),동기요인:r0(A.hm),필수조건:r0(A.hh),
+  시급응답비율:Object.fromEntries([...A.pri].sort((a,b)=>b.rate-a.rate).slice(0,8).map(p=>[IDXN[p.n].name,Math.round(p.rate*100)+'%'])),
+  부서별:A.byDept.filter(o=>o.n>=MIN_N).map(o=>({부서:o.d,n:o.n,종합:r0(o.total),좋아서:o.groups[0],남의눈:o.groups[3],먹고살려고:o.groups[1],흔들림:o.groups[2]})),
+  핵심과제:focus.map(f=>f.title),목소리_지킬것:A.voices.keep.slice(0,15),목소리_바꿀것:A.voices.change.slice(0,15)};
+ const prompt=`당신은 폴앤마크의 조직문화 컨설턴트입니다. 아래는 POCA 조직문화 진단 결과입니다(점수는 0~100).
+구성: 왜 일하는가(동기 수준 1~7: 7 가치·신념, 6 즐거움, 5 목표 = 좋아서 / 4 부끄러움, 3 인정 = 남의 눈 / 2 먹고살려고 / 1 이유 없음), 조직문화 8요인 21지표, 문화 특성(4MAT·OCAI: 1 관계형 Why, 2 질서형 What, 3 성과형 How, 4 혁신형 If), 필수 조건(업무 체계·업무 환경: 부족하면 불만, 있다고 동기가 생기지는 않음).
+한국어로 짧고 구체적으로, 머리말 없이 쓰세요.
+1) 이 조직을 세 문장으로 (숫자 근거)
+2) 눈여겨볼 연결 두 가지 (일하는 이유와 문화, 부서 차이, 목소리와 점수)
+3) 워크숍에서 던질 질문 세 개
+4) 결과 공유회를 여는 첫 질문 하나와, 그 질문을 고른 이유 한 줄. 해결책을 처방하지 말고, 실행 계획은 팀이 직접 만들도록 대화를 여는 데 집중하세요.
+숫자에 없는 내용은 가설이라고 밝히고, 개인을 짐작할 수 있는 표현은 쓰지 마세요.
+데이터: ${JSON.stringify(data)}`;
+ try{const res=await caps.sample(prompt,{onText:({text})=>{out.textContent=text},cache:false});out.textContent=res.text}
+ catch(e){out.textContent=e&&e.code==='rate_limited'?'요청이 많습니다. 잠시 뒤 다시 눌러 주세요.':e&&e.code==='not_granted'?'Claude 해석을 쓰려면 권한 허용이 필요합니다.':'해석을 받지 못했습니다. 잠시 뒤 다시 시도해 주세요.'}
+ btn.disabled=false;btn.textContent='다시 받기';
+}
+async function downloadCSV(A){
+ const codes=[...CFG.MOT.map(m=>m.c),'R01','R02',...CFG.ITEMS.map(x=>x.c),...CFG.K.flatMap(k=>[k.c+'_n',k.c+'_d'])];
+ const head=['at','dept','role','tenure',...codes,'urgent','keep','change','seconds','pilot_feedback'];
+ const q=v=>`"${String(v??'').replace(/"/g,'""')}"`;
+ const rows=A.recs.map(x=>[new Date(x.at||0).toISOString(),x.dept,x.role,x.ten,...codes.map(c=>x.r?.[c]??''),(x.u||[]).map(n=>IDXN[n]?.name).join(' | '),x.o1,x.o2,x.dur??'',x.o3??''].map(q).join(','));
+ try{await caps.downloads.save({filename:`poca_${st.src}.csv`,data:'\ufeff'+head.map(q).join(',')+'\n'+rows.join('\n')})}catch(e){}
+}
+
+/* ---------- sample data ---------- */
+function sampleData(sd,off){
+ let seed=sd||11;off=off||0;const rnd=()=>{seed=(seed*16807)%2147483647;return(seed-1)/2147483646};
+ const gs=()=>{let u=0;for(let i=0;i<6;i++)u+=rnd();return(u-3)/1.2};
+ const clip=x=>Math.max(1,Math.min(10,Math.round(1+(x-1)*1.5)));
+ const plan=[['영업·마케팅',8,0.4,'push'],['운영·생산',8,0.2,'fun'],['기획·경영지원',8,-0.9,'lost'],['연구·개발',5,0.5,'fun'],['교육·컨설팅',1,0.2,'fun']];
+ const shift={18:-1.2,19:-0.9,12:-0.8,21:-0.5,20:-0.5,17:-0.6,10:0.3,16:0.5,8:0.5,4:0.4};
+ const keep=['서로 돕는 분위기','솔직하게 말할 수 있는 문화','자율적으로 일하는 방식','리더가 먼저 들어주는 태도'];
+ const chg=['결정 이유를 설명해 주면 좋겠다','보고 단계를 줄였으면','업무 분장이 더 명확했으면','퇴근 후 연락이 줄었으면','보상 기준을 알고 싶다'];
+ const out=[];
+ for(const [d,k,b,mode] of plan){for(let i=0;i<k;i++){const p=gs()*0.6+b+off;const r={};
+  const md=rnd()<0.6?mode:['fun','push','fun','lost'][Math.floor(rnd()*4)];const mu={fun:[5.6,5.0,4.8,4.4,5.2,3.8,2.2],push:[4.6,4.3,4.4,5.6,5.6,4.8,2.4],lost:[3.9,3.6,3.5,4.6,5.6,4.0,4.6]}[md];
+  CFG.MOT.forEach(m=>r[m.c]=clip(mu[m.k]+gs()*0.9));
+  r.R01=Math.max(0,Math.min(10,Math.round({fun:7.8,push:6.6,lost:5.3}[md]+p*1.2+gs()*1.8)));r.R02=clip({fun:5.6,push:5.0,lost:4.2}[md]+p*0.6+gs()*1.1);
+  CFG.IDX.forEach(x=>x.codes.forEach(c=>{let m=5.0+p+(shift[x.n]||0);if(ITEMC[c].r)m=8-m;r[c]=clip(m+gs()*1.0)}));
+  [[1,4.8,5.5],[2,5.1,5.0],[3,4.5,4.9],[4,3.7,5.3]].forEach(([q,c,de])=>CFG.K.filter(x=>x.q===q).forEach(x=>{r[x.c+'_n']=clip(c+p*0.5+gs()*0.8);r[x.c+'_d']=clip(de+gs()*0.7)}));
+  const w=CFG.IDX.map(x=>1+Math.max(0,-(shift[x.n]||0))*2.5+(x.n===6?2.5:0)+(x.n===5?1.2:0)); const u=[];
+  while(u.length<3){let t=rnd()*w.reduce((a,x,j)=>a+(u.includes(j+1)?0:x),0);for(let j=0;j<21;j++){if(u.includes(j+1))continue;t-=w[j];if(t<=0){u.push(j+1);break}}}
+  out.push({v:2,at:Date.now(),dept:d,role:ROLES[Math.floor(rnd()*3)],ten:TENURE[Math.floor(rnd()*5)],r,u,o1:rnd()<0.6?keep[Math.floor(rnd()*keep.length)]:'',o2:rnd()<0.7?chg[Math.floor(rnd()*chg.length)]:''})}}
+ return out;
+}
+
+/* ---------- boot ---------- */
+render();
+
+const SB_URL='https://ummnwptnjgxhcwmfunqu.supabase.co';
+const SB_KEY='sb_publishable_EhRvKl9x1_6leAHFxDJOlA_ocJ17o75';
+let sb=null;
+function deviceKey(code){const k='poca_key_'+code;try{let v=localStorage.getItem(k);if(!v){v=crypto.randomUUID();localStorage.setItem(k,v)}return v}catch(e){return crypto.randomUUID()}}
+function makeDb(){return {
+ doc(path){const [col,id]=path.split('/');return {
+  async get(){if(col!=='poca_orgs')throw new Error('unsupported');
+   if(caps.canEdit){const {data,error}=await sb.from('poca_orgs').select('info').eq('code',id).maybeSingle();if(error)throw error;return {data:()=>data?data.info:null}}
+   const {data,error}=await sb.rpc('poca_get_org',{p_code:id});if(error)throw error;return {data:()=>data||null}},
+  async set(obj){const {error}=await sb.from('poca_orgs').upsert({code:id,info:obj});if(error)throw error},
+  async update(patch){const {data,error}=await sb.from('poca_orgs').select('info').eq('code',id).single();if(error)throw error;const {error:e2}=await sb.from('poca_orgs').update({info:{...data.info,...patch}}).eq('code',id);if(e2)throw e2}
+ }},
+ collection(col){const q={limit(){return q},async get(){
+  if(col==='poca_orgs'){const {data,error}=await sb.from('poca_orgs').select('code,info').limit(1000);if(error)throw error;return {docs:data.map(r=>({id:r.code,data:()=>r.info}))}}
+  if(col==='poca_resp'){let all=[],from=0;for(;;){const {data,error}=await sb.from('poca_responses').select('org_code,data').range(from,from+999);if(error)throw error;all=all.concat(data);if(data.length<1000)break;from+=1000}return {docs:all.map(r=>({data:()=>({[r.org_code]:r.data})}))}}
+  throw new Error('unsupported')}};return q}
+}}
+caps.downloads={save:async({filename,data})=>{const b=new Blob([data],{type:filename.endsWith('.csv')?'text/csv;charset=utf-8':'text/html;charset=utf-8'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=filename;document.body.append(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},1500)}};
+async function checkAdmin(){try{const {data:{session}}=await sb.auth.getSession();if(!session){caps.canEdit=false;return false}const {data,error}=await sb.rpc('poca_is_admin');caps.canEdit=!error&&data===true;return caps.canEdit}catch(e){caps.canEdit=false;return false}}
+function loginView(){
+ const el=$(`<div class="panel" style="max-width:460px;margin:40px auto"><p class="label">폴앤마크 관리자</p><h2>로그인</h2>
+  <label class="small" for="em">이메일</label><input type="email" id="em" autocomplete="username" style="font:inherit;width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:4px;background:var(--surface);color:var(--ink)">
+  <div style="height:10px"></div><label class="small" for="pw">비밀번호</label><input type="password" id="pw" autocomplete="current-password" style="font:inherit;width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:4px;background:var(--surface);color:var(--ink)">
+  <p class="err" id="lerr"></p><div class="row"><button class="primary" id="li">로그인</button><button id="back">처음으로</button></div></div>`);
+ const go=async()=>{const em=el.querySelector('#em').value.trim(),pw=el.querySelector('#pw').value;const er=el.querySelector('#lerr');if(!em||!pw){er.textContent='이메일과 비밀번호를 적어 주세요.';return}
+  er.textContent='확인하는 중…';const {error}=await sb.auth.signInWithPassword({email:em,password:pw});if(error){er.textContent='로그인하지 못했습니다. 이메일과 비밀번호를 확인해 주세요.';return}
+  if(await checkAdmin()){openAdmin()}else{await sb.auth.signOut();er.textContent='관리자로 등록된 이메일이 아닙니다.'}};
+ el.querySelector('#li').onclick=go;el.querySelector('#pw').onkeydown=e=>{if(e.key==='Enter')go()};
+ el.querySelector('#back').onclick=()=>{st.screen='intro';render()};
+ return el;
+}
+function privacyView(){
+ const el=$(`<div class="panel" style="max-width:760px;margin:24px auto"><p class="label">개인정보 처리 안내</p><h2>POCA 조직문화 진단은 이렇게 응답을 다룹니다</h2>
+  <p><b>받는 것</b> · 부서 · 직급 · 근속 구간, 문항 응답, 열린 질문의 답, 응답에 걸린 시간. 이름 · 이메일 · 사번 · 연락처는 받지 않습니다.</p>
+  <p><b>쓰는 곳</b> · 회사 단위의 조직문화 진단 리포트를 만드는 데만 씁니다. 개인별 응답은 회사에 넘기지 않습니다.</p>
+  <p><b>보이는 방식</b> · 결과는 묶어서만 보입니다. 응답이 ${MIN_N}명 미만인 부서 · 직급 · 근속 그룹은 리포트에 나오지 않습니다. 열린 질문의 답은 누가 썼는지 알 수 없게 다룹니다.</p>
+  <p><b>다시 고치기</b> · 같은 기기에서는 진단이 마감되기 전까지 자기 응답을 다시 낼 수 있습니다. 이를 위해 기기에 무작위 번호를 남기며, 이 번호는 사람과 연결되지 않습니다.</p>
+  <p><b>보관</b> · 응답은 폴앤마크가 관리하는 데이터베이스(Supabase)에 저장되며, 진단을 의뢰한 회사와 정한 기간이 지나면 지웁니다.</p>
+  <p><b>문의</b> · 폴앤마크 (Paul &amp; Mark Co., Ltd.)</p>
+  <div class="row"><button id="back">처음으로</button></div></div>`);
+ el.querySelector('#back').onclick=()=>{st.screen='intro';render()};return el;
+}
+(async()=>{
+ try{if(!window.supabase)throw new Error('no sdk');sb=window.supabase.createClient(SB_URL,SB_KEY,{auth:{persistSession:true,autoRefreshToken:true}});caps.db=makeDb();caps.user={};}catch(e){sb=null;caps.db=null}
+ if(sb)await checkAdmin();
+ const h=(location.hash||'').replace('#','').trim().toUpperCase();
+ if(h&&/^[A-Z0-9]{4,8}$/.test(h))await loadOrg(h,false);
+ if(st.screen==='intro')render();
+ window.addEventListener('hashchange',()=>{const c=(location.hash||'').replace('#','').trim().toUpperCase();if(c&&/^[A-Z0-9]{4,8}$/.test(c)){st.screen='intro';loadOrg(c,false)}});
+})();
+</script>
+</body>
+</html>

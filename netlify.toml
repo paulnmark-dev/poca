@@ -1,0 +1,4 @@
+# POCA 진단 사이트 (WFG는 Netlify 화면에서 Publish directory를 wfg-site로 지정)
+[build]
+  publish = "site"
+  command = ""

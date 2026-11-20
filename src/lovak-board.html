@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Lovak 워크숍 보드</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&family=Noto+Serif+KR:wght@500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#F5F6F4;--surface:#FFFFFF;--surface2:#E9ECE8;--ink:#0F1B2D;--muted:#5E6A78;--line:#DCDFDB;--navy:#1F3F73;--amber:#C07A1E;--red:#A8141C;--accent-ink:#FFFFFF;--c1:#C07A1E;--c2:#D9A65B;--c3:#7C93B8;--c4:#1F3F73;color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0E141C;--surface:#161E29;--surface2:#212B38;--ink:#E9EDF2;--muted:#9AA6B4;--line:#2D3846;--navy:#8FA9D6;--amber:#E0A04A;--red:#E06A6A;--accent-ink:#0E141C;--c1:#E0A04A;--c2:#B88A45;--c3:#5E7AA6;--c4:#8FA9D6;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0E141C;--surface:#161E29;--surface2:#212B38;--ink:#E9EDF2;--muted:#9AA6B4;--line:#2D3846;--navy:#8FA9D6;--amber:#E0A04A;--red:#E06A6A;--accent-ink:#0E141C;--c1:#E0A04A;--c2:#B88A45;--c3:#5E7AA6;--c4:#8FA9D6;color-scheme:dark}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'Noto Sans KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif;font-size:16px;line-height:1.6}
+.wrap{max-width:900px;margin:0 auto;padding:28px 20px 80px}
+h1{font-family:'Noto Serif KR','AppleMyungjo',serif;font-size:30px;line-height:1.35;margin:0 0 12px;font-weight:600}
+h2{font-family:'Noto Serif KR','AppleMyungjo',serif;font-size:22px;line-height:1.4;margin:0 0 8px;font-weight:600}
+h3{font-size:16px;margin:0 0 6px;font-weight:700}
+p{margin:0 0 10px}
+.muted{color:var(--muted)} .small{font-size:14px}
+.label{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--muted);letter-spacing:.5px;margin:0 0 10px}
+.label::before{content:"";width:26px;height:2px;background:var(--red)}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:4px;padding:22px;margin:0 0 16px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+button{font:inherit;cursor:pointer;border-radius:4px;border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:10px 16px}
+button.primary{background:var(--navy);color:var(--accent-ink);border-color:var(--navy);font-weight:600}
+button:disabled{opacity:.45;cursor:not-allowed}
+button[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+button:focus-visible,input:focus-visible,textarea:focus-visible,.opt:focus-visible{outline:3px solid var(--navy);outline-offset:2px}
+input[type=text],textarea{font:inherit;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:4px;padding:10px 12px;width:100%}
+textarea{min-height:64px;resize:vertical}
+.code{font-family:'Noto Serif KR',serif;font-size:44px;font-weight:600;letter-spacing:8px}
+.capbtns{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+.item{padding:14px 0;border-top:1px solid var(--line)} .item:first-of-type{border-top:none}
+.scale{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:8px}
+.opt{border:1px solid var(--line);border-radius:4px;text-align:center;padding:10px 2px;cursor:pointer;background:var(--surface);user-select:none;font-size:14px}
+.opt[aria-checked="true"]{background:var(--navy);color:var(--accent-ink);border-color:var(--navy)}
+.dots{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:8px 0 4px}
+.dots>div{background:var(--surface2);border-radius:3px;padding:6px 4px;text-align:center;min-height:52px}
+.dots .lab{font-size:11.5px;color:var(--muted)}
+.dots .n{font-family:'Noto Serif KR',serif;font-size:22px;font-weight:600}
+.tag{display:inline-block;font-size:12px;font-weight:700;padding:1px 8px;border-radius:2px;margin-left:6px}
+.t-hi{background:color-mix(in srgb,var(--red) 14%,transparent);color:var(--red)}
+.t-lo{background:var(--surface2);color:var(--muted)}
+.group{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-top:6px}
+.group button{padding:6px 12px;font-size:13.5px}
+.imp{font-size:13.5px;display:flex;align-items:center;gap:6px;margin-left:auto}
+.imp input{width:17px;height:17px;accent-color:var(--red)}
+.notice{background:var(--surface2);padding:12px 14px;font-size:14px;margin:0 0 14px}
+.err{color:var(--red);font-size:14px;margin:8px 0 0}
+.cmp{display:grid;grid-template-columns:120px 1fr 52px;gap:10px;align-items:center;margin:6px 0;font-size:14px}
+.cmp .t{height:10px;background:var(--surface2);position:relative}
+.cmp .t>i{position:absolute;top:0;bottom:0;left:0}
+.three{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+@media (max-width:640px){.capbtns{grid-template-columns:repeat(3,1fr)}.three{grid-template-columns:1fr}h1{font-size:25px}.code{font-size:34px}}
+</style>
+</head>
+<body>
+<div class="wrap" id="app" aria-live="polite"></div>
+<script>
+const CAPS=[
+ {k:'structure',n:'구조',e:'Structure',d:'공동의 과제와 책임, 안내와 역량 계획',items:['우리 그룹의 공동 과제는 모두에게 분명하다.','모두가 공동 과제에서 서로에 대한 책임을 진다.','새로 온 사람을 위한 충실하고 최신의 안내(무엇을, 어떻게, 무엇을 기대하는지)가 있다.','중요한 정보는 따로 구분되고, 모두가 그것을 이해할 책임을 지도록 한다.','앞으로 필요한 역량을 갖추기 위한 계획이 있다.']},
+ {k:'customer',n:'고객',e:'Customer',d:'고객 가치에 대한 각자의 기여',items:['모든 직원은 자신이 고객 가치에 어떻게 기여하는지 이해한다.','좋은 서비스가 무엇인지에 대해 같은 그림을 갖고 있다.','모두가 ‘고객을 향한 행동’이 무엇인지 안다.','고객은 자신이 우리에게 중요하다는 것을 분명히 느낀다.','모든 직원이 “우리는 무슨 일을 하는가?”라는 질문에 답할 수 있다.']},
+ {k:'relation',n:'관계',e:'Relation',d:'리더십, 소통, 피드백, 서로 돕기',items:['우리의 리더십은 예측 가능하고, 분명하며, 존중이 있다.','소통에서 오해가 생기지 않도록 애쓴다.','모두가 자신의 과제를 이해하고, 수행에 대해 꾸준히 피드백을 받는다.','우리 조직은 누구나 자기 생각을 말할 수 있게 한다.','여기서는 모두가 끝날 때까지 서로 돕는다.']},
+ {k:'symbol',n:'상징',e:'Symbol',d:'가치와 브랜드가 일하는 방식에 살아 있는가',items:['고객이 우리 제품과 서비스의 무엇을 좋아하는지 (설문 등으로) 확인한다.','회사의 가치가 분명하고, 다듬어져 있으며, 함께 공유된다.','우리의 공동 가치가 일하는 방식에 분명히 드러난다.','우리 브랜드가 왜 중요한지 구성원 모두와 정기적으로 이야기한다.','모두가 자신이 언제나 우리 브랜드를 대표한다는 것을 안다.']},
+ {k:'development',n:'개발',e:'Development',d:'바깥 정보, 발전 계획, 성과 면담',items:['회사에서 바깥 세상의 정보를 누가 모으는지 알고 있다.','우리 사업을 발전시키는 분명한 활동 계획이 있다.','같은 업계의 다른 곳과 비교해 우리가 발전을 이끌고 있다.','모든 직원이 우리의 발전에 대한 자신의 책임을 이해한다.','직원과의 성과 면담이 정기적으로 이루어진다.']}];
+const LV=['전혀 아니다','조금 그렇다','자주 그렇다','항상 그렇다'];
+const LC=['var(--c1)','var(--c2)','var(--c3)','var(--c4)'];
+const CAP=Object.fromEntries(CAPS.map(c=>[c.k,c]));
+let st={screen:'intro',code:'',sess:null,mine:{},err:'',saved:null,demo:false,scores:[],timer:null};
+let caps={db:null,user:null,canEdit:false};
+const $=(h)=>{const d=document.createElement('div');d.innerHTML=h.trim();return d.firstElementChild};
+const esc=(s)=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const avg=a=>a.length?a.reduce((x,y)=>x+y,0)/a.length:NaN;
+function render(){const app=document.getElementById('app');app.innerHTML='';app.append({intro:introV,join:joinV,answer:answerV,done:doneV,create:createV,board:boardV}[st.screen]());window.scrollTo({top:0})}
+function stopTimer(){if(st.timer){clearInterval(st.timer);st.timer=null}}
+
+function introV(){
+ stopTimer();
+ const el=$(`<div><div class="panel" style="padding:30px"><p class="label">PAUL &amp; MARK · LOVAK 워크숍</p>
+ <h1>내가 보는 우리, 우리가 합의한 우리</h1>
+ <p class="muted">조직을 움직이는 다섯 자본(구조 · 고객 · 관계 · 상징 · 개발) 가운데 오늘 다룰 주제를 골라, 먼저 혼자 점수를 적고, 그다음 함께 ‘우리 점수’를 정합니다. 점수가 갈리는 곳에서 대화가 시작됩니다.</p>
+ <div class="capbtns" style="margin-top:12px">${CAPS.map(c=>`<div class="small" style="border-top:2px solid var(--navy);padding-top:6px"><b>${c.n}</b><br><span class="muted">${c.d}</span></div>`).join('')}</div></div>
+ <div class="row"><button class="primary" id="join">참여하기 (코드 입력)</button><button id="demo">진행 보드 예시 보기</button><span id="adm"></span></div></div>`);
+ el.querySelector('#join').onclick=()=>{st.screen='join';st.err='';render()};
+ el.querySelector('#demo').onclick=()=>{st.demo=true;st.sess=demoSession();st.code=st.sess.code;st.scores=demoScores();st.screen='board';render()};
+ if(caps.canEdit){const b=$(`<button>새 워크숍 만들기 (진행자)</button>`);b.onclick=()=>{st.screen='create';st.err='';render()};el.querySelector('#adm').append(b)}
+ return el;
+}
+function joinV(){
+ const el=$(`<div><div class="panel"><p class="label">참여하기</p><h2>진행자가 알려준 코드를 입력하세요</h2>
+ <input type="text" id="c" maxlength="6" value="${esc(st.code)}" style="font-size:24px;letter-spacing:6px;text-transform:uppercase;max-width:220px" aria-label="워크숍 코드">
+ <p class="err" id="err">${esc(st.err)}</p></div><div class="row"><button id="back">처음으로</button><button class="primary" id="go">들어가기</button></div></div>`);
+ el.querySelector('#back').onclick=()=>{st.screen='intro';render()};
+ el.querySelector('#go').onclick=async()=>{
+  const code=el.querySelector('#c').value.trim().toUpperCase(); if(!code){el.querySelector('#err').textContent='코드를 입력하세요.';return}
+  if(!caps.db){el.querySelector('#err').textContent='이 화면에서는 워크숍에 연결할 수 없습니다.';return}
+  el.querySelector('#err').textContent='찾는 중…';
+  try{const sn=await caps.db.doc('lovak_sessions/'+code).get();const d=sn&&sn.data?sn.data():null;if(!d){el.querySelector('#err').textContent='이 코드의 워크숍을 찾지 못했습니다.';return}
+   st.code=code;st.sess={code,...d};st.mine={};st.screen='answer';st.demo=false;render()}
+  catch(e){el.querySelector('#err').textContent='워크숍에 연결하지 못했습니다. 이 페이지에 참여 권한이 있는지 확인해 주세요.'}
+ };
+ return el;
+}
+function answerV(){
+ const S=st.sess;
+ const el=$(`<div><div class="panel"><p class="label">${esc(S.name||'Lovak 워크숍')}</p><h1>먼저, 혼자 적어 보세요</h1><p class="muted">다른 사람과 이야기하기 전에, 지금 내가 느끼는 그대로 고르세요. 이름은 보드에 나오지 않습니다.</p></div>
+ ${S.caps.map(k=>{const c=CAP[k];return `<div class="panel"><p class="label">${c.n} · ${c.e}</p><h2>${c.d}</h2>${c.items.map((t,i)=>`<div class="item"><p style="margin:0">${i+1}. ${esc(t)}</p><div class="scale" role="radiogroup" aria-label="${c.n} ${i+1}">${LV.map((l,v)=>`<div class="opt" role="radio" tabindex="0" data-k="${k}-${i}" data-v="${v+1}" aria-checked="${st.mine[k+'-'+i]===v+1}">${l}</div>`).join('')}</div></div>`).join('')}</div>`}).join('')}
+ <p class="err" id="err"></p><div class="row"><button class="primary" id="go">제출하기</button></div></div>`);
+ el.querySelectorAll('.opt').forEach(o=>{const pick=()=>{st.mine[o.dataset.k]=+o.dataset.v;o.parentElement.querySelectorAll('.opt').forEach(x=>x.setAttribute('aria-checked',x===o))};o.onclick=pick;o.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();pick()}}});
+ el.querySelector('#go').onclick=async()=>{
+  const need=S.caps.flatMap(k=>[0,1,2,3,4].map(i=>k+'-'+i)); const miss=need.filter(x=>!st.mine[x]).length;
+  if(miss){el.querySelector('#err').textContent=`아직 고르지 않은 문항이 ${miss}개 있습니다.`;return}
+  st.saved=null;st.screen='done';render();
+  try{const id=await caps.user.id();const ref=caps.db.doc('lovak_scores/'+id);let cur={};try{const sn=await ref.get();cur=(sn&&sn.data&&sn.data())||{}}catch(e){}cur[st.code]={at:Date.now(),s:{...st.mine}};await ref.set(cur);st.saved=true}catch(e){st.saved=false}
+  const n=document.getElementById('sv');if(n)n.textContent=st.saved?'점수가 보드로 보내졌습니다. 이제 함께 화면을 보세요.':'점수를 보내지 못했습니다. 진행자에게 알려 주세요.';
+ };
+ return el;
+}
+function doneV(){
+ const S=st.sess;
+ const el=$(`<div><div class="notice" id="sv">점수를 보내는 중입니다…</div><div class="panel"><h1>이제 함께 이야기할 차례입니다</h1><p class="muted">진행자 화면에 모두의 점수가 모입니다. 내가 적은 점수가 다른 사람과 다르다면, 그 이유가 오늘 대화의 재료입니다.</p>
+ ${S.caps.map(k=>`<h3 style="margin-top:12px">${CAP[k].n}</h3>${CAP[k].items.map((t,i)=>`<p class="small" style="margin:0 0 4px">${i+1}. ${esc(t)} — <b>${LV[st.mine[k+'-'+i]-1]}</b></p>`).join('')}`).join('')}</div>
+ <div class="row"><button id="home">처음으로</button></div></div>`);
+ el.querySelector('#home').onclick=()=>{st.screen='intro';render()};
+ return el;
+}
+function createV(){
+ let sel=['relation'];
+ const el=$(`<div><div class="panel"><p class="label">진행자</p><h2>새 워크숍 만들기</h2>
+ <label class="small" for="nm">워크숍 이름</label><input type="text" id="nm" maxlength="60" placeholder="예: 생산기술 2팀 · 관계 워크숍">
+ <p class="small" style="margin:14px 0 6px">오늘 다룰 자본 (한두 개를 권합니다)</p><div class="capbtns" id="cb">${CAPS.map(c=>`<button type="button" data-k="${c.k}" aria-pressed="${sel.includes(c.k)}">${c.n}</button>`).join('')}</div>
+ <p class="err" id="err"></p></div><div class="row"><button id="back">처음으로</button><button class="primary" id="go">만들고 코드 받기</button></div></div>`);
+ el.querySelectorAll('#cb button').forEach(b=>b.onclick=()=>{const k=b.dataset.k;sel=sel.includes(k)?sel.filter(x=>x!==k):[...sel,k];b.setAttribute('aria-pressed',sel.includes(k))});
+ el.querySelector('#back').onclick=()=>{st.screen='intro';render()};
+ el.querySelector('#go').onclick=async()=>{
+  if(!sel.length){el.querySelector('#err').textContent='자본을 하나 이상 고르세요.';return}
+  const A='ACDEFGHJKMNPQRTUVWXY3479';const code=Array.from({length:4},()=>A[Math.floor(Math.random()*A.length)]).join('');
+  const d={name:el.querySelector('#nm').value.trim().slice(0,60)||'Lovak 워크숍',caps:CAPS.map(c=>c.k).filter(k=>sel.includes(k)),at:Date.now(),group:{},important:{},actions:{},check:''};
+  try{await caps.db.doc('lovak_sessions/'+code).set(d);st.sess={code,...d};st.code=code;st.demo=false;st.scores=[];st.screen='board';render()}
+  catch(e){el.querySelector('#err').textContent='워크숍을 만들지 못했습니다.'}
+ };
+ return el;
+}
+async function fetchScores(){
+ if(st.demo||!caps.db)return;
+ try{const sn=await caps.db.collection('lovak_scores').limit(1000).get();st.scores=sn.docs.map(d=>d.data()).filter(x=>x&&x[st.code]).map(x=>x[st.code].s);const n=document.getElementById('cnt');if(n)n.textContent=st.scores.length;drawItems()}catch(e){}
+}
+function boardV(){
+ const S=st.sess;
+ const el=$(`<div>${st.demo?'<div class="notice">가상의 참여자 8명으로 만든 예시 보드입니다. 우리 점수와 액션을 직접 눌러 보세요. 예시는 저장되지 않습니다.</div>':''}
+ <div class="panel" style="padding:26px"><p class="label">진행 보드</p><div class="row" style="justify-content:space-between;align-items:flex-end"><div><h1 style="margin:0">${esc(S.name)}</h1><p class="muted" style="margin:4px 0 0">참여 <b id="cnt">${st.scores.length}</b>명 · 오늘의 자본: ${S.caps.map(k=>CAP[k].n).join(' · ')}</p></div><div style="text-align:right"><p class="small muted" style="margin:0">참여 코드</p><div class="code">${esc(st.code)}</div></div></div></div>
+ <div id="items"></div>
+ <div class="panel"><p class="label">합의의 결과</p><h2>내가 본 우리 vs 우리가 합의한 우리</h2><div id="cmp"></div><p class="small muted">회색 막대는 개인 점수의 평균, 진한 막대는 그룹이 합의한 점수입니다 (1~4).</p></div>
+ <div class="panel"><p class="label">액션</p><h2>가장 중요한 문항에서 무엇을 시작하고, 계속하고, 멈출까</h2><div id="act"></div>
+ <p class="small" style="margin-top:12px"><b>다시 확인할 날</b> <input type="text" id="chk" maxlength="40" value="${esc(S.check||'')}" placeholder="예: 6주 뒤 팀 회의" style="max-width:260px;display:inline-block"></p>
+ <div class="row"><button class="primary" id="save" ${st.demo?'disabled':''}>보드 저장</button><span class="small muted" id="sSt">${st.demo?'예시는 저장되지 않습니다.':''}</span></div></div>
+ <div class="row"><button id="refresh" ${st.demo?'disabled':''}>점수 새로고침</button><button id="home">처음으로</button></div></div>`);
+ el.querySelector('#home').onclick=()=>{st.screen='intro';render()};
+ el.querySelector('#refresh').onclick=fetchScores;
+ el.querySelector('#chk').oninput=e=>{S.check=e.target.value};
+ el.querySelector('#save').onclick=async()=>{const s=el.querySelector('#sSt');s.textContent='저장하는 중…';try{await caps.db.doc('lovak_sessions/'+st.code).update({group:S.group,important:S.important,actions:S.actions,check:S.check||''});s.textContent='저장되었습니다.'}catch(e){s.textContent='저장하지 못했습니다.'}};
+ setTimeout(()=>{drawItems();if(!st.demo){fetchScores();stopTimer();st.timer=setInterval(()=>{if(st.screen==='board')fetchScores();else stopTimer()},6000)}},0);
+ return el;
+}
+function drawItems(){
+ const S=st.sess; const box=document.getElementById('items'); if(!box)return;
+ box.innerHTML=S.caps.map(k=>{const c=CAP[k];return `<div class="panel"><p class="label">${c.n} · ${c.e}</p><h2>${c.d}</h2>${c.items.map((t,i)=>{const key=k+'-'+i;const v=st.scores.map(s=>s&&s[key]).filter(x=>x>=1&&x<=4);const cnt=[1,2,3,4].map(n=>v.filter(x=>x===n).length);const spread=v.length?Math.max(...v)-Math.min(...v):0;const g=S.group[key];
+  return `<div class="item"><div class="row" style="align-items:flex-start;gap:8px"><p style="margin:0;flex:1;font-weight:500">${i+1}. ${esc(t)}${v.length&&spread>=2?'<span class="tag t-hi">생각이 크게 갈림</span>':v.length?'<span class="tag t-lo">대체로 비슷함</span>':''}</p><label class="imp"><input type="radio" name="imp-${k}" data-imp="${k}" value="${i}" ${S.important[k]===i?'checked':''}>가장 중요</label></div>
+   <div class="dots">${cnt.map((n,j)=>`<div style="${n?`box-shadow:inset 0 -${Math.min(40,6+n*6)}px 0 color-mix(in srgb,${LC[j]} 35%,transparent)`:''}"><div class="n">${n}</div><div class="lab">${LV[j]}</div></div>`).join('')}</div>
+   ${v.length&&spread>=2?'<p class="small" style="color:var(--red);margin:4px 0">가장 높게 적은 분과 가장 낮게 적은 분이 먼저 이유를 이야기해 주세요.</p>':''}
+   <div class="group"><span class="small muted">우리 점수</span>${LV.map((l,j)=>`<button type="button" data-g="${key}" data-v="${j+1}" aria-pressed="${g===j+1}">${l}</button>`).join('')}</div></div>`}).join('')}</div>`}).join('');
+ box.querySelectorAll('[data-g]').forEach(b=>b.onclick=()=>{S.group[b.dataset.g]=+b.dataset.v;drawItems()});
+ box.querySelectorAll('[data-imp]').forEach(r=>r.onchange=()=>{S.important[r.dataset.imp]=+r.value;drawAct()});
+ drawCmp();drawAct();
+}
+function drawCmp(){
+ const S=st.sess;const box=document.getElementById('cmp');if(!box)return;
+ box.innerHTML=S.caps.map(k=>{const keys=[0,1,2,3,4].map(i=>k+'-'+i);const ind=avg(st.scores.flatMap(s=>keys.map(x=>s&&s[x]).filter(v=>v>=1)));const gv=keys.map(x=>S.group[x]).filter(Boolean);const grp=avg(gv);
+  return `<p class="small" style="margin:10px 0 2px"><b>${CAP[k].n}</b></p><div class="cmp"><span class="small muted">내가 본 우리</span><div class="t"><i style="width:${isNaN(ind)?0:(ind-1)/3*100}%;background:var(--line)"></i></div><span>${isNaN(ind)?'–':ind.toFixed(1)}</span></div><div class="cmp"><span class="small muted">합의한 우리</span><div class="t"><i style="width:${isNaN(grp)?0:(grp-1)/3*100}%;background:var(--navy)"></i></div><span>${isNaN(grp)?'–':grp.toFixed(1)}</span></div>${gv.length&&gv.length<5?`<p class="small muted" style="margin:0">우리 점수 ${gv.length}/5 정함</p>`:''}`}).join('');
+}
+function drawAct(){
+ const S=st.sess;const box=document.getElementById('act');if(!box)return;
+ box.innerHTML=S.caps.map(k=>{const i=S.important[k];const a=S.actions[k]||{start:'',keep:'',stop:''};
+  return `<div style="margin:12px 0"><h3>${CAP[k].n}${i!=null?` · <span class="muted" style="font-weight:500">${esc(CAP[k].items[i])}</span>`:''}</h3>${i==null?'<p class="small muted">위에서 ‘가장 중요’한 문항을 먼저 고르세요.</p>':`<div class="three">${[['start','시작할 것'],['keep','계속할 것'],['stop','멈출 것']].map(([f,l])=>`<div><label class="small" for="a-${k}-${f}"><b>${l}</b></label><textarea id="a-${k}-${f}" data-a="${k}" data-f="${f}" placeholder="담당 · 언제까지">${esc(a[f])}</textarea></div>`).join('')}</div>`}</div>`}).join('');
+ box.querySelectorAll('[data-a]').forEach(t=>t.oninput=e=>{const a=S.actions[t.dataset.a]=S.actions[t.dataset.a]||{start:'',keep:'',stop:''};a[t.dataset.f]=e.target.value.slice(0,500)});
+}
+function demoSession(){return {code:'DEMO',name:'예시 · 생산기술 2팀 관계 워크숍',caps:['relation','structure'],group:{},important:{},actions:{},check:''}}
+function demoScores(){
+ let seed=3;const r=()=>{seed=(seed*16807)%2147483647;return(seed-1)/2147483646};
+ const base={'relation-0':2.8,'relation-1':2.2,'relation-2':1.9,'relation-3':2.5,'relation-4':3.3,'structure-0':2.6,'structure-1':2.9,'structure-2':1.6,'structure-3':2.3,'structure-4':1.8};
+ const wide={'relation-3':1.6,'structure-1':1.4};
+ return Array.from({length:8},()=>{const o={};Object.entries(base).forEach(([k,m])=>{const w=wide[k]||0.7;o[k]=Math.max(1,Math.min(4,Math.round(m+(r()-0.5)*2*w)))});return o});
+}
+render();
+(async()=>{
+ if(!window.claude||!window.claude.use)return;
+ try{caps.user=await window.claude.use('user')}catch(e){}
+ try{caps.db=await window.claude.use('db')}catch(e){}
+ try{caps.canEdit=caps.user?await caps.user.canEdit():false}catch(e){}
+ if(!caps.db)caps.canEdit=false;
+ if(st.screen==='intro')render();
+})();
+</script>
+</body>
+</html>
