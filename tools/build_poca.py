@@ -14,15 +14,15 @@ i=s.find('<script>'); assert i>0
 s=s[:i]+'<script src="supabase.js"></script>\n'+s[i:]
 
 # respondent intro: sample buttons only for admin; admin/login button
-rep('<button id="smp">조직 리포트 예시 보기</button><button id="psmp">펄스 리포트 예시 보기</button><span id="adm"></span></div></div>`);',
-    '${caps.canEdit?\'<button id="smp">조직 리포트 예시 보기</button><button id="psmp">펄스 리포트 예시 보기</button>\':\'\'}<span id="adm"></span></div><p class="small muted" style="margin-top:18px"><a href="#" id="privacy">개인정보 처리 안내</a> · ${caps.canEdit?\'<a href="#" id="logout">로그아웃</a>\':\'<a href="#" id="login">관리자 로그인</a>\'}</p></div>`);')
+rep('<button id="smp">조직 리포트 예시 보기</button><span id="adm"></span></div></div>`);',
+    '${caps.canEdit?\'<button id="smp">조직 리포트 예시 보기</button>\':\'\'}<span id="adm"></span></div><p class="small muted" style="margin-top:18px"><a href="#" id="privacy">개인정보 처리 안내</a> · ${caps.canEdit?\'<a href="#" id="logout">로그아웃</a>\':\'<a href="#" id="login">관리자 로그인</a>\'}</p></div>`);')
 _i=s.find('function introView');_j=s.find('\nfunction ',_i+10)
 _seg=s[_i:_j]
 assert _seg.count("el.querySelector('#smp').onclick=()=>{st.R=aggregate(sampleData());")==1
 _seg=_seg.replace("el.querySelector('#smp').onclick=()=>{st.R=aggregate(sampleData());","{const sm=el.querySelector('#smp');if(sm)sm.onclick=()=>{st.R=aggregate(sampleData());")
 s=s[:_i]+_seg+s[_j:]
-rep("el.querySelector('#psmp').onclick=()=>{st.P=samplePulse();st.src='sample';st.screen='pulse';render()};",
-    "}{const ps=el.querySelector('#psmp');if(ps)ps.onclick=()=>{st.P=samplePulse();st.src='sample';st.screen='pulse';render()};}\n el.querySelector('#privacy').onclick=e=>{e.preventDefault();st.screen='privacy';render()};\n {const li=el.querySelector('#login');if(li)li.onclick=e=>{e.preventDefault();st.screen='login';render()};const lo=el.querySelector('#logout');if(lo)lo.onclick=async e=>{e.preventDefault();try{await sb.auth.signOut()}catch(_){}caps.canEdit=false;st.screen='intro';render()};}")
+rep("if(caps.canEdit){const b=$(`<button>진단 관리 (폴앤마크)</button>`);",
+    "}\n el.querySelector('#privacy').onclick=e=>{e.preventDefault();st.screen='privacy';render()};\n {const li=el.querySelector('#login');if(li)li.onclick=e=>{e.preventDefault();st.screen='login';render()};const lo=el.querySelector('#logout');if(lo)lo.onclick=async e=>{e.preventDefault();try{await sb.auth.signOut()}catch(_){}caps.canEdit=false;st.screen='intro';render()};}\n if(caps.canEdit){const b=$(`<button>진단 관리 (폴앤마크)</button>`);")
 s=s.replace("}[st.screen];app.append(v())",",login:loginView,privacy:privacyView}[st.screen];app.append(v())",1)
 assert ",login:loginView,privacy:privacyView}[st.screen]" in s
 rep("st.orgErr='진단에 연결하지 못했습니다. 이 페이지에 참여 권한이 있는지 확인해 주세요.';","st.orgErr='진단에 연결하지 못했습니다. 인터넷 연결을 확인하고 다시 시도해 주세요.';")

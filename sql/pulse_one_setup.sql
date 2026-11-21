@@ -1,4 +1,4 @@
--- POCA 펄스 '바꿔보자! 한 가지만!' (매주 한 문항, 문자 발송)
+-- POCA Atomic Culture: 작은 습관의 변화가 문화를 바꿉니다 (매주 한 문항, 문자 발송)
 -- poca_setup.sql 을 먼저 실행한 데이터베이스에서 실행하세요. 여러 번 실행해도 괜찮습니다. 고칠 곳은 없습니다.
 -- 자동 발송 일정은 pulse_one_schedule.sql 에서 따로 켭니다.
 --
@@ -250,7 +250,7 @@ begin
     base := coalesce(p.info->>'base', '');
     for m in select token, phone from public.pulse_members where program_code = p.code and active and phone is not null loop
       insert into public.pulse_outbox (program_code, phone, text)
-      values (p.code, m.phone, '[바꿔보자! 한 가지만] ' || line || '이번 주 질문: ' || q || ' ' || base || '#p/' || m.token);
+      values (p.code, m.phone, '[Atomic Culture] ' || line || '이번 주 질문: ' || q || ' ' || base || '#p/' || m.token);
     end loop;
   end loop;
   return made;

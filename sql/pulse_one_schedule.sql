@@ -1,4 +1,4 @@
--- POCA 펄스 '한 가지만' · 문자 자동 발송 켜기
+-- POCA Atomic Culture · 문자 자동 발송 켜기
 -- pulse_one_setup.sql 을 먼저 실행하세요.
 --
 -- [먼저 할 일 · 한 번만]

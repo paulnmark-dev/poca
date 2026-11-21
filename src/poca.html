@@ -280,14 +280,14 @@ const heat=(rows,label)=>`<table><tr><th>${label}</th><th class="n">종합</th>$
  }
  P('종합 분석 및 제언','제언 ① 핵심 과제','진단이 가리키는 곳은 세 군데다',`<div class="cols3">${focus.map((f,i)=>`<div class="fc" style="border-top-color:${f.c}"><p class="num" style="color:${f.c}">0${i+1}</p><h3>${esc(f.title)}</h3>${f.lines.map(l=>`<p>${esc(l)}</p>`).join('')}</div>`).join('')}</div>`);
  P('종합 분석 및 제언','제언 ② 대화를 위한 질문','답을 정하기 전에, 먼저 함께 묻는다',`<table class="q"><tr><th>핵심 과제</th><th>대화를 위한 질문</th><th>딜레마 명제</th></tr>${focus.map((f,i)=>`<tr><td><b>${'①②③'[i]} ${esc(f.tag)}</b></td><td>${esc(f.q)}</td><td class="dl">“${esc(f.d)}”</td></tr>`).join('')}</table><p class="note">질문은 팀 대화에서, 딜레마 명제는 워크숍에서 찬반으로 서 보며 씁니다. 실행 계획은 이 대화를 거쳐 각 팀이 직접 만듭니다.</p>`);
- P('종합 분석 및 제언','제언 ③ 향후 추진 방향','진단은 여기까지, 이제 함께 이야기할 차례다',`<div class="cols3 steps"><div><p class="muted">2주 안에</p><p class="num">01</p><h3>결과 공유회</h3><p>경영진 → 리더 → 전체 순서로, 핵심 과제를 함께 읽습니다.</p></div><div><p class="muted">1~2개월</p><p class="num">02</p><h3>팀별 대화 워크숍 (WFG)</h3><p>질문과 딜레마 명제로 대화하고, 팀이 시작 · 계속 · 멈춤을 정합니다.</p></div><div><p class="muted">6개월 뒤</p><p class="num">03</p><h3>재진단</h3><p>펄스 또는 같은 문항으로 다시 재고, 무엇이 바뀌었는지 돌아봅니다.</p></div></div><p style="margin-top:8mm">폴앤마크는 결과 공유회 진행, 대화 워크숍 설계와 퍼실리테이션, 재진단 리포트를 함께합니다.</p>`);
+ P('종합 분석 및 제언','제언 ③ 향후 추진 방향','진단은 여기까지, 이제 함께 이야기할 차례다',`<div class="cols3 steps"><div><p class="muted">2주 안에</p><p class="num">01</p><h3>결과 공유회</h3><p>경영진 → 리더 → 전체 순서로, 핵심 과제를 함께 읽습니다.</p></div><div><p class="muted">1~2개월</p><p class="num">02</p><h3>팀별 대화 워크숍 (WFG)</h3><p>질문과 딜레마 명제로 대화하고, 팀이 시작 · 계속 · 멈춤을 정합니다.</p></div><div><p class="muted">6개월 뒤</p><p class="num">03</p><h3>재진단</h3><p>매주 Atomic Culture(작은 습관 펄스)로 행동을 연습하고, 같은 문항으로 다시 재서 무엇이 바뀌었는지 돌아봅니다.</p></div></div><p style="margin-top:8mm">폴앤마크는 결과 공유회 진행, 대화 워크숍 설계와 퍼실리테이션, 재진단 리포트를 함께합니다.</p>`);
  if(full){
   const PG={1:['Viking Leadership','Smooth Team 진단 & 워크숍'],2:['Smooth Team 진단 & 워크숍','Viking Leadership'],3:['Coaching Communications','4MAT 진단 & Communication'],4:['4MAT 진단 & Communication','LTI 대화'],5:['비전 설정 및 목표 수립','5x5 조직개발진단 & Vision Alignment'],6:['Dino Dialogue','Communication Excellence'],7:['Viking Leadership','Feedback Workshop'],8:['Well Functioning Group (WFG)','Smooth Team 진단 & 워크숍'],9:['Feedback Workshop','Coaching Communications'],10:['Well Functioning Group (WFG)','Dino Dialogue'],11:['Lovak model 리뷰','4MAT 진단 & Communication'],12:['Lovak model 리뷰','Smooth Team 진단 & 워크숍'],13:['Lovak model 리뷰','경영진 결과 공유'],14:['브랜드메시지 워크숍','Lovak model 리뷰'],15:['브랜드메시지 워크숍','Lovak model 리뷰'],16:['Leadership Transformation','LTI 대화'],17:['Leadership Transformation','5x5 조직개발진단 & Vision Alignment'],18:['필수 조건 점검 워크숍','경영진 결과 공유'],19:['필수 조건 점검 워크숍','경영진 결과 공유'],20:['경영진 결과 공유','필수 조건 점검 워크숍'],21:['경영진 결과 공유','비전 설정 및 목표 수립']};
   const shakyD=A.byDept.filter(show).map(o=>({o,r:o.groups[2]/o.n})).sort((a,b)=>b.r-a.r)[0];
   const LEAD=[16,17,9,1];const fIdx=[...new Set(focus.map(f=>{const x=CFG.IDX.find(y=>y.name===f.tag);return x?x.n:null}).filter(Boolean))];
   const low=[...CFG.IDX].sort((a,b)=>A.idx[a.n]-A.idx[b.n]).map(x=>x.n);
   const pick=(ns,k)=>ns.map(n=>({n,p:PG[n][k]}));
-  const y1=[{q:'1분기',who:'경영진 → 전 직원',p:'결과 공유회',why:'핵심 과제'},...pick(fIdx.slice(0,1),0).map(x=>({q:'1분기',who:'전 직원',p:x.p,why:IDXN[x.n].name})),{q:'2분기',who:shakyD&&shakyD.r>=0.3?esc(shakyD.o.d)+' 먼저, 이어서 전 팀':'전 팀',p:'Well Functioning Group (WFG) 팀 대화',why:'대화를 위한 질문'},...pick(fIdx.slice(1,2),0).map(x=>({q:'2분기',who:'해당 부서',p:x.p,why:IDXN[x.n].name})),{q:'3분기',who:'리더 그룹',p:LEAD.map(n=>A.idx[n]).some(v=>v<70)?'LTI 대화 + '+PG[LEAD.sort((a,b)=>A.idx[a]-A.idx[b])[0]][0]:'LTI 대화',why:'상사의 리더십 · 피드백과 인정'},{q:'3분기',who:'전 직원',p:'POCA 펄스',why:'변화 확인'},{q:'4분기',who:'전 직원',p:'POCA 재진단 준비 · 2년차 계획',why:'—'}];
+  const y1=[{q:'1분기',who:'경영진 → 전 직원',p:'결과 공유회',why:'핵심 과제'},...pick(fIdx.slice(0,1),0).map(x=>({q:'1분기',who:'전 직원',p:x.p,why:IDXN[x.n].name})),{q:'2분기',who:shakyD&&shakyD.r>=0.3?esc(shakyD.o.d)+' 먼저, 이어서 전 팀':'전 팀',p:'Well Functioning Group (WFG) 팀 대화',why:'대화를 위한 질문'},...pick(fIdx.slice(1,2),0).map(x=>({q:'2분기',who:'해당 부서',p:x.p,why:IDXN[x.n].name})),{q:'3분기',who:'리더 그룹',p:LEAD.map(n=>A.idx[n]).some(v=>v<70)?'LTI 대화 + '+PG[LEAD.sort((a,b)=>A.idx[a]-A.idx[b])[0]][0]:'LTI 대화',why:'상사의 리더십 · 피드백과 인정'},{q:'2~4분기',who:'전 직원',p:'Atomic Culture · 작은 습관 펄스 (매주 문자 한 문항)',why:'가장 바라는 문화의 행동 연습'},{q:'4분기',who:'전 직원',p:'POCA 재진단 준비 · 2년차 계획',why:'—'}];
   P('종합 분석 및 제언','제언 ④ 교육 · 1년차','진단이 가리키는 곳에서 시작하는 1년',`<table><tr><th>시기</th><th>대상</th><th>프로그램</th><th>연결 지표</th></tr>${y1.map(r=>`<tr><td>${r.q}</td><td>${r.who}</td><td><b>${r.p}</b></td><td class="muted">${esc(r.why)}</td></tr>`).join('')}</table><p class="note">프로그램은 폴앤마크의 기존 과정에서 ‘핵심 과제’와 가장 낮은 지표에 맞춰 자동으로 골랐습니다. 결과 공유회에서 함께 다듬는 초안입니다.</p>`);
   const y2=low.filter(n=>!fIdx.includes(n)).slice(0,5);
   P('종합 분석 및 제언','제언 ④ 교육 · 2년차','변화를 넓히고 뿌리내리는 해',`<table><tr><th>대상</th><th>프로그램</th><th>연결 지표 (현재 점수)</th></tr>${y2.map(n=>`<tr><td>${[16,17].includes(n)?'리더 그룹':[18,19,20,21,13].includes(n)?'경영진':'전 직원 · 해당 부서'}</td><td><b>${PG[n][0]}</b> <span class="muted">또는 ${PG[n][1]}</span></td><td>${esc(IDXN[n].name)} (${r1(A.idx[n])})</td></tr>`).join('')}<tr><td>전 직원</td><td><b>POCA 정식 재진단</b></td><td>1년 변화 확인</td></tr></table><p class="note">1년차에 다룬 지표를 제외하고, 점수가 낮은 순서로 다섯 지표를 골랐습니다.</p>`);
@@ -379,12 +379,11 @@ function introView(){
   ${O?'<p class="small muted" style="margin-top:14px">한 사람당 한 응답이 저장됩니다. 다시 하면 이전 응답을 덮어씁니다.</p>':''}${st.invite?`<p class="small" style="margin-top:10px;padding:10px 12px;background:var(--surface2);border-radius:4px"><b>${esc(st.invite.name)}</b>님의 개인 링크입니다. 응답 내용은 이름과 연결되지 않은 채 익명으로 저장되고, 인사 담당자에게는 <b>완료 여부만</b> 전달됩니다.</p>`:''}</div>
   ${closed?'<div class="notice">이 진단은 마감되었습니다. 참여해 주셔서 감사합니다.</div>':st.invite&&st.invite.done?'<div class="notice">이미 응답을 마치셨습니다. 다시 하면 이전 응답을 덮어씁니다.</div>':done?'<div class="notice">이 기기에서 이미 응답하셨습니다. 다시 하면 이전 응답을 덮어씁니다.</div>':''}
   ${O?'':`<div class="panel"><h3>회사에서 받은 진단 코드를 입력하세요</h3><div class="row"><input type="text" id="code" maxlength="8" style="max-width:200px;font-size:20px;letter-spacing:4px;text-transform:uppercase;font:inherit;padding:10px 12px;border:1px solid var(--line);border-radius:4px;background:var(--surface);color:var(--ink)" aria-label="진단 코드"><button id="enter">들어가기</button></div><p class="err" id="cerr">${esc(st.orgErr)}</p></div>`}
-  ${O&&!closed?'<label class="chk" style="max-width:640px;margin-bottom:10px"><input type="checkbox" id="agree"><span>응답은 이름과 연결되지 않게 저장되고 결과는 묶어서만 보인다는 안내를 확인했습니다. 참여는 자유이며, 참여하지 않아도 불이익이 없습니다.</span></label><p class="err" id="agErr"></p>':''}<div class="row">${O&&!closed?'<button class="primary" id="go">진단 시작하기</button>':''}<button id="smp">조직 리포트 예시 보기</button><button id="psmp">펄스 리포트 예시 보기</button><span id="adm"></span></div></div>`);
+  ${O&&!closed?'<label class="chk" style="max-width:640px;margin-bottom:10px"><input type="checkbox" id="agree"><span>응답은 이름과 연결되지 않게 저장되고 결과는 묶어서만 보인다는 안내를 확인했습니다. 참여는 자유이며, 참여하지 않아도 불이익이 없습니다.</span></label><p class="err" id="agErr"></p>':''}<div class="row">${O&&!closed?'<button class="primary" id="go">진단 시작하기</button>':''}<button id="smp">조직 리포트 예시 보기</button><span id="adm"></span></div></div>`);
  const go=el.querySelector('#go'); if(go)go.onclick=()=>{if(!el.querySelector('#agree').checked){el.querySelector('#agErr').textContent='안내를 확인하고 체크해 주세요.';return}st={...st,screen:'survey',step:0,r:{},u:[],o1:'',o2:'',o3:'',t0:Date.now(),err:'',saved:null};render()};
  const en=el.querySelector('#enter'); if(en)en.onclick=()=>{const c=el.querySelector('#code').value.trim().toUpperCase();if(c)loadOrg(c,true)};
  el.querySelector('#smp').onclick=()=>{st.R=aggregate(sampleData());st.R.prev=aggregate(sampleData(29,-0.25));st.src='sample';st.screen='report';render()};
- el.querySelector('#psmp').onclick=()=>{st.P=samplePulse();st.src='sample';st.screen='pulse';render()};
- if(caps.canEdit){const b=$(`<button>진단 관리 (폴앤마크)</button>`);b.onclick=openAdmin;el.querySelector('#adm').append(b)}
+  if(caps.canEdit){const b=$(`<button>진단 관리 (폴앤마크)</button>`);b.onclick=openAdmin;el.querySelector('#adm').append(b)}
  return el;
 }
 async function loadOrg(code,manual){
@@ -411,23 +410,21 @@ function adminView(){
   <div style="height:10px"></div><label class="small" for="mn">익명 기준 (이보다 적은 그룹은 결과를 가림)</label><select id="mn"><option value="3" selected>3명 (기본)</option><option value="5">5명 (더 엄격)</option></select>
   <div style="height:10px"></div><label class="small" for="roster">직원 명단 (선택 · 한 줄에 ‘이름’ 또는 ‘이름, 부서’) · 넣으면 사람마다 개인 링크가 생기고, 인사 담당자 화면에서 완료 여부를 볼 수 있습니다</label><textarea id="roster" placeholder="홍길동, 영업&#10;김철수, 생산"></textarea>
   <div style="height:10px"></div><label class="chk" style="max-width:520px"><input type="checkbox" id="hrRep"><span><b>인사 담당자에게 결과 보고서 공개</b> (끄면 인사 담당자는 응답 현황만 봅니다. 나중에 바꿀 수 있습니다)</span></label>
-  <div style="height:14px"></div><label class="chk" style="max-width:420px"><input type="checkbox" id="isPilot"><span><b>시범 운영</b> (응답 시간을 기록하고, 헷갈린 문항 의견을 받습니다)</span></label><div style="height:8px"></div><label class="chk" style="max-width:360px"><input type="checkbox" id="isP"><span><b>펄스로 만들기</b> (13문항 + 맞춤 문항, 약 3분)</span></label>
-  <div style="height:10px"></div><label class="small" for="base">비교할 이전 진단 (선택 · 펄스는 꼭 고르세요)</label><select id="base"><option value="">없음</option>${st.orgs.filter(o=>o.type!=='pulse').map(o=>`<option value="${esc(o.code)}">${esc(o.name)} (${esc(o.code)})</option>`).join('')}</select><div id="pbox" style="display:none">
-  <p class="small" style="margin:10px 0 4px">맞춤 지표 (지난 리포트의 ‘핵심 과제’, 최대 3개)</p><div style="columns:2;font-size:14px">${CFG.IDX.map(x=>`<label style="display:block"><input type="checkbox" class="ex" value="${x.n}"> ${String(x.n).padStart(2,'0')} ${esc(x.name)}</label>`).join('')}</div></div>
+  <div style="height:14px"></div><label class="chk" style="max-width:420px"><input type="checkbox" id="isPilot"><span><b>시범 운영</b> (응답 시간을 기록하고, 헷갈린 문항 의견을 받습니다)</span></label>
+  <div style="height:10px"></div><label class="small" for="base">비교할 이전 진단 (재진단일 때 선택)</label><select id="base"><option value="">없음</option>${st.orgs.filter(o=>o.type!=='pulse').map(o=>`<option value="${esc(o.code)}">${esc(o.name)} (${esc(o.code)})</option>`).join('')}</select>
   <p class="err" id="aerr"></p><div class="row"><button class="primary" id="mk">만들고 코드 받기</button></div></div>
   <div class="panel"><h2>진행 중인 진단</h2>${st.adminErr?`<p class="err">${esc(st.adminErr)}</p>`:''}${st.orgs.length?st.orgs.map(o=>`<div class="act" style="border-top-color:${o.open===false?'var(--muted)':'var(--navy)'}"><div class="row" style="justify-content:space-between"><div><h3 style="margin:0">${esc(o.name)} <span class="small muted">· ${o.type==='pulse'?'펄스 · ':''}코드 ${esc(o.code)}${o.open===false?' · 마감':''}</span></h3><p class="small muted" style="margin:2px 0 0">응답 ${o.n}명${o.headcount?` / 대상 ${o.headcount}명 (${Math.round(o.n/o.headcount*100)}%)`:''}</p></div>
    <div class="row"><button data-rep="${esc(o.code)}">리포트 보기</button>${o.roster?`<button data-inv="${esc(o.code)}">명단 · 개인 링크</button>`:''}<button data-tog="${esc(o.code)}">${o.open===false?'다시 열기':'마감하기'}</button></div></div>
    ${o.hr?`<p class="small" style="margin:8px 0 0">인사 담당자 링크 (응답 현황${o.hrReport?' + 결과 보고서':''}) · 익명 기준 ${o.minN||3}명 · <a href="#" data-hrt="${esc(o.code)}">${o.hrReport?'보고서 공개 끄기':'보고서 공개 켜기'}</a><input type="text" readonly value="${pageBase()}#hr/${esc(o.code)}/${esc(o.hr)}" style="font:inherit;font-size:13px;width:100%;padding:6px 8px;border:1px solid var(--line);border-radius:4px;background:var(--surface2);color:var(--ink)" onclick="this.select()"></p>`:''}
    <p class="small" style="margin:8px 0 0">공유 링크: <input type="text" readonly value="${PAGE_URL}#${esc(o.code)}" style="font:inherit;font-size:13px;width:100%;padding:6px 8px;border:1px solid var(--line);border-radius:4px;background:var(--surface2);color:var(--ink)" onclick="this.select()"></p></div>`).join(''):'<p class="small muted">아직 만든 진단이 없습니다.</p>'}</div>
-  <div class="row"><button id="home">처음으로</button><button id="pones">‘한 가지만’ 펄스 관리</button></div></div>`);
+  <div class="row"><button id="home">처음으로</button><button id="pones">Atomic Culture 관리</button></div></div>`);
  el.querySelector('#pones').onclick=openPones;
- const ip=el.querySelector('#isP');ip.onchange=()=>{el.querySelector('#pbox').style.display=ip.checked?'block':'none'};
  el.querySelector('#home').onclick=()=>{st.screen='intro';render()};
  el.querySelector('#mk').onclick=async()=>{
   const name=el.querySelector('#nm').value.trim().slice(0,60);if(!name){el.querySelector('#aerr').textContent='회사 이름을 적어 주세요.';return}
   const depts=el.querySelector('#dp').value.split('\n').map(x=>x.trim()).filter(Boolean).slice(0,40);
   const hc=parseInt(el.querySelector('#hc').value,10)||null;
-  const isP=el.querySelector('#isP').checked;const pilot=el.querySelector('#isPilot').checked;const base=el.querySelector('#base').value;const extra=[...el.querySelectorAll('.ex:checked')].map(x=>+x.value);
+  const isP=false;const pilot=el.querySelector('#isPilot').checked;const base=el.querySelector('#base').value;const extra=[];
   if(isP&&!base){el.querySelector('#aerr').textContent='비교할 이전 진단을 고르세요.';return}
   if(extra.length>3){el.querySelector('#aerr').textContent='맞춤 지표는 3개까지 고를 수 있습니다.';return}
   const A='ACDEFGHJKMNPQRTUVWXY3479';const code=Array.from({length:5},()=>A[Math.floor(Math.random()*A.length)]).join('');
@@ -681,7 +678,7 @@ function invitesView(){
   try{await caps.ext.addInvites(V.code,add);if(!o.roster)await caps.db.doc('poca_orgs/'+V.code).update({roster:true});openInvites(V.code)}catch(e){el.querySelector('#aerr').textContent='추가하지 못했습니다.'}};
  return el;
 }
-/* ---------- '바꿔보자! 한 가지만' 펄스 ---------- */
+/* ---------- Atomic Culture: 작은 습관의 변화가 문화를 바꿉니다 ---------- */
 const ONE_BANK=[
  {c:1,q:'이번 주, 동료에게 먼저 웃으며 인사했다.'},
  {c:1,q:'이번 주, 동료의 작은 일을 구체적으로 인정하고 칭찬했다.'},
@@ -699,11 +696,11 @@ async function loadPone(){const P=st.pone;
  try{const d=await caps.ext.pulseGet(P.token);if(!d){P.err='이 링크를 찾지 못했습니다. 인사 담당자에게 문의해 주세요.'}else P.data=d}catch(e){P.err='연결하지 못했습니다. 잠시 뒤 다시 열어 주세요.'}render()}
 function poneView(){
  const P=st.pone||{};const D=P.data;
- if(!D)return $(`<div class="panel" style="max-width:640px;margin:24px auto"><p class="label">바꿔보자! 한 가지만</p><h2>${P.err?esc(P.err):'불러오는 중입니다…'}</h2></div>`);
+ if(!D)return $(`<div class="panel" style="max-width:640px;margin:24px auto"><p class="label">Atomic Culture</p><h2>${P.err?esc(P.err):'불러오는 중입니다…'}</h2></div>`);
  const L=D.last;
- const el=$(`<div style="max-width:640px;margin:0 auto"><div class="panel" style="padding:28px"><p class="label">${esc(D.program||'')} · 바꿔보자! 한 가지만</p>
+ const el=$(`<div style="max-width:640px;margin:0 auto"><div class="panel" style="padding:28px"><p class="label">${esc(D.program||'')} · Atomic Culture</p>
   ${L?`<p class="small" style="margin:0 0 14px;padding:10px 12px;background:var(--surface2);border-radius:4px">지난 질문 “${esc(L.question)}”<br>평균 <b>나 ${f1(+L.avg)}</b>${L.team_avg!=null?` · <b>우리 팀 ${f1(+L.team_avg)}</b>${L.team_delta!=null?` (${+L.team_delta>=0?'+':''}${f1(+L.team_delta)})`:''}`:''} · ${L.n}명 참여</p>`:''}
-  ${!D.open?'<h2>지금은 열린 질문이 없습니다</h2><p class="muted">다음 질문은 목요일 낮 12시에 문자로 보내 드립니다.</p>':P.sent?`<h2>고맙습니다, ${esc(D.name)}님</h2><p class="muted">이번 주도 한 가지만. 결과는 인사팀 확인 뒤 다음 주 문자에 함께 보내 드립니다.</p>`:`
+  ${!D.open?'<h2>지금은 열린 질문이 없습니다</h2><p class="muted">다음 질문은 목요일 낮 12시에 문자로 보내 드립니다.</p>':P.sent?`<h2>고맙습니다, ${esc(D.name)}님</h2><p class="muted">작은 습관 하나가 문화를 바꿉니다. 결과는 인사팀 확인 뒤 다음 주 문자에 함께 보내 드립니다.</p>`:`
   <p class="small muted" style="margin:0">${esc(D.name)}님, ${D.week_no}주차 질문입니다</p><h2 style="margin-top:6px">${esc(D.question)}</h2>
   ${D.done?'<div class="notice">이번 주에 이미 답하셨습니다. 다시 내면 이전 답을 덮어씁니다.</div>':''}
   <p class="qtext" style="margin:14px 0 6px"><b>나는</b></p>${scaleHTML('ONE',P.score,['전혀 그렇지 않다','매우 그렇다'])}
@@ -722,12 +719,12 @@ async function loadPoneHr(){const H=st.ph;
  try{const d=await caps.ext.pulseHr(H.code,H.tok);if(!d)H.err='링크가 맞지 않습니다. 폴앤마크에 링크를 다시 요청해 주세요.';else{H.data=d;H.err=''}}catch(e){H.err='불러오지 못했습니다. 잠시 뒤 다시 열어 주세요.'}render()}
 function poneHrView(){
  const H=st.ph||{};const D=H.data;
- if(!D)return $(`<div class="panel"><p class="label">바꿔보자! 한 가지만 · 인사팀</p><h2>${H.err?esc(H.err):'불러오는 중입니다…'}</h2></div>`);
+ if(!D)return $(`<div class="panel"><p class="label">Atomic Culture · 인사팀</p><h2>${H.err?esc(H.err):'불러오는 중입니다…'}</h2></div>`);
  const W=D.weeks||[];const cur=D.current;const ppl=cur?cur.people:[];const doneN=ppl.filter(x=>x.done).length;
  const pts=[...W].reverse().filter(w=>w.closed&&w.avg!=null);
  const chart=pts.length>=2?(()=>{const Wd=560,Ht=160,L=34,B=24,T=10;const X=i=>L+i*(Wd-L-10)/(pts.length-1),Y=v=>Ht-B-(v-1)/9*(Ht-B-T);
   return `<svg viewBox="0 0 ${Wd} ${Ht}" style="width:100%;height:auto" role="img" aria-label="주차별 평균"><text x="${Wd-10}" y="${T+10}" text-anchor="end" font-size="11" fill="var(--navy)">— 우리 팀</text><text x="${Wd-10}" y="${T+24}" text-anchor="end" font-size="11" fill="var(--navy2)">- - 나</text>${[1,4,7,10].map(v=>`<line x1="${L}" x2="${Wd-10}" y1="${Y(v)}" y2="${Y(v)}" stroke="var(--line)" ${v===7?'stroke-dasharray="4 4"':''}/><text x="${L-6}" y="${Y(v)+4}" text-anchor="end" font-size="11" fill="var(--muted)">${v}</text>`).join('')}<polyline fill="none" stroke="var(--navy2)" stroke-width="1.5" stroke-dasharray="5 4" points="${pts.map((w,i)=>X(i)+','+Y(+w.avg)).join(' ')}"/>${pts.some(w=>w.team_avg!=null)?`<polyline fill="none" stroke="var(--navy)" stroke-width="2.5" points="${pts.filter(w=>w.team_avg!=null).map(w=>X(pts.indexOf(w))+','+Y(+w.team_avg)).join(' ')}"/>`:''}${pts.map((w,i)=>`${w.team_avg!=null?`<circle cx="${X(i)}" cy="${Y(+w.team_avg)}" r="4" fill="${w.approved?'var(--navy)':'var(--surface)'}" stroke="var(--navy)" stroke-width="2"/>`:''}<text x="${X(i)}" y="${Ht-6}" text-anchor="middle" font-size="11" fill="var(--muted)">${w.week_no}주</text>`).join('')}</svg>`})():'';
- const el=$(`<div><div class="panel" style="padding:28px"><p class="label">${esc(D.name)} · 바꿔보자! 한 가지만 · 인사팀 화면</p><h1>매주 한 가지, 우리는 이만큼 움직였다</h1>
+ const el=$(`<div><div class="panel" style="padding:28px"><p class="label">${esc(D.name)} · Atomic Culture · 인사팀 화면</p><h1>작은 습관이 쌓이는 모습</h1><p class="small" style="margin:-4px 0 10px">작은 습관의 변화가 문화를 바꿉니다.</p>
   <p class="small muted">수요일 18:00에 마감하고, 목요일 12:00에 다음 질문이 문자로 나갑니다. 마감된 주를 확인하고 <b>승인</b>하면, 그 평균이 다음 문자에 함께 실립니다. <b>우리 팀</b> 평균이 7점을 넘거나 같은 질문을 3주 하면 다음 질문으로 넘어갑니다. ‘나’와 ‘우리 팀’의 차이가 크면, 각자는 하고 있다고 느끼지만 서로에게는 아직 전해지지 않았다는 뜻입니다.</p>${chart}</div>
   ${cur?`<div class="panel"><h2>${cur.week_no}주차 참여 <span class="small muted">${doneN} / ${ppl.length}명</span></h2><div class="row"><button id="cpTodo">미참여자 이름 복사</button></div><p class="small" style="margin-top:8px">${ppl.map(x=>`<span style="display:inline-block;margin:0 10px 6px 0;color:${x.done?'var(--navy)':'var(--red)'}">${x.done?'●':'○'} ${esc(x.name)}</span>`).join('')}</p></div>`:''}
   <div class="panel"><h2>주차별 결과</h2><table><tr><th>주차</th><th>질문</th><th class="n">참여</th><th class="n">나</th><th class="n">우리 팀</th><th>상태</th></tr>${W.map((w,i)=>{const prev=W[i+1];const dl=prev&&w.team_avg!=null&&prev.team_avg!=null?(+w.team_avg-prev.team_avg):null;
@@ -739,18 +736,18 @@ function poneHrView(){
  return el;
 }
 async function openPones(){st.pz={list:null,err:'',order:ONE_BANK.map(x=>({...x,on:true}))};st.screen='pones';render();
- if(!(caps.ext&&caps.ext.listPrograms)){st.pz.err='‘한 가지만’ 펄스는 웹사이트의 관리 화면에서만 만들 수 있습니다.';st.pz.list=[];render();return}
+ if(!(caps.ext&&caps.ext.listPrograms)){st.pz.err='Atomic Culture는 웹사이트의 관리 화면에서만 만들 수 있습니다.';st.pz.list=[];render();return}
  try{st.pz.list=await caps.ext.listPrograms()}catch(e){st.pz.err='목록을 불러오지 못했습니다. (데이터베이스 설정 pulse_one_setup.sql이 필요합니다)';st.pz.list=[]}render()}
 function ponesView(){
  const Z=st.pz;const inp='font:inherit;width:100%;padding:8px 10px;border:1px solid var(--line);border-radius:4px;background:var(--surface);color:var(--ink)';
- const el=$(`<div><div class="panel"><p class="label">바꿔보자! 한 가지만</p><h2>새 펄스 만들기</h2>
-  <label class="small" for="pn">이름</label><input type="text" id="pn" maxlength="60" placeholder="예: 대덕전자 · 한 가지만" style="${inp}">
+ const el=$(`<div><div class="panel"><p class="label">Atomic Culture · 작은 습관의 변화가 문화를 바꿉니다</p><h2>새로 만들기</h2>
+  <label class="small" for="pn">이름</label><input type="text" id="pn" maxlength="60" placeholder="예: 대덕전자 · Atomic Culture" style="${inp}">
   <div style="height:10px"></div><label class="small" for="pm">참여자 명단 (한 줄에 ‘이름, 부서, 전화번호’) · 전화번호는 문자 발송에만 쓰고 응답과 연결하지 않습니다</label><textarea id="pm" placeholder="홍길동, 영업, 010-1234-5678"></textarea>
   <div style="height:10px"></div><label class="small" for="porg">POCA 결과로 질문 순서 정하기 (선택)</label><div class="row"><select id="porg"><option value="">선택 안 함</option>${(st.orgs||[]).filter(o=>o.type!=='pulse').map(o=>`<option value="${esc(o.code)}">${esc(o.name)} (${esc(o.code)})</option>`).join('')}</select><button id="sortb">가장 바라는 문화부터 정렬</button></div>
   <p class="small" style="margin:12px 0 4px">질문 순서 (위에서부터 · ‘우리 팀’ 평균 7점 이상이거나 3주가 되면 다음 질문 · 체크한 것만 · 문구는 고칠 수 있습니다). 네 문화는 POCA ‘조직의 현재와 미래’와 같습니다.</p>
   ${Z.order.map((x,i)=>`<div class="row" style="flex-wrap:nowrap;margin:4px 0"><input type="checkbox" data-on="${i}" ${x.on?'checked':''}><span class="small muted" style="min-width:150px">${esc(ONE_CN[x.c])}${x.gap!=null?' · 차이 '+(x.gap>=0?'+':'')+Math.round(x.gap):''}</span><input type="text" data-q="${i}" value="${esc(x.q)}" maxlength="80" style="${inp}"></div>`).join('')}
   <p class="err" id="perr">${esc(Z.err)}</p><div class="row"><button class="primary" id="pmk">만들기</button></div></div>
-  <div class="panel"><h2>진행 중인 펄스</h2>${(Z.list||[]).map(p=>`<div class="act"><h3 style="margin:0">${esc(p.info.name)} <span class="small muted">· 코드 ${esc(p.code)} · 참여자 ${p.members??'–'}명 · ${p.weeks??0}주 진행</span></h3>
+  <div class="panel"><h2>진행 중</h2>${(Z.list||[]).map(p=>`<div class="act"><h3 style="margin:0">${esc(p.info.name)} <span class="small muted">· 코드 ${esc(p.code)} · 참여자 ${p.members??'–'}명 · ${p.weeks??0}주 진행</span></h3>
    <p class="small" style="margin:6px 0 0">인사팀 링크<input type="text" readonly value="${pageBase()}#ph/${esc(p.code)}/${esc(p.info.hr)}" style="${inp};font-size:13px;background:var(--surface2)" onclick="this.select()"></p>
    <div class="row" style="margin-top:6px">${p.weeks?'':`<button data-start="${esc(p.code)}">지금 첫 질문 보내기</button>`}<button data-pclose="${esc(p.code)}">${p.info.open===false?'다시 열기':'멈추기'}</button></div></div>`).join('')||'<p class="small muted">아직 없습니다.</p>'}</div>
   <div class="row"><button id="back">진단 관리로</button></div></div>`);
