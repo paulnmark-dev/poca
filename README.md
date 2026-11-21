@@ -26,7 +26,7 @@
 ## Netlify 설정
 
 - POCA: 저장소 연결, Publish directory `site` (`netlify.toml`에 들어 있음)
-- WFG: 같은 저장소로 프로젝트를 하나 더 만들고, Publish directory를 `wfg-site`로 지정
+- WFG: 별도 프로젝트 없이 같은 사이트의 `/wfg/` 주소로 배포됩니다 (netlify.toml 빌드 명령이 wfg-site를 site/wfg로 복사)
 
 ## 보안
 

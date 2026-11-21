@@ -1,4 +1,4 @@
-# POCA 진단 사이트 (WFG는 Netlify 화면에서 Publish directory를 wfg-site로 지정)
+# POCA 진단 사이트 (루트 /) + WFG 워크숍 (/wfg/) — Cloud Run(Dockerfile)과 같은 구성
 [build]
   publish = "site"
-  command = ""
+  command = "mkdir -p site/wfg && cp -r wfg-site/. site/wfg/"
