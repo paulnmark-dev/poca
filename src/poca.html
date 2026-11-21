@@ -85,7 +85,10 @@ svg text{font-family:'Noto Sans KR',sans-serif}
 <div class="wrap" id="app" aria-live="polite"></div>
 <script>
 const CFG = {"FN": ["권한부여와 책임", "능력개발", "일에 대한 정보 소통", "관계", "업무 체계", "제품·서비스 자신감", "리더십", "업무 환경"], "IDX": [{"n": 1, "name": "권한부여 및 자율성", "f": 0, "star": true, "codes": ["C01", "C02"], "what": "스스로 판단하고 결정할 수 있는 여지", "how": "팀별로 ‘알아서 해도 되는 일’ 목록을 합의합니다.", "later": "위임 전결 기준 재설계", "plain": "내 일을 스스로 정할 수 있는 자율", "q": "지난달 ‘이건 내가 정해도 될 텐데’ 싶었던 일은 무엇이었나요?", "d": "리더는 결과가 나빠질 걸 알아도 구성원이 선택하게 둬야만 한다."}, {"n": 2, "name": "책임", "f": 0, "star": false, "codes": ["C04", "C05"], "what": "맡은 일의 범위와 권한이 분명한 상태", "how": "핵심 업무 10개의 담당자와 결정권자를 한 장으로 정리합니다.", "later": "직무기술서와 성과 목표 재정렬", "plain": "분명한 역할과 책임", "q": "‘이건 누구 일이지?’ 하고 멈췄던 일이 있었나요?", "d": "책임은 권한이 주어진 만큼만 물어야만 한다."}, {"n": 3, "name": "능력개발지원", "f": 1, "star": true, "codes": ["C06", "C08"], "what": "회사가 내 성장을 함께 그리는 경험", "how": "리더와 구성원이 30분씩 성장 대화를 합니다.", "later": "개인 성장 계획과 학습 예산 연결", "plain": "성장을 위한 회사의 지원", "q": "1년 뒤 나는 이곳에서 무엇을 더 잘하게 되어 있을까요?", "d": "회사는 이직할 수도 있는 사람의 성장에도 투자해야만 한다."}, {"n": 4, "name": "능력개발기회", "f": 1, "star": true, "codes": ["C09", "C11", "C59", "C60"], "what": "도전하고 실패에서 배우는 기회", "how": "팀 회고에 ‘이번에 배운 것’ 한 줄을 추가합니다.", "later": "프로젝트 참여 제도와 실패 공유회", "plain": "새로운 도전과 배움의 기회", "q": "최근에 해 본 새로운 시도는 무엇이었고, 실패했다면 어떻게 다뤄졌나요?", "d": "성과가 급할 때도 익숙하지 않은 사람에게 일을 맡겨야만 한다."}, {"n": 5, "name": "회사의 방향과 소통", "f": 2, "star": true, "codes": ["C12", "C14"], "what": "회사의 방향을 알고 내 일과 잇는 것", "how": "경영진이 ‘올해 우리가 하지 않을 것 3가지’를 공유합니다.", "later": "전략과 팀 목표를 잇는 워크숍", "plain": "회사 방향에 대한 공유", "q": "우리 회사가 3년 뒤 어디에 있을지, 한 문장으로 말할 수 있나요?", "d": "경영진은 확정되지 않은 방향도 먼저 공유해야만 한다."}, {"n": 6, "name": "일 정보에 관한 소통", "f": 2, "star": true, "codes": ["C15", "C17"], "what": "결정과 그 이유가 제때 흐르는 소통", "how": "주간 회의에 ‘결정과 그 이유’ 1분 코너를 만듭니다.", "later": "의사결정 기록·공유 채널 표준화", "plain": "일에 필요한 정보와 결정 이유의 공유", "q": "최근 ‘왜 이렇게 정해졌지?’ 하고 궁금했던 결정은 무엇인가요?", "d": "모든 결정은 이유와 함께 공개되어야만 한다."}, {"n": 7, "name": "내 성공의 기준", "f": 2, "star": true, "codes": ["C18", "C19"], "what": "무엇이 잘한 것인지 분명한 기준", "how": "리더와 구성원이 ‘잘한 것의 모습’을 한 장으로 합의합니다.", "later": "목표·평가 기준 공개와 분기 점검", "plain": "무엇이 잘한 것인지에 대한 기준", "q": "내 일에서 ‘잘했다’는 어떤 모습인지, 리더와 같은 그림을 갖고 있나요?", "d": "성과 기준은 숫자로 측정할 수 있는 것만 담아야만 한다."}, {"n": 8, "name": "관계와 협동", "f": 3, "star": true, "codes": ["C21", "C23"], "what": "팀과 부서를 넘는 협력", "how": "다른 부서와 업무 공유 자리를 한 번 만듭니다.", "later": "부서 간 공동 목표 설정", "plain": "팀과 부서 간 협력", "q": "다른 팀과 일할 때 가장 자주 막히는 곳은 어디인가요?", "d": "다른 팀을 돕느라 우리 팀 목표가 늦어져도 도와야만 한다."}, {"n": 9, "name": "피드백과 인정", "f": 3, "star": true, "codes": ["C24", "C25"], "what": "기여가 보이고 인정받는 경험", "how": "회의 끝 2분, ‘고마운 일’을 나눕니다.", "later": "월 1회 1:1 피드백 루틴과 동료 인정 제도", "plain": "피드백과 인정", "q": "최근 누군가에게 ‘고맙다’는 말을 들은 일은 무엇이었나요?", "d": "피드백은 상대가 원하지 않아도 솔직하게 해야만 한다."}, {"n": 10, "name": "존중과 심리적 안전", "f": 3, "star": true, "codes": ["C27", "C28"], "what": "누구나 다른 의견과 실수를 말할 수 있는 안전함", "how": "리더가 먼저 자신의 실수 하나를 공유합니다.", "later": "반대 의견을 먼저 묻는 회의 규칙", "plain": "서로 존중하고 편하게 말할 수 있는 분위기", "q": "회의에서 말하려다 삼킨 말이 있었나요? 왜 삼켰나요?", "d": "실수한 사람의 이름은 회고에서 밝히지 않아야만 한다."}, {"n": 11, "name": "절차", "f": 4, "star": false, "codes": ["C30", "C32"], "what": "단순하고 효율적인 업무 절차", "how": "불필요한 보고 하나를 없애는 실험을 합니다.", "later": "업무 프로세스 간소화와 온보딩 키트", "plain": "단순하고 효율적인 업무 절차", "q": "없어져도 아무 문제 없을 보고나 절차는 무엇인가요?", "d": "절차를 줄여 생긴 실수는 개인이 아니라 조직이 책임져야만 한다."}, {"n": 12, "name": "역할과 결정 권한", "f": 4, "star": false, "codes": ["C33", "C34"], "what": "누가 무엇을 맡고 결정하는지 분명함", "how": "핵심 결정 10개의 결정권자 지도를 그립니다.", "later": "R&R 재정의와 의사결정 권한 규정", "plain": "분명한 역할 분담과 결정 권한", "q": "최근 ‘이건 누가 결정하지?’ 때문에 늦어진 일은 무엇인가요?", "d": "결정 권한은 직급이 아니라 정보를 가장 많이 가진 사람에게 있어야만 한다."}, {"n": 13, "name": "정책", "f": 4, "star": false, "codes": ["C36", "C37"], "what": "공정하게 적용되는 정책", "how": "자주 묻는 정책 10개를 한 장으로 정리합니다.", "later": "정책 정기 점검과 예외 기준 공개", "plain": "공정한 회사 정책", "q": "우리 회사 규정 중 사람마다 다르게 적용된다고 느낀 것이 있나요?", "d": "정책은 모두에게 예외 없이 똑같이 적용되어야만 한다."}, {"n": 14, "name": "자신감", "f": 5, "star": false, "codes": ["C38", "C39"], "what": "우리 제품·서비스에 대한 자부심", "how": "고객 성공 사례 1건을 전사에 공유합니다.", "later": "제품·서비스 개선 아이디어 채널", "plain": "우리 제품·서비스에 대한 자부심", "q": "친한 사람에게 우리 제품·서비스를 권할 수 있나요? 왜 그런가요?", "d": "제품의 약점은 고객보다 구성원이 먼저 솔직하게 말해야만 한다."}, {"n": 15, "name": "고객중심", "f": 5, "star": false, "codes": ["C40", "C41", "C61"], "what": "고객의 목소리가 결정에 닿는 것", "how": "고객 피드백 원문 5개를 팀 회의에서 함께 읽습니다.", "later": "VOC 정례 리뷰", "plain": "고객의 목소리 반영", "q": "최근 고객의 목소리가 우리 결정을 바꾼 적이 있나요?", "d": "고객이 원해도 우리 원칙과 맞지 않으면 거절해야만 한다."}, {"n": 16, "name": "상사의 리더십", "f": 6, "star": true, "codes": ["C42", "C43"], "what": "코칭하고 성장을 돕는 상사", "how": "리더에게 1:1 대화 질문 카드를 나눠 줍니다.", "later": "리더 코칭 교육과 리더 피드백", "plain": "상사의 코칭과 관심", "q": "리더와의 대화 중 가장 도움이 됐던 순간은 언제였나요?", "d": "리더는 성과가 낮은 구성원에게 더 많은 시간을 써야만 한다."}, {"n": 17, "name": "경영진의 리더십", "f": 6, "star": false, "codes": ["C45", "C47"], "what": "비전을 말하고 가치를 실천하는 경영진", "how": "경영진 타운홀에서 질문을 먼저 받습니다.", "later": "경영진 가치 실천 약속과 공개 점검", "plain": "경영진의 비전과 솔선", "q": "경영진에게 꼭 듣고 싶은 이야기 한 가지는 무엇인가요?", "d": "경영진은 불확실한 위기 상황도 구성원에게 그대로 알려야만 한다."}, {"n": 18, "name": "일과 삶의 균형", "f": 7, "star": false, "codes": ["C48", "C49"], "what": "감당할 수 있는 업무량과 쉼", "how": "팀별 ‘퇴근 후 연락 규칙’을 합의합니다.", "later": "업무량 재배분과 우선순위 조정", "plain": "일과 삶의 균형", "q": "지난주 퇴근 후 일 때문에 연락한 일 중, 다음 날 해도 됐던 것은 무엇인가요?", "d": "급한 일이 생기면 개인 시간보다 팀 일정이 우선해야만 한다."}, {"n": 19, "name": "도구와 공간", "f": 7, "star": false, "codes": ["C51", "C53"], "what": "일하기 좋은 도구와 공간", "how": "가장 불편한 도구나 공간 하나를 바로 해결합니다.", "later": "업무 특성별 유연근무 기준", "plain": "일하기 좋은 도구와 공간", "q": "일하면서 가장 불편한 도구나 공간 하나를 꼽는다면 무엇인가요?", "d": "유연근무는 모든 직무에 똑같이 허용되어야만 한다."}, {"n": 20, "name": "보상", "f": 7, "star": false, "codes": ["C54", "C55"], "what": "기여에 맞는 공정하고 투명한 보상", "how": "보상·승진 기준 설명회를 엽니다.", "later": "보상 체계 투명화와 기여 기반 인정", "plain": "공정한 보상", "q": "우리 회사에서 ‘보상받는 일’은 무엇이라고 생각하나요?", "d": "보상은 결과가 같다면 과정과 상관없이 같아야만 한다."}, {"n": 21, "name": "안정성", "f": 7, "star": false, "codes": ["C57", "C58"], "what": "불안하지 않은 일과 미래", "how": "경영진이 사업 현황을 솔직하게 공유합니다.", "later": "정기 사업 현황 브리핑", "plain": "고용과 회사의 안정", "q": "회사의 미래에 대해 가장 궁금하거나 불안한 것은 무엇인가요?", "d": "회사는 나쁜 소식일수록 빨리 알려야만 한다."}], "ITEMS": [{"c": "C01", "t": "내 일을 어떤 방식과 순서로 할지 스스로 정할 수 있다.", "r": false, "i": 1}, {"c": "C02", "t": "내 업무와 관련된 결정을 내릴 때 내 의견이 실제로 반영된다.", "r": false, "i": 1}, {"c": "C04", "t": "내가 맡은 일의 범위와 책임이 분명하다.", "r": false, "i": 2}, {"c": "C05", "t": "내 역할과 직급에 걸맞은 책임과 권한이 함께 주어진다.", "r": false, "i": 2}, {"c": "C06", "t": "회사는 내 커리어 성장에 관심을 갖고 실질적으로 지원한다.", "r": false, "i": 3}, {"c": "C08", "t": "앞으로 1~2년 동안 이곳에서 내가 어떻게 성장할 수 있을지 그려진다.", "r": false, "i": 3}, {"c": "C09", "t": "내 역량을 넓히는 새로운 도전 기회가 주어진다.", "r": false, "i": 4}, {"c": "C11", "t": "시도했다가 실패한 경험도 배움으로 인정받는다.", "r": false, "i": 4}, {"c": "C59", "t": "새로운 아이디어를 실험해 볼 시간과 여지가 있다.", "r": false, "i": 4}, {"c": "C60", "t": "더 나은 방법이 보이면, 지금의 방식을 바꾸는 데 주저하지 않는다.", "r": false, "i": 4}, {"c": "C12", "t": "회사가 앞으로 3~5년간 어디로 가려 하는지 알고 있다.", "r": false, "i": 5}, {"c": "C14", "t": "회사의 방향과 우리 팀의 목표가 연결되어 있다고 느낀다.", "r": false, "i": 5}, {"c": "C15", "t": "내 일에 영향을 주는 결정과 변경 사항을 제때 공유받는다.", "r": false, "i": 6}, {"c": "C17", "t": "중요한 결정이 내려진 이유를 설명 듣는다.", "r": false, "i": 6}, {"c": "C18", "t": "내 업무에서 무엇이 ‘잘한 것’인지 기준이 분명하다.", "r": false, "i": 7}, {"c": "C19", "t": "내 성과가 어떤 기준으로 평가되는지 알고 있다.", "r": false, "i": 7}, {"c": "C21", "t": "나는 우리 팀의 일원이라고 느낀다.", "r": false, "i": 8}, {"c": "C23", "t": "다른 팀(부서)과의 협업이 원활하다.", "r": false, "i": 8}, {"c": "C24", "t": "내 성장에 도움이 되는 구체적인 피드백을 정기적으로 받는다.", "r": false, "i": 9}, {"c": "C25", "t": "내가 기여한 일은 동료와 조직이 알아보고 인정해 준다.", "r": false, "i": 9}, {"c": "C27", "t": "이곳에서는 배경·직급·나이와 상관없이 모두가 존중받는다.", "r": false, "i": 10}, {"c": "C28", "t": "동료나 상사와 다른 의견을 불이익 걱정 없이 말할 수 있다.", "r": false, "i": 10}, {"c": "C30", "t": "일을 처리하는 절차가 명확하고 효율적이다.", "r": false, "i": 11}, {"c": "C32", "t": "불필요한 보고나 승인 단계 때문에 일이 늦어진다.", "r": true, "i": 11}, {"c": "C33", "t": "조직 구조와 역할 분담(R&R)이 명확하다.", "r": false, "i": 12}, {"c": "C34", "t": "무엇을 누가 결정하는지가 분명하다.", "r": false, "i": 12}, {"c": "C36", "t": "일하는 데 필요한 회사 정책(근무·휴가·평가 등)이 충분하고 공정하게 적용된다.", "r": false, "i": 13}, {"c": "C37", "t": "회사 정책과 규정은 변화에 맞춰 제때 업데이트된다.", "r": false, "i": 13}, {"c": "C38", "t": "나는 우리 회사의 제품·서비스에 자부심이 있다.", "r": false, "i": 14}, {"c": "C39", "t": "우리 회사의 강점과 차별점을 다른 사람에게 설명할 수 있다.", "r": false, "i": 14}, {"c": "C40", "t": "우리 회사는 고객의 목소리를 의사결정에 반영한다.", "r": false, "i": 15}, {"c": "C41", "t": "우리 조직은 고객의 요구에 시기적절하게 대응한다.", "r": false, "i": 15}, {"c": "C61", "t": "우리 조직은 바깥(고객, 업계, 다른 분야)에서 배운 것을 빠르게 일에 적용한다.", "r": false, "i": 15}, {"c": "C42", "t": "내 상사는 일에 필요한 코칭과 멘토링을 해준다.", "r": false, "i": 16}, {"c": "C43", "t": "내 상사는 내가 의견과 아이디어를 내도록 독려한다.", "r": false, "i": 16}, {"c": "C45", "t": "경영진은 회사의 비전과 방향을 분명하고 일관되게 제시한다.", "r": false, "i": 17}, {"c": "C47", "t": "경영진은 변화 상황에서 구성원이 이해하고 준비할 수 있도록 이끈다.", "r": false, "i": 17}, {"c": "C48", "t": "전반적으로 내 업무량은 감당할 수 있는 수준이다.", "r": false, "i": 18}, {"c": "C49", "t": "퇴근 후나 휴일에도 일 때문에 제대로 쉬지 못하는 경우가 많다.", "r": true, "i": 18}, {"c": "C51", "t": "일하는 데 필요한 도구·장비·디지털 환경이 충분히 지원된다.", "r": false, "i": 19}, {"c": "C53", "t": "근무 장소와 시간의 유연성이 업무 특성에 맞게 주어진다.", "r": false, "i": 19}, {"c": "C54", "t": "내 일에 대한 보상은 나의 기여에 비추어 공정하다.", "r": false, "i": 20}, {"c": "C55", "t": "보상과 승진이 어떤 기준으로 결정되는지 알고 있다.", "r": false, "i": 20}, {"c": "C57", "t": "이 회사에서 내 일과 자리가 안정적이라고 느낀다.", "r": false, "i": 21}, {"c": "C58", "t": "회사의 미래에 대해 불안해하지 않고 일할 수 있다.", "r": false, "i": 21}], "MOT": [{"c": "M01", "t": "일 자체가 재미있고 흥미롭기 때문에", "k": 0}, {"c": "M03", "t": "어려운 과제를 해냈을 때 느끼는 성취감 때문에", "k": 0}, {"c": "M04", "t": "이 일이 나라는 사람을 잘 드러내 주기 때문에", "k": 1}, {"c": "M05", "t": "이 일이 내 삶의 가치관과 잘 맞기 때문에", "k": 1}, {"c": "M07", "t": "내가 원하는 커리어 목표를 이루는 데 중요하기 때문에", "k": 2}, {"c": "M08", "t": "내 인생에서 이루고 싶은 목표에 다가가게 해주기 때문에", "k": 2}, {"c": "M10", "t": "잘해내지 못하면 스스로에게 부끄러울 것 같기 때문에", "k": 3}, {"c": "M12", "t": "일에서 밀리면 인생에서도 뒤처질 것 같기 때문에", "k": 3}, {"c": "M13", "t": "돈을 벌기 위해서", "k": 4}, {"c": "M14", "t": "생활의 안정을 위해서", "k": 4}, {"c": "M15", "t": "다른 사람(상사, 동료, 가족 등)에게 인정받기 위해서", "k": 5}, {"c": "M16", "t": "다른 사람에게 비난받지 않기 위해서", "k": 5}, {"c": "M17", "t": "솔직히 내가 왜 이 일을 하는지 잘 모르겠다", "k": 6}, {"c": "M18", "t": "일에서 요구하는 것이 너무 많아 의욕이 생기지 않는다", "k": 6}], "REASONS": ["일이 즐거워서", "내 가치·신념과 맞아서", "내 목표에 닿아서", "스스로 부끄럽지 않으려고", "먹고살려고", "남에게 인정받으려고", "이유를 모르겠어서"], "K": [{"c": "K1a", "q": 1, "t": "우리 조직은 구성원의 이야기를 듣고, 각자의 성장을 돌본다."}, {"c": "K1b", "q": 1, "t": "우리 조직은 사람과 아이디어를 연결하고, 아직 다듬어지지 않은 생각도 함께 키운다."}, {"c": "K2a", "q": 2, "t": "우리 조직은 결정하기 전에 바깥의 현실과 데이터를 충분히 모으고 살핀다."}, {"c": "K2b", "q": 2, "t": "우리 조직은 역할과 절차가 분명해서, 누가 무엇을 하는지 명확하다."}, {"c": "K3a", "q": 3, "t": "우리 조직은 매일의 일이 효율적으로, 흔들림 없이 돌아가도록 관리한다."}, {"c": "K3b", "q": 3, "t": "우리 조직은 결과와 책임을 분명히 묻고, 끝까지 실행하게 한다."}, {"c": "K4a", "q": 4, "t": "우리 조직은 밖으로 나가 필요한 자원과 기회를 끌어오고, 활동 반경을 넓힌다."}, {"c": "K4b", "q": 4, "t": "우리 조직은 지금의 방식에 질문을 던지고, 새로운 방식을 상상하고 시도한다."}], "FQ": ["내 일은 내가 정하고, 책임도 분명한가요?", "이곳에서 성장하고 있나요?", "방향과 정보, 잘했다는 기준을 알고 있나요?", "함께 일하고, 인정받고, 존중받나요?", "일이 돌아가는 체계가 명확한가요?", "우리 제품과 고객에 자부심이 있나요?", "상사와 경영진이 잘 이끌어 주나요?", "이곳에서 오래, 건강하게 일할 수 있나요?"], "FS": ["자율과 책임", "성장", "방향과 정보", "관계와 존중", "일의 틀", "제품 자부심", "리더십", "일하기 좋은 환경"], "RES": [{"c": "R01", "t": "이 회사를 친구에게 일터로 추천하겠다.", "scale": 11}, {"c": "R02", "t": "1년 뒤에도 이 회사에서 일하고 있을 것 같다.", "scale": 10}]};
-const MIN_N = 3;
+let MIN_N = 3;
+function setMinN(o){MIN_N=(o&&(o.minN===5||o.minN===3))?o.minN:3}
+function pageBase(){return /^https?:/.test(location.protocol)&&!/claudeusercontent|claude\.ai|localhost/.test(location.host)?location.origin+location.pathname:PAGE_URL}
+function rnd20(){const A='abcdefghijkmnpqrstuvwxyz23456789';const b=new Uint8Array(20);crypto.getRandomValues(b);return Array.from(b,x=>A[x%A.length]).join('')}
 const QN = {1:'관계형',2:'질서형',3:'성과형',4:'혁신형'};
 const QW = {1:'Why',2:'What',3:'How',4:'If'};
 const QP = {1:'함께 성장하는 문화',2:'체계와 원칙의 문화',3:'실행과 결과의 문화',4:'도전과 변화의 문화'};
@@ -116,7 +119,7 @@ const pulseCodes=(org)=>{const ex=((org&&org.extra)||[]).map(n=>IDXN[n]&&IDXN[n]
 const STEPS=new Proxy([],{get:(t,k)=>{const a=isPulse()?['info','pulse']:FULL_STEPS;const v=a[k];return typeof v==='function'?v.bind(a):v}});
 const PAGE_URL='https://claude.ai/artifact/3fxnc6Aa3itsJ2KcsugAzn';
 let st = {org:null,orgs:[],orgErr:'',screen:'intro',step:0,r:{},dept:'',role:'',ten:'',u:[],o1:'',o2:'',err:'',mine:null,saved:null,R:null,src:''};
-let caps = {db:null,user:null,downloads:null,sample:null,canEdit:false};
+let caps = {db:null,user:null,downloads:null,sample:null,canEdit:false,ext:null};
 
 const $=(h)=>{const d=document.createElement('div');d.innerHTML=h.trim();return d.firstElementChild};
 const esc=(s)=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -362,7 +365,7 @@ function scatter(points,opt){
 }
 
 /* ---------- screens ---------- */
-function render(){const app=document.getElementById('app');app.innerHTML='';const v={intro:introView,survey:surveyView,result:resultView,report:reportView,admin:adminView,pulse:pulseView}[st.screen];app.append(v());window.scrollTo({top:0})}
+function render(){const app=document.getElementById('app');app.innerHTML='';const v={intro:introView,survey:surveyView,result:resultView,report:reportView,admin:adminView,pulse:pulseView,hr:hrView,invites:invitesView}[st.screen];app.append(v());window.scrollTo({top:0})}
 function introView(){
  const O=st.org;
  const done=O?(()=>{try{return localStorage.getItem('poca_done_'+O.code)}catch(e){return null}})():null;
@@ -373,11 +376,11 @@ function introView(){
   <h1>우리 조직은 지금 어떤 문화이고, 사람들은 왜 일하고 있을까요?</h1>
   <p class="muted">${O&&O.type==='pulse'?'지난 진단 이후 달라진 것을 짧게 점검합니다. 약 3분.':'약 11분, 80문항입니다.'} 이름은 받지 않으며, 결과는 묶어서만 보입니다.</p>
   <div class="three"><div><h3>나의 업무 동기</h3><p class="small muted">나의 업무 동기요인을 돌아봅니다.</p></div><div><h3>현재 조직 분석</h3><p class="small muted">여덟 가지 질문으로 우리 조직을 봅니다.</p></div><div><h3>조직의 현재와 미래</h3><p class="small muted">우리 문화가 어디에 있고, 어디로 가고 싶은지 봅니다.</p></div></div>
-  ${O?'<p class="small muted" style="margin-top:14px">한 사람당 한 응답이 저장됩니다. 다시 하면 이전 응답을 덮어씁니다.</p>':''}</div>
-  ${closed?'<div class="notice">이 진단은 마감되었습니다. 참여해 주셔서 감사합니다.</div>':done?'<div class="notice">이 기기에서 이미 응답하셨습니다. 다시 하면 이전 응답을 덮어씁니다.</div>':''}
+  ${O?'<p class="small muted" style="margin-top:14px">한 사람당 한 응답이 저장됩니다. 다시 하면 이전 응답을 덮어씁니다.</p>':''}${st.invite?`<p class="small" style="margin-top:10px;padding:10px 12px;background:var(--surface2);border-radius:4px"><b>${esc(st.invite.name)}</b>님의 개인 링크입니다. 응답 내용은 이름과 연결되지 않은 채 익명으로 저장되고, 인사 담당자에게는 <b>완료 여부만</b> 전달됩니다.</p>`:''}</div>
+  ${closed?'<div class="notice">이 진단은 마감되었습니다. 참여해 주셔서 감사합니다.</div>':st.invite&&st.invite.done?'<div class="notice">이미 응답을 마치셨습니다. 다시 하면 이전 응답을 덮어씁니다.</div>':done?'<div class="notice">이 기기에서 이미 응답하셨습니다. 다시 하면 이전 응답을 덮어씁니다.</div>':''}
   ${O?'':`<div class="panel"><h3>회사에서 받은 진단 코드를 입력하세요</h3><div class="row"><input type="text" id="code" maxlength="8" style="max-width:200px;font-size:20px;letter-spacing:4px;text-transform:uppercase;font:inherit;padding:10px 12px;border:1px solid var(--line);border-radius:4px;background:var(--surface);color:var(--ink)" aria-label="진단 코드"><button id="enter">들어가기</button></div><p class="err" id="cerr">${esc(st.orgErr)}</p></div>`}
-  <div class="row">${O&&!closed?'<button class="primary" id="go">진단 시작하기</button>':''}<button id="smp">조직 리포트 예시 보기</button><button id="psmp">펄스 리포트 예시 보기</button><span id="adm"></span></div></div>`);
- const go=el.querySelector('#go'); if(go)go.onclick=()=>{st={...st,screen:'survey',step:0,r:{},u:[],o1:'',o2:'',o3:'',t0:Date.now(),err:'',saved:null};render()};
+  ${O&&!closed?'<label class="chk" style="max-width:640px;margin-bottom:10px"><input type="checkbox" id="agree"><span>응답은 이름과 연결되지 않게 저장되고 결과는 묶어서만 보인다는 안내를 확인했습니다. 참여는 자유이며, 참여하지 않아도 불이익이 없습니다.</span></label><p class="err" id="agErr"></p>':''}<div class="row">${O&&!closed?'<button class="primary" id="go">진단 시작하기</button>':''}<button id="smp">조직 리포트 예시 보기</button><button id="psmp">펄스 리포트 예시 보기</button><span id="adm"></span></div></div>`);
+ const go=el.querySelector('#go'); if(go)go.onclick=()=>{if(!el.querySelector('#agree').checked){el.querySelector('#agErr').textContent='안내를 확인하고 체크해 주세요.';return}st={...st,screen:'survey',step:0,r:{},u:[],o1:'',o2:'',o3:'',t0:Date.now(),err:'',saved:null};render()};
  const en=el.querySelector('#enter'); if(en)en.onclick=()=>{const c=el.querySelector('#code').value.trim().toUpperCase();if(c)loadOrg(c,true)};
  el.querySelector('#smp').onclick=()=>{st.R=aggregate(sampleData());st.R.prev=aggregate(sampleData(29,-0.25));st.src='sample';st.screen='report';render()};
  el.querySelector('#psmp').onclick=()=>{st.P=samplePulse();st.src='sample';st.screen='pulse';render()};
@@ -389,7 +392,7 @@ async function loadOrg(code,manual){
  if(!caps.db){if(manual){st.orgErr='이 화면에서는 진단에 연결할 수 없습니다.';render()}return}
  try{const sn=await caps.db.doc('poca_orgs/'+code).get();const d=sn&&sn.data?sn.data():null;
   if(!d){st.org=null;st.orgErr='이 코드의 진단을 찾지 못했습니다.';render();return}
-  st.org={code,...d};if(st.screen==='intro')render()}
+  st.org={code,...d};setMinN(st.org);if(st.screen==='intro')render()}
  catch(e){st.orgErr='진단에 연결하지 못했습니다. 이 페이지에 참여 권한이 있는지 확인해 주세요.';if(st.screen==='intro')render()}
 }
 async function openAdmin(){
@@ -405,12 +408,16 @@ function adminView(){
   <label class="small" for="nm">회사(조직) 이름</label><input type="text" id="nm" maxlength="60" placeholder="예: 대덕전자" style="font:inherit;width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:4px;background:var(--surface);color:var(--ink)">
   <div style="height:10px"></div><label class="small" for="dp">부서 목록 (한 줄에 하나)</label><textarea id="dp" placeholder="경영지원&#10;영업&#10;생산"></textarea>
   <div style="height:10px"></div><label class="small" for="hc">대상 인원 (참여율 계산용, 선택)</label><input type="text" id="hc" inputmode="numeric" maxlength="6" style="font:inherit;max-width:160px;padding:10px 12px;border:1px solid var(--line);border-radius:4px;background:var(--surface);color:var(--ink)">
+  <div style="height:10px"></div><label class="small" for="mn">익명 기준 (이보다 적은 그룹은 결과를 가림)</label><select id="mn"><option value="3" selected>3명 (기본)</option><option value="5">5명 (더 엄격)</option></select>
+  <div style="height:10px"></div><label class="small" for="roster">직원 명단 (선택 · 한 줄에 ‘이름’ 또는 ‘이름, 부서’) · 넣으면 사람마다 개인 링크가 생기고, 인사 담당자 화면에서 완료 여부를 볼 수 있습니다</label><textarea id="roster" placeholder="홍길동, 영업&#10;김철수, 생산"></textarea>
+  <div style="height:10px"></div><label class="chk" style="max-width:520px"><input type="checkbox" id="hrRep"><span><b>인사 담당자에게 결과 보고서 공개</b> (끄면 인사 담당자는 응답 현황만 봅니다. 나중에 바꿀 수 있습니다)</span></label>
   <div style="height:14px"></div><label class="chk" style="max-width:420px"><input type="checkbox" id="isPilot"><span><b>시범 운영</b> (응답 시간을 기록하고, 헷갈린 문항 의견을 받습니다)</span></label><div style="height:8px"></div><label class="chk" style="max-width:360px"><input type="checkbox" id="isP"><span><b>펄스로 만들기</b> (13문항 + 맞춤 문항, 약 3분)</span></label>
   <div style="height:10px"></div><label class="small" for="base">비교할 이전 진단 (선택 · 펄스는 꼭 고르세요)</label><select id="base"><option value="">없음</option>${st.orgs.filter(o=>o.type!=='pulse').map(o=>`<option value="${esc(o.code)}">${esc(o.name)} (${esc(o.code)})</option>`).join('')}</select><div id="pbox" style="display:none">
   <p class="small" style="margin:10px 0 4px">맞춤 지표 (지난 리포트의 ‘핵심 과제’, 최대 3개)</p><div style="columns:2;font-size:14px">${CFG.IDX.map(x=>`<label style="display:block"><input type="checkbox" class="ex" value="${x.n}"> ${String(x.n).padStart(2,'0')} ${esc(x.name)}</label>`).join('')}</div></div>
   <p class="err" id="aerr"></p><div class="row"><button class="primary" id="mk">만들고 코드 받기</button></div></div>
   <div class="panel"><h2>진행 중인 진단</h2>${st.adminErr?`<p class="err">${esc(st.adminErr)}</p>`:''}${st.orgs.length?st.orgs.map(o=>`<div class="act" style="border-top-color:${o.open===false?'var(--muted)':'var(--navy)'}"><div class="row" style="justify-content:space-between"><div><h3 style="margin:0">${esc(o.name)} <span class="small muted">· ${o.type==='pulse'?'펄스 · ':''}코드 ${esc(o.code)}${o.open===false?' · 마감':''}</span></h3><p class="small muted" style="margin:2px 0 0">응답 ${o.n}명${o.headcount?` / 대상 ${o.headcount}명 (${Math.round(o.n/o.headcount*100)}%)`:''}</p></div>
-   <div class="row"><button data-rep="${esc(o.code)}">리포트 보기</button><button data-tog="${esc(o.code)}">${o.open===false?'다시 열기':'마감하기'}</button></div></div>
+   <div class="row"><button data-rep="${esc(o.code)}">리포트 보기</button>${o.roster?`<button data-inv="${esc(o.code)}">명단 · 개인 링크</button>`:''}<button data-tog="${esc(o.code)}">${o.open===false?'다시 열기':'마감하기'}</button></div></div>
+   ${o.hr?`<p class="small" style="margin:8px 0 0">인사 담당자 링크 (응답 현황${o.hrReport?' + 결과 보고서':''}) · 익명 기준 ${o.minN||3}명 · <a href="#" data-hrt="${esc(o.code)}">${o.hrReport?'보고서 공개 끄기':'보고서 공개 켜기'}</a><input type="text" readonly value="${pageBase()}#hr/${esc(o.code)}/${esc(o.hr)}" style="font:inherit;font-size:13px;width:100%;padding:6px 8px;border:1px solid var(--line);border-radius:4px;background:var(--surface2);color:var(--ink)" onclick="this.select()"></p>`:''}
    <p class="small" style="margin:8px 0 0">공유 링크: <input type="text" readonly value="${PAGE_URL}#${esc(o.code)}" style="font:inherit;font-size:13px;width:100%;padding:6px 8px;border:1px solid var(--line);border-radius:4px;background:var(--surface2);color:var(--ink)" onclick="this.select()"></p></div>`).join(''):'<p class="small muted">아직 만든 진단이 없습니다.</p>'}</div>
   <div class="row"><button id="home">처음으로</button></div></div>`);
  const ip=el.querySelector('#isP');ip.onchange=()=>{el.querySelector('#pbox').style.display=ip.checked?'block':'none'};
@@ -423,9 +430,15 @@ function adminView(){
   if(isP&&!base){el.querySelector('#aerr').textContent='비교할 이전 진단을 고르세요.';return}
   if(extra.length>3){el.querySelector('#aerr').textContent='맞춤 지표는 3개까지 고를 수 있습니다.';return}
   const A='ACDEFGHJKMNPQRTUVWXY3479';const code=Array.from({length:5},()=>A[Math.floor(Math.random()*A.length)]).join('');
-  try{await caps.db.doc('poca_orgs/'+code).set({name,depts:depts.length?depts:DEPTS,headcount:hc,open:true,at:Date.now(),type:isP?'pulse':'full',base:base||null,extra:isP?extra:[],pilot});openAdmin()}catch(e){el.querySelector('#aerr').textContent='진단을 만들지 못했습니다.'}
+  const minN=+el.querySelector('#mn').value===5?5:3;const hrReport=el.querySelector('#hrRep').checked;
+  const roster=el.querySelector('#roster').value.split('\n').map(x=>x.trim()).filter(Boolean).slice(0,2000).map(l=>{const [nm,...dp]=l.split(/[,\t]/);return {name:nm.trim().slice(0,40),dept:(dp.join(',')||'').trim().slice(0,40)||null}}).filter(x=>x.name);
+  if(roster.length&&!(caps.ext&&caps.ext.addInvites)){el.querySelector('#aerr').textContent='직원 명단은 웹사이트(poca 사이트)의 관리 화면에서만 넣을 수 있습니다.';return}
+  const rDepts=[...new Set(roster.map(x=>x.dept).filter(Boolean))];try{await caps.db.doc('poca_orgs/'+code).set({name,depts:depts.length?depts:rDepts.length?rDepts:DEPTS,headcount:hc||(roster.length||null),open:true,at:Date.now(),type:isP?'pulse':'full',base:base||null,extra:isP?extra:[],pilot,minN,hrReport,hr:rnd20(),roster:roster.length>0});
+   if(roster.length)await caps.ext.addInvites(code,roster);openAdmin()}catch(e){el.querySelector('#aerr').textContent='진단을 만들지 못했습니다.'+(roster.length?' (명단 저장에 필요한 데이터베이스 설정이 아직 안 되어 있을 수 있습니다)':'')}
  };
  el.querySelectorAll('[data-rep]').forEach(b=>b.onclick=()=>loadReport(b.dataset.rep));
+ el.querySelectorAll('[data-inv]').forEach(b=>b.onclick=()=>openInvites(b.dataset.inv));
+ el.querySelectorAll('[data-hrt]').forEach(b=>b.onclick=async e=>{e.preventDefault();const o=st.orgs.find(x=>x.code===b.dataset.hrt);try{await caps.db.doc('poca_orgs/'+o.code).update({hrReport:!o.hrReport});openAdmin()}catch(_){}});
  el.querySelectorAll('[data-tog]').forEach(b=>b.onclick=async()=>{const o=st.orgs.find(x=>x.code===b.dataset.tog);try{await caps.db.doc('poca_orgs/'+o.code).update({open:o.open===false});openAdmin()}catch(e){}});
  return el;
 }
@@ -437,7 +450,7 @@ function surveyView(){
  const body=el.querySelector('#body');
  if(step==='info'){
   const sel=(id,lab,opts,val)=>`<label class="small" for="${id}">${lab}</label><select id="${id}"><option value="">선택하세요</option>${opts.map(o=>`<option ${val===o?'selected':''}>${o}</option>`).join('')}</select><div style="height:12px"></div>`;
-  body.innerHTML=`<p class="label">시작하기 전에</p><h2>소속을 알려주세요</h2><p class="small muted">그룹별 결과는 응답이 ${MIN_N}명 이상일 때만 보입니다 (테스트 기준, 정식은 5명).</p>${sel('dept','부서',(st.org&&st.org.depts)||DEPTS,st.dept)}${sel('role','직급',ROLES,st.role)}${sel('ten','근속',TENURE,st.ten)}`;
+  body.innerHTML=`<p class="label">시작하기 전에</p><h2>소속을 알려주세요</h2><p class="small muted">그룹별 결과는 응답이 ${MIN_N}명 이상일 때만 보입니다.${st.invite?' 개인 링크로 응답해도, 응답 내용은 이름과 연결되지 않습니다.':''}</p>${sel('dept','부서',(st.org&&st.org.depts)||DEPTS,st.dept)}${sel('role','직급',ROLES,st.role)}${sel('ten','근속',TENURE,st.ten)}`;
   body.querySelector('#dept').onchange=e=>{st.dept=e.target.value;clr(el)};body.querySelector('#role').onchange=e=>{st.role=e.target.value;clr(el)};body.querySelector('#ten').onchange=e=>{st.ten=e.target.value;clr(el)};
  } else if(step==='pulse'){
   const codes=pulseCodes(st.org);
@@ -481,7 +494,7 @@ function validate(step){
 }
 async function submit(){
  const rec={v:2,at:Date.now(),dept:st.dept,role:st.role,ten:st.ten,r:{...st.r},u:[...st.u],o1:st.o1.trim().slice(0,400),o2:st.o2.trim().slice(0,400),dur:st.t0?Math.round((Date.now()-st.t0)/1000):null,o3:(st.o3||'').trim().slice(0,400)};
- st.mine=rec;st.saved=null;st.screen='result';render();
+ st.mine=rec;st.saved=null;st.screen='result';render();const inviteTok=st.invite?st.invite.token:null;
  if(caps.db&&caps.user&&st.org){try{const id=await caps.user.id();if(!id)throw 0;const ref=caps.db.doc('poca_resp/'+id);let cur={};try{const sn=await ref.get();cur=(sn&&sn.data&&sn.data())||{}}catch(e){}cur[st.org.code]=rec;await ref.set(cur);st.saved=true}catch(e){st.saved=false}}else st.saved=false;
  try{if(st.org)localStorage.setItem('poca_done_'+st.org.code,'1')}catch(e){}
  const n=document.getElementById('savenote');if(n)n.textContent=saveText();
@@ -594,15 +607,77 @@ function reportView(){
   <p class="small" style="margin-top:12px">폴앤마크는 결과 공유회 진행, 대화 워크숍 설계와 퍼실리테이션, 재진단 리포트를 함께합니다.</p></div>
 
  <div class="panel" id="aiPanel"><p class="label">Claude의 해석</p><p class="small muted">위 결과를 Claude가 읽고 해석과 워크숍 질문을 써 줍니다.</p><div class="row"><button id="aiBtn">해석 받기</button></div><div class="ai small" id="aiOut" style="margin-top:12px"></div></div>
- <div class="row"><button class="primary" id="dlRep">요약판 내려받기 (경영진용, 16쪽)</button><button class="primary" id="dlFull">전체판 내려받기 (HR용, 약 55쪽)</button><button id="csv">원자료 내려받기 (CSV)</button><button id="home">처음으로</button></div><p class="small muted" style="margin-top:8px">내려받은 파일을 브라우저로 열고 인쇄에서 ‘PDF로 저장’을 고르면, A4 가로 리포트가 됩니다.</p></div>`));
- el.querySelector('#home').onclick=()=>{if(st.src==='real'){openAdmin()}else{st.screen='intro';render()}};
- const cb=el.querySelector('#csv'); if(!caps.downloads)cb.remove(); else cb.onclick=()=>downloadCSV(A);
+ <div class="row"><button class="primary" id="dlRep">요약판 내려받기 (경영진용, 약 22쪽)</button><button class="primary" id="dlFull">전체판 내려받기 (HR용, 약 60쪽)</button><button id="items">문항별 점수 (엑셀용 CSV)</button><button id="csv">원자료 내려받기 (CSV)</button><button id="home">처음으로</button></div><p class="small muted" style="margin-top:8px">내려받은 파일을 브라우저로 열고 인쇄에서 ‘PDF로 저장’을 고르면, A4 가로 리포트가 됩니다.</p></div>`));
+ el.querySelector('#home').onclick=()=>{if(st.src==='hr'){st.screen='hr';render()}else if(st.src==='real'){openAdmin()}else{st.screen='intro';render()}};
+ const cb=el.querySelector('#csv'); if(!caps.downloads||!caps.canEdit)cb.remove(); else cb.onclick=()=>downloadCSV(A);
+ {const ib=el.querySelector('#items'); if(!caps.downloads)ib.remove(); else ib.onclick=()=>downloadItems(A);}
  const dr=el.querySelector('#dlRep'),df=el.querySelector('#dlFull'); if(!caps.downloads){dr.remove();df.remove()} else {dr.onclick=()=>downloadReport(A,false);df.onclick=()=>downloadReport(A,true)}
  if(!caps.sample)el.querySelector('#aiPanel').remove(); else el.querySelector('#aiBtn').onclick=()=>askClaude(A,el,focus);
  return el;
 }
+async function route(){
+ const raw=(location.hash||'').replace('#','').trim();
+ let m=raw.match(/^hr\/([A-Za-z0-9]{4,8})\/([a-z0-9]{10,40})$/);
+ if(m){st.hr={code:m[1].toUpperCase(),tok:m[2],data:null,err:''};st.screen='hr';render();await loadHr();return}
+ m=raw.match(/^i\/([0-9a-fA-F-]{36})$/);
+ if(m){await loadInvite(m[1]);return}
+ const c=raw.toUpperCase();if(c&&/^[A-Z0-9]{4,8}$/.test(c)){st.invite=null;st.screen='intro';await loadOrg(c,false)}
+}
+async function loadInvite(tok){
+ st.orgErr='';st.screen='intro';
+ if(!(caps.ext&&caps.ext.getInvite)){st.orgErr='이 화면에서는 개인 링크를 열 수 없습니다.';render();return}
+ try{const d=await caps.ext.getInvite(tok);if(!d){st.org=null;st.invite=null;st.orgErr='이 개인 링크를 찾지 못했습니다. 인사 담당자에게 링크를 다시 받아 주세요.';render();return}
+  st.org={code:d.code,...d.info};setMinN(st.org);st.invite={token:tok,name:d.name,done:!!d.done};render()}
+ catch(e){st.orgErr='진단에 연결하지 못했습니다. 인터넷 연결을 확인하고 다시 시도해 주세요.';render()}
+}
+async function loadHr(){
+ const H=st.hr;
+ if(!(caps.ext&&caps.ext.hrStatus)){H.err='이 화면에서는 응답 현황을 볼 수 없습니다.';render();return}
+ try{const d=await caps.ext.hrStatus(H.code,H.tok);if(!d){H.err='링크가 맞지 않습니다. 폴앤마크에 링크를 다시 요청해 주세요.';render();return}H.data=d;H.err='';render()}
+ catch(e){H.err='응답 현황을 불러오지 못했습니다. 잠시 뒤 다시 열어 주세요.';render()}
+}
+function hrView(){
+ const H=st.hr||{};const D=H.data;
+ if(!D)return $(`<div class="panel"><p class="label">응답 현황</p><h2>${H.err?esc(H.err):'불러오는 중입니다…'}</h2></div>`);
+ const inv=D.invites||[];const doneN=inv.filter(x=>x.done).length;const target=inv.length||D.headcount||null;const rate=target?Math.round(D.total/target*100):null;
+ const filt=H.filter||'todo';const list=inv.filter(x=>filt==='all'?true:filt==='done'?x.done:!x.done);
+ const remind=`[조직문화 진단 안내] 아직 참여하지 않으셨다면 오늘 10분만 내어 주세요. 응답은 이름과 연결되지 않게 저장되고, 결과는 묶어서만 보입니다. ${inv.length?'아래 개인 링크로 참여해 주세요: ':'참여 링크: '}`;
+ const el=$(`<div><div class="panel" style="padding:28px"><p class="label">${esc(D.name)} · 인사 담당자 화면</p><h1>응답 현황</h1>
+  <div class="kpis"><div class="kpi"><div class="n">${D.total}${target?`<span class="of"> / ${target}</span>`:''}</div><div class="l">응답한 사람</div><div class="s">${rate!=null?'응답률 '+rate+'%':''}${D.open===false?' · 마감됨':' · 진행 중'}</div></div></div>
+  <p class="small muted">이 화면은 응답 여부만 보여 줍니다. 누가 무엇이라고 답했는지는 폴앤마크도 볼 수 없게 저장됩니다.</p></div>
+  ${(D.byDept||[]).length?`<div class="panel"><h2>부서별 응답 수</h2>${D.byDept.map(b=>`<div class="bar" style="grid-template-columns:44mm 1fr 18mm"><div>${esc(b.dept||'(미선택)')}</div><div style="background:var(--surface2);height:12px;border-radius:3px;align-self:center"><i style="display:block;height:100%;border-radius:3px;width:${Math.min(100,b.n/Math.max(...D.byDept.map(x=>x.n))*100)}%;background:var(--navy)"></i></div><div class="v">${b.n}명</div></div>`).join('')}</div>`:''}
+  ${inv.length?`<div class="panel"><h2>명단별 완료 여부 <span class="small muted">완료 ${doneN} · 미완료 ${inv.length-doneN}</span></h2>
+   <div class="row"><button data-f="todo" ${filt==='todo'?'class="primary"':''}>미완료</button><button data-f="done" ${filt==='done'?'class="primary"':''}>완료</button><button data-f="all" ${filt==='all'?'class="primary"':''}>전체</button><button id="cpTodo">미완료자 이름·링크 복사</button></div>
+   <table style="margin-top:10px"><tr><th>이름</th><th>부서</th><th>상태</th><th>개인 링크</th></tr>${list.map(x=>`<tr><td>${esc(x.name)}</td><td>${esc(x.dept||'')}</td><td>${x.done?'<b style="color:var(--navy)">완료</b>':'<span style="color:var(--red)">미완료</span>'}</td><td><input type="text" readonly value="${pageBase()}#i/${esc(x.token)}" style="font:inherit;font-size:12px;width:100%;padding:4px 6px;border:1px solid var(--line);border-radius:4px;background:var(--surface2)" onclick="this.select()"></td></tr>`).join('')||'<tr><td colspan="4" class="muted">해당하는 사람이 없습니다.</td></tr>'}</table></div>`:''}
+  <div class="panel"><h2>독려 문구</h2><textarea id="rm" style="min-height:70px">${esc(remind)}</textarea><div class="row"><button id="cpRm">문구 복사</button></div><p class="small muted">명단 모드에서는 각자의 개인 링크를 함께 보내 주세요. 공용 링크로 진행하는 진단은 기존 공용 링크를 붙이면 됩니다.</p></div>
+  ${D.hrReport?`<div class="panel"><h2>결과 보고서</h2><p class="small muted">폴앤마크가 공개한 진단입니다. ${D.minN||3}명 미만 그룹은 가려집니다.</p><div class="row"><button class="primary" id="hrRep">결과 보고서 보기</button></div><p class="err" id="hrErr"></p></div>`:''}
+  <div class="row"><button id="rf">새로고침</button></div></div>`);
+ el.querySelectorAll('[data-f]').forEach(b=>b.onclick=()=>{H.filter=b.dataset.f;render()});
+ const copy=t=>{try{navigator.clipboard.writeText(t)}catch(e){}};
+ {const b=el.querySelector('#cpTodo');if(b)b.onclick=()=>{copy(inv.filter(x=>!x.done).map(x=>`${x.name}\t${x.dept||''}\t${pageBase()}#i/${x.token}`).join('\n'));b.textContent='복사했습니다'}}
+ el.querySelector('#cpRm').onclick=e=>{copy(el.querySelector('#rm').value);e.target.textContent='복사했습니다'};
+ el.querySelector('#rf').onclick=()=>{H.data=null;render();loadHr()};
+ {const b=el.querySelector('#hrRep');if(b)b.onclick=async()=>{b.disabled=true;try{const rows=await caps.ext.hrResponses(H.code,H.tok);if(!rows||!rows.length)throw 0;st.repOrg={code:H.code,name:D.name,headcount:target,minN:D.minN};setMinN(st.repOrg);st.R=aggregate(rows);st.src='hr';st.screen='report';render()}catch(e){el.querySelector('#hrErr').textContent='보고서를 불러오지 못했습니다. 응답이 아직 없거나, 공개가 꺼졌을 수 있습니다.';b.disabled=false}}}
+ return el;
+}
+async function openInvites(code){
+ st.inv={code,org:st.orgs.find(o=>o.code===code),rows:null,err:''};st.screen='invites';render();
+ try{st.inv.rows=await caps.ext.listInvites(code)}catch(e){st.inv.err='명단을 불러오지 못했습니다.'}render();
+}
+function invitesView(){
+ const V=st.inv||{};const rows=V.rows||[];const o=V.org||{};
+ const el=$(`<div><div class="panel"><p class="label">${esc(o.name||'')} · 명단과 개인 링크</p><h2>개인 링크 ${rows.length}개 · 완료 ${rows.filter(x=>x.done).length}</h2>${V.err?`<p class="err">${esc(V.err)}</p>`:''}
+  <div class="row"><button id="dl">이름·부서·링크 내려받기 (CSV)</button><button id="back">진단 관리로</button></div>
+  <table style="margin-top:10px"><tr><th>이름</th><th>부서</th><th>상태</th><th>개인 링크</th></tr>${rows.map(x=>`<tr><td>${esc(x.name)}</td><td>${esc(x.dept||'')}</td><td>${x.done?'완료':'미완료'}</td><td><input type="text" readonly value="${pageBase()}#i/${esc(x.token)}" style="font:inherit;font-size:12px;width:100%;padding:4px 6px;border:1px solid var(--line);border-radius:4px;background:var(--surface2)" onclick="this.select()"></td></tr>`).join('')}</table></div>
+  <div class="panel"><h3>명단 추가</h3><textarea id="add" placeholder="홍길동, 영업"></textarea><div class="row"><button id="addb">추가하고 개인 링크 만들기</button></div><p class="err" id="aerr"></p></div></div>`);
+ el.querySelector('#back').onclick=openAdmin;
+ el.querySelector('#dl').onclick=async()=>{const q=v=>`"${String(v??'').replace(/"/g,'""')}"`;const t='\ufeff'+[['이름','부서','개인 링크'],...rows.map(x=>[x.name,x.dept||'',pageBase()+'#i/'+x.token])].map(r=>r.map(q).join(',')).join('\n');try{await caps.downloads.save({filename:`POCA_개인링크_${o.name||V.code}.csv`,data:t})}catch(e){}};
+ el.querySelector('#addb').onclick=async()=>{const add=el.querySelector('#add').value.split('\n').map(x=>x.trim()).filter(Boolean).map(l=>{const [nm,...dp]=l.split(/[,\t]/);return {name:nm.trim().slice(0,40),dept:(dp.join(',')||'').trim().slice(0,40)||null}}).filter(x=>x.name);if(!add.length)return;
+  try{await caps.ext.addInvites(V.code,add);if(!o.roster)await caps.db.doc('poca_orgs/'+V.code).update({roster:true});openInvites(V.code)}catch(e){el.querySelector('#aerr').textContent='추가하지 못했습니다.'}};
+ return el;
+}
 async function loadReport(code){
- st.screen='report';st.src='real';st.R=null;st.repOrg=(st.orgs||[]).find(o=>o.code===code)||{code,name:code};
+ st.screen='report';st.src='real';st.R=null;st.repOrg=(st.orgs||[]).find(o=>o.code===code)||{code,name:code};setMinN(st.repOrg);
  const app=document.getElementById('app');app.innerHTML='<div class="panel"><p>응답을 불러오는 중입니다…</p></div>';
  let done=false;const t=setTimeout(()=>{if(!done)app.innerHTML='<div class="panel"><h2>응답을 불러오지 못했습니다</h2><p class="muted">연결이 느리거나 권한이 없습니다. 잠시 뒤 다시 열어 주세요.</p></div>'},10000);
  try{const snap=await caps.db.collection('poca_resp').limit(1000).get();done=true;clearTimeout(t);const all=snap.docs.map(d=>d.data()).filter(Boolean);const pick=c=>all.filter(x=>x[c]).map(x=>x[c]);
@@ -661,6 +736,23 @@ async function askClaude(A,el,focus){
  catch(e){out.textContent=e&&e.code==='rate_limited'?'요청이 많습니다. 잠시 뒤 다시 눌러 주세요.':e&&e.code==='not_granted'?'Claude 해석을 쓰려면 권한 허용이 필요합니다.':'해석을 받지 못했습니다. 잠시 뒤 다시 시도해 주세요.'}
  btn.disabled=false;btn.textContent='다시 받기';
 }
+function itemScoreCSV(A){
+ const q=v=>`"${String(v??'').replace(/"/g,'""')}"`;const recs=A.recs||[];
+ const depts=(A.byDept||[]).filter(o=>o.n>=MIN_N).map(o=>o.d);
+ const sc=(rs,c,rev)=>{const v=rs.map(r=>r.r&&r.r[c]).filter(x=>typeof x==='number').map(pct).map(x=>rev?110-x:x);return v.length?Math.round(avg(v)):''};
+ const fav=(rs,c,rev)=>{const v=rs.map(r=>r.r&&r.r[c]).filter(x=>typeof x==='number');return v.length?Math.round(v.filter(x=>rev?x<=4:x>=7).length/v.length*100)+'%':''};
+ const byD=d=>recs.filter(r=>r.dept===d);
+ const L=[];L.push(['POCA 문항별 점수',st.repOrg?st.repOrg.name:'예시 조직','응답 '+A.n+'명','익명 기준 '+MIN_N+'명'].map(q).join(','));L.push('');
+ L.push(['영역','요인','지표','코드','문항','점수','긍정률','편차',...depts].map(q).join(','));
+ CFG.IDX.forEach(x=>x.codes.forEach(c=>{const it=ITEMC[c];L.push(['현재 조직 분석',CFG.FN[x.f],x.name,c,it.t+(it.r?' (R)':''),sc(recs,c,it.r),fav(recs,c,it.r),isNaN(A.itemSd[c])?'':Math.round(A.itemSd[c]),...depts.map(d=>sc(byD(d),c,it.r))].map(q).join(','))}));
+ CFG.MOT.forEach(m=>L.push(['나의 업무 동기','수준 '+LV[m.k],STATE[m.k],m.c,m.t,sc(recs,m.c,false),fav(recs,m.c,false),'',...depts.map(d=>sc(byD(d),m.c,false))].map(q).join(',')));
+ CFG.RES.forEach(r=>L.push(['추천·잔류 의향','','',r.c,r.t,r.c==='R01'?'eNPS '+A.enps:sc(recs,r.c,false),r.c==='R02'?fav(recs,r.c,false):'','',...depts.map(()=> '')].map(q).join(',')));
+ CFG.K.forEach(k=>{L.push(['조직의 현재','문화 '+QN[k.q],'',k.c+'_n',k.t,sc(recs,k.c+'_n',false),'','',...depts.map(d=>sc(byD(d),k.c+'_n',false))].map(q).join(','));L.push(['조직의 지향','문화 '+QN[k.q],'',k.c+'_d',k.t,sc(recs,k.c+'_d',false),'','',...depts.map(d=>sc(byD(d),k.c+'_d',false))].map(q).join(','))});
+ L.push('');L.push(['우선순위 투표','지표','표','득표율'].map(q).join(','));
+ [...A.pri].sort((a,b)=>b.rate-a.rate).forEach(p=>L.push(['',IDXN[p.n].name,p.votes??Math.round(p.rate*A.n),Math.round(p.rate*100)+'%'].map(q).join(',')));
+ return '\ufeff'+L.join('\n');
+}
+async function downloadItems(A){try{await caps.downloads.save({filename:`POCA_문항별점수_${(st.repOrg&&st.repOrg.name)||'예시'}.csv`,data:itemScoreCSV(A)})}catch(e){}}
 async function downloadCSV(A){
  const codes=[...CFG.MOT.map(m=>m.c),'R01','R02',...CFG.ITEMS.map(x=>x.c),...CFG.K.flatMap(k=>[k.c+'_n',k.c+'_d'])];
  const head=['at','dept','role','tenure',...codes,'urgent','keep','change','seconds','pilot_feedback'];
@@ -702,10 +794,9 @@ render();
  try{caps.canEdit=caps.user?await caps.user.canEdit():false}catch(e){caps.canEdit=false}
  if(!caps.db)caps.canEdit=false;
  if(!caps.canEdit)caps.sample=null;
- const h=(location.hash||'').replace('#','').trim().toUpperCase();
- if(h&&/^[A-Z0-9]{4,8}$/.test(h))await loadOrg(h,false);
+ await route();
  if(st.screen==='intro')render();
- window.addEventListener('hashchange',()=>{const c=(location.hash||'').replace('#','').trim().toUpperCase();if(c&&/^[A-Z0-9]{4,8}$/.test(c)){st.screen='intro';loadOrg(c,false)}});
+ window.addEventListener('hashchange',()=>{route()});
 })();
 </script>
 </body>

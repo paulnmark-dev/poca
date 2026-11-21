@@ -23,16 +23,15 @@ _seg=_seg.replace("el.querySelector('#smp').onclick=()=>{st.R=aggregate(sampleDa
 s=s[:_i]+_seg+s[_j:]
 rep("el.querySelector('#psmp').onclick=()=>{st.P=samplePulse();st.src='sample';st.screen='pulse';render()};",
     "}{const ps=el.querySelector('#psmp');if(ps)ps.onclick=()=>{st.P=samplePulse();st.src='sample';st.screen='pulse';render()};}\n el.querySelector('#privacy').onclick=e=>{e.preventDefault();st.screen='privacy';render()};\n {const li=el.querySelector('#login');if(li)li.onclick=e=>{e.preventDefault();st.screen='login';render()};const lo=el.querySelector('#logout');if(lo)lo.onclick=async e=>{e.preventDefault();try{await sb.auth.signOut()}catch(_){}caps.canEdit=false;st.screen='intro';render()};}")
-rep("const v={intro:introView,survey:surveyView,result:resultView,report:reportView,admin:adminView,pulse:pulseView}[st.screen];",
-    "const v={intro:introView,survey:surveyView,result:resultView,report:reportView,admin:adminView,pulse:pulseView,login:loginView,privacy:privacyView}[st.screen];")
+rep("const v={intro:introView,survey:surveyView,result:resultView,report:reportView,admin:adminView,pulse:pulseView,hr:hrView,invites:invitesView}[st.screen];",
+    "const v={intro:introView,survey:surveyView,result:resultView,report:reportView,admin:adminView,pulse:pulseView,hr:hrView,invites:invitesView,login:loginView,privacy:privacyView}[st.screen];")
 rep("st.orgErr='진단에 연결하지 못했습니다. 이 페이지에 참여 권한이 있는지 확인해 주세요.';","st.orgErr='진단에 연결하지 못했습니다. 인터넷 연결을 확인하고 다시 시도해 주세요.';")
-rep("그룹별 결과는 응답이 ${MIN_N}명 이상일 때만 보입니다 (테스트 기준, 정식은 5명).","그룹별 결과는 응답이 ${MIN_N}명 이상일 때만 보입니다.")
 
 # submit -> rpc
 a=s.find("if(caps.db&&caps.user&&st.org){try{const id=await caps.user.id();")
 b=s.find("else st.saved=false;",a)+len("else st.saved=false;")
 assert a>0 and b>a
-s=s[:a]+"if(sb&&st.org){try{const {data,error}=await sb.rpc('poca_submit',{p_code:st.org.code,p_key:deviceKey(st.org.code),p_data:rec});if(error||data!==true)throw error||new Error('closed');st.saved=true}catch(e){st.saved=false}}else st.saved=false;"+s[b:]
+s=s[:a]+"if(sb&&st.org){try{const {data,error}=inviteTok?await sb.rpc('poca_submit_invite',{p_code:st.org.code,p_key:deviceKey(st.org.code),p_data:rec,p_token:inviteTok}):await sb.rpc('poca_submit',{p_code:st.org.code,p_key:deviceKey(st.org.code),p_data:rec});if(error||data!==true)throw error||new Error('closed');st.saved=true;if(st.invite)st.invite.done=true}catch(e){st.saved=false}}else st.saved=false;"+s[b:]
 rep("'이 화면에서는 응답이 저장되지 않았습니다. 결과는 아래에서 확인할 수 있습니다. (저장하려면 이 페이지에 참여자 이상 권한이 필요합니다)'",
     "'응답을 저장하지 못했습니다. 인터넷 연결을 확인한 뒤 같은 기기에서 다시 제출해 주세요. 진단이 마감된 경우에도 저장되지 않습니다.'")
 
@@ -82,22 +81,29 @@ function loginView(){
 }
 function privacyView(){
  const el=$(`<div class="panel" style="max-width:760px;margin:24px auto"><p class="label">개인정보 처리 안내</p><h2>POCA 조직문화 진단은 이렇게 응답을 다룹니다</h2>
-  <p><b>받는 것</b> · 부서 · 직급 · 근속 구간, 문항 응답, 열린 질문의 답, 응답에 걸린 시간. 이름 · 이메일 · 사번 · 연락처는 받지 않습니다.</p>
+  <p><b>받는 것</b> · 부서 · 직급 · 근속 구간, 문항 응답, 열린 질문의 답. 시범 운영일 때는 응답에 걸린 시간과 문항 의견도 받습니다. 이름 · 이메일 · 사번 · 연락처는 응답과 함께 받지 않습니다.</p>
+  <p><b>개인 링크로 진행할 때</b> · 회사가 개인 링크 방식을 고른 경우, 회사가 준 이름(과 부서)을 명단에 보관하고 ‘완료 여부’만 표시합니다. 명단과 응답은 서로 다른 곳에 저장되고 둘을 잇는 기록을 남기지 않습니다. 그래서 누가 무엇이라고 답했는지는 회사도 폴앤마크도 알 수 없습니다.</p>
   <p><b>쓰는 곳</b> · 회사 단위의 조직문화 진단 리포트를 만드는 데만 씁니다. 개인별 응답은 회사에 넘기지 않습니다.</p>
   <p><b>보이는 방식</b> · 결과는 묶어서만 보입니다. 응답이 ${MIN_N}명 미만인 부서 · 직급 · 근속 그룹은 리포트에 나오지 않습니다. 열린 질문의 답은 누가 썼는지 알 수 없게 다룹니다.</p>
+  <p><b>참여</b> · 참여는 자유입니다. 참여하지 않거나 중간에 그만두어도 불이익이 없습니다.</p>
   <p><b>다시 고치기</b> · 같은 기기에서는 진단이 마감되기 전까지 자기 응답을 다시 낼 수 있습니다. 이를 위해 기기에 무작위 번호를 남기며, 이 번호는 사람과 연결되지 않습니다.</p>
-  <p><b>보관</b> · 응답은 폴앤마크가 관리하는 데이터베이스(Supabase)에 저장되며, 진단을 의뢰한 회사와 정한 기간이 지나면 지웁니다.</p>
+  <p><b>보관과 파기</b> · 응답과 명단은 폴앤마크가 이용하는 클라우드 데이터베이스(Supabase)에 저장되며, 진단을 의뢰한 회사와 정한 기간이 지나면 지웁니다.</p>
   <p><b>문의</b> · 폴앤마크 (Paul &amp; Mark Co., Ltd.)</p>
   <div class="row"><button id="back">처음으로</button></div></div>`);
  el.querySelector('#back').onclick=()=>{st.screen='intro';render()};return el;
 }
 (async()=>{
  try{if(!window.supabase)throw new Error('no sdk');sb=window.supabase.createClient(SB_URL,SB_KEY,{auth:{persistSession:true,autoRefreshToken:true}});caps.db=makeDb();caps.user={};}catch(e){sb=null;caps.db=null}
- if(sb)await checkAdmin();
- const h=(location.hash||'').replace('#','').trim().toUpperCase();
- if(h&&/^[A-Z0-9]{4,8}$/.test(h))await loadOrg(h,false);
+ if(sb){await checkAdmin();caps.ext={
+  async getInvite(tok){const {data,error}=await sb.rpc('poca_get_invite',{p_token:tok});if(error)throw error;return data||null},
+  async hrStatus(code,tok){const {data,error}=await sb.rpc('poca_hr_status',{p_code:code,p_token:tok});if(error)throw error;return data||null},
+  async hrResponses(code,tok){const {data,error}=await sb.rpc('poca_hr_responses',{p_code:code,p_token:tok});if(error)throw error;return data||[]},
+  async addInvites(code,rows){const {error}=await sb.from('poca_invites').insert(rows.map(r=>({org_code:code,name:r.name,dept:r.dept||null})));if(error)throw error},
+  async listInvites(code){const {data,error}=await sb.from('poca_invites').select('token,name,dept,done').eq('org_code',code).order('name');if(error)throw error;return data||[]}
+ }}
+ await route();
  if(st.screen==='intro')render();
- window.addEventListener('hashchange',()=>{const c=(location.hash||'').replace('#','').trim().toUpperCase();if(c&&/^[A-Z0-9]{4,8}$/.test(c)){st.screen='intro';loadOrg(c,false)}});
+ window.addEventListener('hashchange',()=>{route()});
 })();"""
 s=s[:a]+boot+s[b:]
 assert s.count("st.orgErr='이 코드의 진단을 찾지 못했습니다.'")==1

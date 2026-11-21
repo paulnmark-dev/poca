@@ -10,7 +10,7 @@
 | `wfg-site/` | Next Culture · WFG 팀 대화 워크숍 웹사이트 (별도 Netlify 프로젝트) |
 | `src/` | 원본. `poca.html`(진단·결과보고서), `wfg.html`(WFG), `lovak-board.html`, `lti-dialogue.html` |
 | `tools/` | 원본을 웹사이트로 바꾸는 스크립트 |
-| `sql/` | Supabase 설정 SQL (`poca_setup.sql` 먼저, 그다음 `wfg_setup.sql`) |
+| `sql/` | Supabase 설정 SQL (`poca_setup.sql` → `poca_update_202611.sql` → `wfg_setup.sql`) |
 | `samples/` | 예시 결과보고서 PDF (한국어 · 영어, 전체판 · 요약판) |
 
 ## 고치는 순서
