@@ -14,8 +14,8 @@ i=s.find('<script>'); assert i>0
 s=s[:i]+'<script src="supabase.js"></script>\n'+s[i:]
 
 # respondent intro: sample buttons only for admin; admin/login button
-rep('<button id="smp">조직 리포트 예시 보기</button><span id="adm"></span></div></div>`);',
-    '${caps.canEdit?\'<button id="smp">조직 리포트 예시 보기</button>\':\'\'}<span id="adm"></span></div><p class="small muted" style="margin-top:18px"><a href="#" id="privacy">개인정보 처리 안내</a> · ${caps.canEdit?\'<a href="#" id="logout">로그아웃</a>\':\'<a href="#" id="login">관리자 로그인</a>\'}</p></div>`);')
+rep('<button id="smp">조직 리포트 예시 보기</button><button id="asmp">Atomic Culture 예시 보기</button><span id="adm"></span></div></div>`);',
+    '${caps.canEdit?\'<button id="smp">조직 리포트 예시 보기</button><button id="asmp">Atomic Culture 예시 보기</button>\':\'\'}<span id="adm"></span></div><p class="small muted" style="margin-top:18px"><a href="#" id="privacy">개인정보 처리 안내</a> · ${caps.canEdit?\'<a href="#" id="logout">로그아웃</a>\':\'<a href="#" id="login">관리자 로그인</a>\'}</p></div>`);')
 _i=s.find('function introView');_j=s.find('\nfunction ',_i+10)
 _seg=s[_i:_j]
 assert _seg.count("el.querySelector('#smp').onclick=()=>{st.R=aggregate(sampleData());")==1

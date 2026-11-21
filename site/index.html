@@ -383,10 +383,11 @@ function introView(){
   ${O?'<p class="small muted" style="margin-top:14px">한 사람당 한 응답이 저장됩니다. 다시 하면 이전 응답을 덮어씁니다.</p>':''}${st.invite?`<p class="small" style="margin-top:10px;padding:10px 12px;background:var(--surface2);border-radius:4px"><b>${esc(st.invite.name)}</b>님의 개인 링크입니다. 응답 내용은 이름과 연결되지 않은 채 익명으로 저장되고, 인사 담당자에게는 <b>완료 여부만</b> 전달됩니다.</p>`:''}</div>
   ${closed?'<div class="notice">이 진단은 마감되었습니다. 참여해 주셔서 감사합니다.</div>':st.invite&&st.invite.done?'<div class="notice">이미 응답을 마치셨습니다. 다시 하면 이전 응답을 덮어씁니다.</div>':done?'<div class="notice">이 기기에서 이미 응답하셨습니다. 다시 하면 이전 응답을 덮어씁니다.</div>':''}
   ${O?'':`<div class="panel"><h3>회사에서 받은 진단 코드를 입력하세요</h3><div class="row"><input type="text" id="code" maxlength="8" style="max-width:200px;font-size:20px;letter-spacing:4px;text-transform:uppercase;font:inherit;padding:10px 12px;border:1px solid var(--line);border-radius:4px;background:var(--surface);color:var(--ink)" aria-label="진단 코드"><button id="enter">들어가기</button></div><p class="err" id="cerr">${esc(st.orgErr)}</p></div>`}
-  ${O&&!closed?'<label class="chk" style="max-width:640px;margin-bottom:10px"><input type="checkbox" id="agree"><span>응답은 이름과 연결되지 않게 저장되고 결과는 묶어서만 보인다는 안내를 확인했습니다. 참여는 자유이며, 참여하지 않아도 불이익이 없습니다.</span></label><p class="err" id="agErr"></p>':''}<div class="row">${O&&!closed?'<button class="primary" id="go">진단 시작하기</button>':''}${caps.canEdit?'<button id="smp">조직 리포트 예시 보기</button>':''}<span id="adm"></span></div><p class="small muted" style="margin-top:18px"><a href="#" id="privacy">개인정보 처리 안내</a> · ${caps.canEdit?'<a href="#" id="logout">로그아웃</a>':'<a href="#" id="login">관리자 로그인</a>'}</p></div>`);
+  ${O&&!closed?'<label class="chk" style="max-width:640px;margin-bottom:10px"><input type="checkbox" id="agree"><span>응답은 이름과 연결되지 않게 저장되고 결과는 묶어서만 보인다는 안내를 확인했습니다. 참여는 자유이며, 참여하지 않아도 불이익이 없습니다.</span></label><p class="err" id="agErr"></p>':''}<div class="row">${O&&!closed?'<button class="primary" id="go">진단 시작하기</button>':''}${caps.canEdit?'<button id="smp">조직 리포트 예시 보기</button><button id="asmp">Atomic Culture 예시 보기</button>':''}<span id="adm"></span></div><p class="small muted" style="margin-top:18px"><a href="#" id="privacy">개인정보 처리 안내</a> · ${caps.canEdit?'<a href="#" id="logout">로그아웃</a>':'<a href="#" id="login">관리자 로그인</a>'}</p></div>`);
  const go=el.querySelector('#go'); if(go)go.onclick=()=>{if(!el.querySelector('#agree').checked){el.querySelector('#agErr').textContent='안내를 확인하고 체크해 주세요.';return}st={...st,screen:'survey',step:0,r:{},u:[],o1:'',o2:'',o3:'',t0:Date.now(),err:'',saved:null};render()};
  const en=el.querySelector('#enter'); if(en){const sub=()=>{const c0=el.querySelector('#code').value.replace(/\s/g,'');const c2=koToEn(c0).toUpperCase();const c=c2;const ce=el.querySelector('#cerr');if(!c){ce.textContent='진단 코드를 적어 주세요.';return}ce.textContent='확인하는 중…';en.disabled=true;loadOrg(c,true).finally(()=>{en.disabled=false})};en.onclick=sub;el.querySelector('#code').onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();sub()}}};
  {const sm=el.querySelector('#smp');if(sm)sm.onclick=()=>{st.R=aggregate(sampleData());st.R.prev=aggregate(sampleData(29,-0.25));st.src='sample';st.screen='report';render()};
+ {const a=el.querySelector('#asmp');if(a)a.onclick=openAtomicSample;}
   }
  el.querySelector('#privacy').onclick=e=>{e.preventDefault();st.screen='privacy';render()};
  {const li=el.querySelector('#login');if(li)li.onclick=e=>{e.preventDefault();st.screen='login';render()};const lo=el.querySelector('#logout');if(lo)lo.onclick=async e=>{e.preventDefault();try{await sb.auth.signOut()}catch(_){}caps.canEdit=false;st.screen='intro';render()};}
@@ -705,7 +706,7 @@ function poneView(){
  const P=st.pone||{};const D=P.data;
  if(!D)return $(`<div class="panel" style="max-width:640px;margin:24px auto"><p class="label">Atomic Culture</p><h2>${P.err?esc(P.err):'불러오는 중입니다…'}</h2></div>`);
  const L=D.last;
- const el=$(`<div style="max-width:640px;margin:0 auto"><div class="panel" style="padding:28px"><p class="label">${esc(D.program||'')} · Atomic Culture</p>
+ const el=$(`<div style="max-width:640px;margin:0 auto">${P.sample?'<div class="notice">응답자가 문자 속 링크를 누르면 보는 화면의 예시입니다. 실제로 저장되지는 않습니다. <a href="#" id="bk">인사팀 화면으로</a></div>':''}<div class="panel" style="padding:28px"><p class="label">${esc(D.program||'')} · Atomic Culture</p>
   ${L?`<p class="small" style="margin:0 0 14px;padding:10px 12px;background:var(--surface2);border-radius:4px">지난 질문 “${esc(L.question)}”<br>평균 <b>나 ${f1(+L.avg)}</b>${L.team_avg!=null?` · <b>우리 팀 ${f1(+L.team_avg)}</b>${L.team_delta!=null?` (${+L.team_delta>=0?'+':''}${f1(+L.team_delta)})`:''}`:''} · ${L.n}명 참여</p>`:''}
   ${!D.open?'<h2>지금은 열린 질문이 없습니다</h2><p class="muted">다음 질문은 목요일 낮 12시에 문자로 보내 드립니다.</p>':P.sent?`<h2>고맙습니다, ${esc(D.name)}님</h2><p class="muted">작은 습관 하나가 문화를 바꿉니다. 결과는 인사팀 확인 뒤 다음 주 문자에 함께 보내 드립니다.</p>`:`
   <p class="small muted" style="margin:0">${esc(D.name)}님, ${D.week_no}주차 질문입니다</p><h2 style="margin-top:6px">${esc(D.question)}</h2>
@@ -717,7 +718,9 @@ function poneView(){
   <p class="err" id="pe"></p><div class="row"><button class="primary" id="ps">보내기</button></div>`}</div></div>`);
  el.querySelectorAll('.opt').forEach(o=>{const pick=()=>{if(o.dataset.code==='TEAM')P.team=+o.dataset.v;else P.score=+o.dataset.v;o.parentElement.querySelectorAll('.opt').forEach(x=>x.setAttribute('aria-checked',x===o))};o.onclick=pick;o.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();pick()}}});
  const nt=el.querySelector('#nt');if(nt)nt.oninput=e=>P.note=e.target.value;
+ {const bk=el.querySelector('#bk');if(bk)bk.onclick=e=>{e.preventDefault();st.screen='poneHr';render()}}
  const b=el.querySelector('#ps');if(b)b.onclick=async()=>{if(!P.score||!P.team){el.querySelector('#pe').textContent='‘나는’과 ‘우리 팀은’ 모두 1~10 중 하나를 골라 주세요.';return}b.disabled=true;
+  if(P.sample){P.sent=true;render();return}
   try{const ok=await caps.ext.pulseSubmit(P.token,P.score,P.team,(P.note||'').trim());if(!ok)throw 0;P.sent=true;render()}catch(e){el.querySelector('#pe').textContent='보내지 못했습니다. 질문이 마감되었거나 연결이 끊겼을 수 있습니다.';b.disabled=false}};
  return el;
 }
@@ -731,15 +734,17 @@ function poneHrView(){
  const pts=[...W].reverse().filter(w=>w.closed&&w.avg!=null);
  const chart=pts.length>=2?(()=>{const Wd=560,Ht=160,L=34,B=24,T=10;const X=i=>L+i*(Wd-L-10)/(pts.length-1),Y=v=>Ht-B-(v-1)/9*(Ht-B-T);
   return `<svg viewBox="0 0 ${Wd} ${Ht}" style="width:100%;height:auto" role="img" aria-label="주차별 평균"><text x="${Wd-10}" y="${T+10}" text-anchor="end" font-size="11" fill="var(--navy)">— 우리 팀</text><text x="${Wd-10}" y="${T+24}" text-anchor="end" font-size="11" fill="var(--navy2)">- - 나</text>${[1,4,7,10].map(v=>`<line x1="${L}" x2="${Wd-10}" y1="${Y(v)}" y2="${Y(v)}" stroke="var(--line)" ${v===7?'stroke-dasharray="4 4"':''}/><text x="${L-6}" y="${Y(v)+4}" text-anchor="end" font-size="11" fill="var(--muted)">${v}</text>`).join('')}<polyline fill="none" stroke="var(--navy2)" stroke-width="1.5" stroke-dasharray="5 4" points="${pts.map((w,i)=>X(i)+','+Y(+w.avg)).join(' ')}"/>${pts.some(w=>w.team_avg!=null)?`<polyline fill="none" stroke="var(--navy)" stroke-width="2.5" points="${pts.filter(w=>w.team_avg!=null).map(w=>X(pts.indexOf(w))+','+Y(+w.team_avg)).join(' ')}"/>`:''}${pts.map((w,i)=>`${w.team_avg!=null?`<circle cx="${X(i)}" cy="${Y(+w.team_avg)}" r="4" fill="${w.approved?'var(--navy)':'var(--surface)'}" stroke="var(--navy)" stroke-width="2"/>`:''}<text x="${X(i)}" y="${Ht-6}" text-anchor="middle" font-size="11" fill="var(--muted)">${w.week_no}주</text>`).join('')}</svg>`})():'';
- const el=$(`<div><div class="panel" style="padding:28px"><p class="label">${esc(D.name)} · Atomic Culture · 인사팀 화면</p><h1>작은 습관이 쌓이는 모습</h1><p class="small" style="margin:-4px 0 10px">작은 습관의 변화가 문화를 바꿉니다.</p>
+ const el=$(`<div>${H.sample?'<div class="notice">가상의 12명 팀이 8주 동안 진행한 예시입니다. 혁신형(도전과 변화)이 ‘가장 바라는 문화’로 나온 회사라 그 질문부터 시작했습니다. <a href="#" id="pv">응답자가 받는 화면 보기</a> · <a href="#" id="hm">처음으로</a></div>':''}<div class="panel" style="padding:28px"><p class="label">${esc(D.name)} · Atomic Culture · 인사팀 화면</p><h1>작은 습관이 쌓이는 모습</h1><p class="small" style="margin:-4px 0 10px">작은 습관의 변화가 문화를 바꿉니다.</p>
   <p class="small muted">수요일 18:00에 마감하고, 목요일 12:00에 다음 질문이 문자로 나갑니다. 마감된 주를 확인하고 <b>승인</b>하면, 그 평균이 다음 문자에 함께 실립니다. <b>우리 팀</b> 평균이 7점을 넘거나 같은 질문을 3주 하면 다음 질문으로 넘어갑니다. ‘나’와 ‘우리 팀’의 차이가 크면, 각자는 하고 있다고 느끼지만 서로에게는 아직 전해지지 않았다는 뜻입니다.</p>${chart}</div>
   ${cur?`<div class="panel"><h2>${cur.week_no}주차 참여 <span class="small muted">${doneN} / ${ppl.length}명</span></h2><div class="row"><button id="cpTodo">미참여자 이름 복사</button></div><p class="small" style="margin-top:8px">${ppl.map(x=>`<span style="display:inline-block;margin:0 10px 6px 0;color:${x.done?'var(--navy)':'var(--red)'}">${x.done?'●':'○'} ${esc(x.name)}</span>`).join('')}</p></div>`:''}
   <div class="panel"><h2>주차별 결과</h2><table><tr><th>주차</th><th>질문</th><th class="n">참여</th><th class="n">나</th><th class="n">우리 팀</th><th>상태</th></tr>${W.map((w,i)=>{const prev=W[i+1];const dl=prev&&w.team_avg!=null&&prev.team_avg!=null?(+w.team_avg-prev.team_avg):null;
    return `<tr><td>${w.week_no}주<br><span class="small muted">${esc(w.opened_on||'')}</span></td><td>${esc(w.question)}${w.closed&&(w.notes||[]).length?`<details class="small" style="margin-top:6px"><summary>달라진 한 가지 ${w.notes.length}개 (확인 후 승인)</summary>${w.notes.map(t=>`<p class="voice small">${esc(t)}</p>`).join('')}</details>`:''}</td><td class="n">${w.n}명</td><td class="n">${f1(+w.avg)}</td><td class="n"><b>${w.team_avg==null?'–':f1(+w.team_avg)}</b>${dl!=null?`<br><span class="small" style="color:${dl>=0?'var(--navy)':'var(--red)'}">${dl>=0?'+':''}${f1(dl)}</span>`:''}</td><td>${!w.closed?'진행 중':w.approved?'<b style="color:var(--navy)">승인됨</b>':`<button data-ap="${w.id}">승인</button>`}</td></tr>`}).join('')||'<tr><td colspan="6" class="muted">아직 보낸 질문이 없습니다.</td></tr>'}</table></div>
   <div class="row"><button id="rf">새로고침</button></div></div>`);
  {const b=el.querySelector('#cpTodo');if(b)b.onclick=()=>{try{navigator.clipboard.writeText(ppl.filter(x=>!x.done).map(x=>x.name).join(', '))}catch(e){}b.textContent='복사했습니다'}}
- el.querySelectorAll('[data-ap]').forEach(b=>b.onclick=async()=>{b.disabled=true;try{await caps.ext.pulseApprove(H.code,H.tok,+b.dataset.ap)}catch(e){}H.data=null;render();loadPoneHr()});
- el.querySelector('#rf').onclick=()=>{H.data=null;render();loadPoneHr()};
+ el.querySelectorAll('[data-ap]').forEach(b=>b.onclick=async()=>{b.disabled=true;if(H.sample){const w=D.weeks.find(x=>x.id===+b.dataset.ap);if(w)w.approved=true;render();return}try{await caps.ext.pulseApprove(H.code,H.tok,+b.dataset.ap)}catch(e){}H.data=null;render();loadPoneHr()});
+ {const pv=el.querySelector('#pv');if(pv)pv.onclick=e=>{e.preventDefault();const W=D.weeks;const last=W.find(w=>w.approved);const prev=W.find(w=>w.approved&&w.week_no===last.week_no-1);st.pone={token:'',sample:true,score:null,team:null,note:'',sent:false,err:'',data:{program:D.name,name:'김민준',open:true,week_no:W[0].week_no,question:W[0].question,done:false,last:{question:last.question,avg:last.avg,team_avg:last.team_avg,team_delta:prev?last.team_avg-prev.team_avg:null,n:last.n}}};st.screen='pone';render()};
+  const hm=el.querySelector('#hm');if(hm)hm.onclick=e=>{e.preventDefault();st.screen='intro';render()}}
+ el.querySelector('#rf').onclick=()=>{if(H.sample){H.data=sampleAtomic();render();return}H.data=null;render();loadPoneHr()};
  return el;
 }
 async function openPones(){st.pz={list:null,err:'',order:ONE_BANK.map(x=>({...x,on:true}))};st.screen='pones';render();
@@ -777,6 +782,15 @@ function ponesView(){
  el.querySelectorAll('[data-pclose]').forEach(b=>b.onclick=async()=>{const p=Z.list.find(x=>x.code===b.dataset.pclose);try{await caps.ext.setProgram(p.code,{...p.info,open:p.info.open===false})}catch(e){}openPones()});
  return el;
 }
+function sampleAtomic(){
+ const order=[7,8,0,1,2,3,4,5,6];const Q=i=>ONE_BANK[order[i]].q;
+ const plan=[[0,7.4,5.2],[0,7.6,5.9],[0,7.8,6.3],[1,7.2,6.1],[1,7.9,7.1],[2,8.1,6.8],[2,8.3,7.3],[3,null,null]];
+ const notes=[['회의 끝에 “만약 이렇게 하면?”을 한 번 물어봤다','다른 팀 방식을 우리 일에 붙여 봤다'],['엉뚱한 의견에 바로 반박하지 않고 끝까지 들었다'],['점심 때 새 아이디어를 가볍게 나눴다','아이디어 노트를 다시 쓰기 시작했다'],['팀장님이 먼저 “다른 방법은 없을까?” 물어봐 줌'],['주간회의에 ‘엉뚱한 제안 5분’이 생겼다'],['아침에 먼저 인사하니 분위기가 달라졌다','출근길 엘리베이터에서 인사를 건넸다'],['신입에게 먼저 웃으며 인사했다'],[]];
+ const weeks=plan.map(([qi,me,team],w)=>({id:w+1,week_no:w+1,question:Q(qi),opened_on:'2026-'+(w<2?'11-'+(19+w*7):'12-'+String((w-2)*7+3).padStart(2,'0')),closed:w<7,approved:w<6,n:w<7?[11,12,10,12,11,12,11][w]:7,avg:me==null?7.6:me,team_avg:team==null?7.0:team,notes:notes[w]})).reverse();
+ const names=['김민준','이서연','박지호','최유나','정하준','강수아','조은우','윤지민','장도윤','임서윤','한예준','오하은'];
+ return {name:'예시 조직',members:12,weeks,current:{week_no:8,people:names.map((n,i)=>({name:n,dept:null,done:[0,1,3,4,6,8,10].includes(i)}))}};
+}
+function openAtomicSample(){st.ph={code:'SAMPLE',tok:'',data:sampleAtomic(),err:'',sample:true};st.screen='poneHr';render()}
 function alertLike(el,t){const e=el.querySelector('#perr');if(e)e.textContent=t}
 async function loadReport(code){
  st.screen='report';st.src='real';st.R=null;st.repOrg=(st.orgs||[]).find(o=>o.code===code)||{code,name:code};setMinN(st.repOrg);
