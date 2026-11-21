@@ -5,7 +5,7 @@
 -- 흐름
 --   수요일 18:00  pulse_close()  : 이번 주 질문 마감, 평균 계산 → 인사팀이 확인하고 승인
 --   목요일 12:00  pulse_open()   : 다음 질문을 열고, 승인된 지난주 결과와 함께 문자 대기열(outbox)에 넣음
---   다음 질문 규칙: 지난주 평균이 7점 이상이거나, 같은 질문을 3주 했으면 다음 질문으로
+--   다음 질문 규칙: 지난주 '우리 팀' 평균이 7점 이상이거나, 같은 질문을 3주 했으면 다음 질문으로
 -- 익명
 --   명단(이름·전화번호)과 응답은 서로 다른 표에 있고, 둘을 잇는 기록·시각을 남기지 않습니다.
 
@@ -38,20 +38,25 @@ create table if not exists public.pulse_weeks (
   closed        boolean not null default false,
   approved      boolean not null default false,
   n             int,
-  avg           numeric(4,2),
+  avg           numeric(4,2),   -- '나' 평균
+  team_avg      numeric(4,2),   -- '우리 팀' 평균 (다음 질문으로 넘어가는 기준)
   unique (program_code, week_no)
 );
+alter table public.pulse_weeks add column if not exists team_avg numeric(4,2);
 
 -- 응답: 누가 냈는지(토큰)도, 언제 냈는지(시각)도 남기지 않습니다.
 create table if not exists public.pulse_answers (
   week_id         bigint not null references public.pulse_weeks(id) on delete cascade,
   respondent_key  uuid not null,
-  score           int not null check (score between 1 and 10),
+  score           int not null check (score between 1 and 10),        -- 나는
+  team_score      int check (team_score between 1 and 10),            -- 우리 팀은
   note            text check (note is null or length(note) <= 200),
   primary key (week_id, respondent_key)
 );
 
 -- 완료 여부: 이름 쪽에는 '했다/안 했다'만.
+alter table public.pulse_answers add column if not exists team_score int check (team_score between 1 and 10);
+
 create table if not exists public.pulse_done (
   week_id  bigint not null references public.pulse_weeks(id) on delete cascade,
   token    uuid not null references public.pulse_members(token) on delete cascade,
@@ -94,12 +99,13 @@ returns jsonb
 language sql stable security definer set search_path = public
 as $$
   with a as (
-    select week_no, question, avg, n, row_number() over (order by week_no desc) as rk
+    select week_no, question, avg, team_avg, n, row_number() over (order by week_no desc) as rk
     from public.pulse_weeks where program_code = p_code and closed and approved and avg is not null
   )
   select case when x.week_no is null then null else jsonb_build_object(
-    'week_no', x.week_no, 'question', x.question, 'avg', x.avg, 'n', x.n,
-    'delta', (select x.avg - y.avg from a y where y.rk = 2)) end
+    'week_no', x.week_no, 'question', x.question, 'avg', x.avg, 'team_avg', x.team_avg, 'n', x.n,
+    'delta', (select x.avg - y.avg from a y where y.rk = 2),
+    'team_delta', (select x.team_avg - y.team_avg from a y where y.rk = 2)) end
   from (select * from a where rk = 1) x;
 $$;
 
@@ -126,20 +132,22 @@ end;
 $$;
 
 -- 2) 응답자: 이번 주 답 내기 (같은 기기에서 다시 내면 덮어씀)
-create or replace function public.pulse_submit(p_token uuid, p_key uuid, p_score int, p_note text)
+drop function if exists public.pulse_submit(uuid, uuid, int, text);
+create or replace function public.pulse_submit(p_token uuid, p_key uuid, p_score int, p_team int, p_note text)
 returns boolean
 language plpgsql security definer set search_path = public
 as $$
 declare m public.pulse_members; w public.pulse_weeks;
 begin
   if p_score is null or p_score < 1 or p_score > 10 then return false; end if;
+  if p_team is not null and (p_team < 1 or p_team > 10) then return false; end if;
   select * into m from public.pulse_members where token = p_token and active;
   if m.token is null then return false; end if;
   w := public.pulse_current_week(m.program_code);
   if w.id is null then return false; end if;
-  insert into public.pulse_answers (week_id, respondent_key, score, note)
-  values (w.id, p_key, p_score, nullif(left(trim(coalesce(p_note,'')), 200), ''))
-  on conflict (week_id, respondent_key) do update set score = excluded.score, note = excluded.note;
+  insert into public.pulse_answers (week_id, respondent_key, score, team_score, note)
+  values (w.id, p_key, p_score, p_team, nullif(left(trim(coalesce(p_note,'')), 200), ''))
+  on conflict (week_id, respondent_key) do update set score = excluded.score, team_score = excluded.team_score, note = excluded.note;
   insert into public.pulse_done (week_id, token) values (w.id, p_token) on conflict do nothing;
   return true;
 end;
@@ -163,6 +171,7 @@ begin
         'closed', k.closed, 'approved', k.approved,
         'n', coalesce(k.n, (select count(*) from public.pulse_answers a where a.week_id = k.id)),
         'avg', coalesce(k.avg, (select round(avg(score)::numeric, 2) from public.pulse_answers a where a.week_id = k.id)),
+        'team_avg', coalesce(k.team_avg, (select round(avg(team_score)::numeric, 2) from public.pulse_answers a where a.week_id = k.id)),
         'notes', case when k.closed then coalesce((select jsonb_agg(a.note order by md5(a.respondent_key::text)) from public.pulse_answers a where a.week_id = k.id and a.note is not null), '[]'::jsonb) else '[]'::jsonb end
       ) order by k.week_no desc) from public.pulse_weeks k where k.program_code = p.code), '[]'::jsonb),
     'current', case when w.id is null then null else jsonb_build_object(
@@ -196,7 +205,8 @@ declare cnt int;
 begin
   update public.pulse_weeks w set closed = true,
     n = (select count(*) from public.pulse_answers a where a.week_id = w.id),
-    avg = (select round(avg(score)::numeric, 2) from public.pulse_answers a where a.week_id = w.id)
+    avg = (select round(avg(score)::numeric, 2) from public.pulse_answers a where a.week_id = w.id),
+    team_avg = (select round(avg(team_score)::numeric, 2) from public.pulse_answers a where a.week_id = w.id)
   where not closed and (p_code is null or program_code = p_code);
   get diagnostics cnt = row_count;
   return cnt;
@@ -224,7 +234,7 @@ begin
                row_number() over (partition by item_idx order by week_no desc) rn2
         from public.pulse_weeks where program_code = p.code) s
       where s.item_idx = last.item_idx and s.rn = s.rn2;
-      if (last.avg is not null and last.avg >= 7) or streak >= 3 then idx := (last.item_idx + 1) % nitems;
+      if (coalesce(last.team_avg, last.avg) is not null and coalesce(last.team_avg, last.avg) >= 7) or streak >= 3 then idx := (last.item_idx + 1) % nitems;
       else idx := last.item_idx; end if;
     end if;
     q := items->idx->>'q'; itn := nullif(coalesce(items->idx->>'c', items->idx->>'n'),'')::int;  -- c = 문화 1~4 (관계·질서·성과·혁신)
@@ -233,8 +243,9 @@ begin
     made := made + 1;
     res := public.pulse_last_result(p.code);
     line := case when res is null then ''
-      else '지난주 우리 평균 ' || to_char((res->>'avg')::numeric, 'FM90.0') || '점'
-           || case when res->>'delta' is null then '' else ' (' || case when (res->>'delta')::numeric >= 0 then '+' else '' end || to_char((res->>'delta')::numeric, 'FM90.0') || ')' end
+      else '지난주 평균 나 ' || to_char((res->>'avg')::numeric, 'FM90.0')
+           || case when res->>'team_avg' is null then '' else ' · 우리 팀 ' || to_char((res->>'team_avg')::numeric, 'FM90.0') end
+           || case when res->>'team_delta' is null then '' else ' (' || case when (res->>'team_delta')::numeric >= 0 then '+' else '' end || to_char((res->>'team_delta')::numeric, 'FM90.0') || ')' end
            || '. ' end;
     base := coalesce(p.info->>'base', '');
     for m in select token, phone from public.pulse_members where program_code = p.code and active and phone is not null loop
@@ -247,8 +258,8 @@ end;
 $$;
 
 revoke execute on function public.pulse_current_week(text), public.pulse_last_result(text), public.pulse_close(text), public.pulse_open(text) from public, anon, authenticated;
-revoke execute on function public.pulse_get(uuid), public.pulse_submit(uuid, uuid, int, text), public.pulse_hr(text, text), public.pulse_hr_approve(text, text, bigint) from public;
-grant execute on function public.pulse_get(uuid), public.pulse_submit(uuid, uuid, int, text), public.pulse_hr(text, text), public.pulse_hr_approve(text, text, bigint) to anon, authenticated;
+revoke execute on function public.pulse_get(uuid), public.pulse_submit(uuid, uuid, int, int, text), public.pulse_hr(text, text), public.pulse_hr_approve(text, text, bigint) from public;
+grant execute on function public.pulse_get(uuid), public.pulse_submit(uuid, uuid, int, int, text), public.pulse_hr(text, text), public.pulse_hr_approve(text, text, bigint) to anon, authenticated;
 
 -- 관리자가 화면에서 '지금 첫 질문 보내기'를 누를 때
 create or replace function public.pulse_start_now(p_code text)

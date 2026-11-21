@@ -629,7 +629,7 @@ async function route(){
  m=raw.match(/^ph\/([A-Za-z0-9]{4,8})\/([a-z0-9]{10,40})$/);
  if(m){st.ph={code:m[1].toUpperCase(),tok:m[2],data:null,err:''};st.screen='poneHr';render();await loadPoneHr();return}
  m=raw.match(/^p\/([0-9a-fA-F-]{36})$/);
- if(m){st.pone={token:m[1],data:null,err:'',score:null,note:'',sent:false};st.screen='pone';render();await loadPone();return}
+ if(m){st.pone={token:m[1],data:null,err:'',score:null,team:null,note:'',sent:false};st.screen='pone';render();await loadPone();return}
  m=raw.match(/^i\/([0-9a-fA-F-]{36})$/);
  if(m){await loadInvite(m[1]);return}
  const c=raw.toUpperCase();if(c&&/^[A-Z0-9]{4,8}$/.test(c)){st.invite=null;st.screen='intro';await loadOrg(c,false)}
@@ -689,15 +689,15 @@ function invitesView(){
 }
 /* ---------- '바꿔보자! 한 가지만' 펄스 ---------- */
 const ONE_BANK=[
- {c:1,q:'이번 주, 나는 동료에게 먼저 웃으며 인사했다.'},
- {c:1,q:'이번 주, 나는 동료의 작은 일을 구체적으로 인정하고 칭찬했다.'},
- {c:2,q:'이번 주, 나는 모르는 부분을 구체적으로 물어보았다.'},
- {c:2,q:'이번 주, 나는 문제를 정확히 이해한 뒤에 일을 시작했다.'},
- {c:2,q:'이번 주, 나는 일에 필요한 것을 따로 공부했다.'},
- {c:3,q:'이번 주, 나는 고민만 하지 않고 일단 시도했다.'},
- {c:3,q:'이번 주, 나는 시작한 일 하나를 결과로 마무리했다.'},
- {c:4,q:'이번 주, 나는 틀을 벗어난 아이디어를 하나 냈다.'},
- {c:4,q:'이번 주, 나는 새로운 아이디어로 동료와 대화했다.'}];
+ {c:1,q:'이번 주, 동료에게 먼저 웃으며 인사했다.'},
+ {c:1,q:'이번 주, 동료의 작은 일을 구체적으로 인정하고 칭찬했다.'},
+ {c:2,q:'이번 주, 모르는 부분을 구체적으로 물어보았다.'},
+ {c:2,q:'이번 주, 문제를 정확히 이해한 뒤에 일을 시작했다.'},
+ {c:2,q:'이번 주, 일에 필요한 것을 따로 공부했다.'},
+ {c:3,q:'이번 주, 고민만 하지 않고 일단 시도했다.'},
+ {c:3,q:'이번 주, 시작한 일 하나를 결과로 마무리했다.'},
+ {c:4,q:'이번 주, 틀을 벗어난 아이디어를 하나 냈다.'},
+ {c:4,q:'이번 주, 새로운 아이디어로 동료와 대화했다.'}];
 const ONE_CN={1:'함께 성장 (관계형 · Why)',2:'체계와 원칙 (질서형 · What)',3:'실행과 결과 (성과형 · How)',4:'도전과 변화 (혁신형 · If)'};
 const f1=x=>x==null||isNaN(x)?'–':(Math.round(x*10)/10).toFixed(1);
 async function loadPone(){const P=st.pone;
@@ -708,18 +708,19 @@ function poneView(){
  if(!D)return $(`<div class="panel" style="max-width:640px;margin:24px auto"><p class="label">바꿔보자! 한 가지만</p><h2>${P.err?esc(P.err):'불러오는 중입니다…'}</h2></div>`);
  const L=D.last;
  const el=$(`<div style="max-width:640px;margin:0 auto"><div class="panel" style="padding:28px"><p class="label">${esc(D.program||'')} · 바꿔보자! 한 가지만</p>
-  ${L?`<p class="small" style="margin:0 0 14px;padding:10px 12px;background:var(--surface2);border-radius:4px">지난 질문 “${esc(L.question)}”<br><b>우리 평균 ${f1(+L.avg)}점</b>${L.delta!=null?` (${+L.delta>=0?'+':''}${f1(+L.delta)})`:''} · ${L.n}명 참여</p>`:''}
+  ${L?`<p class="small" style="margin:0 0 14px;padding:10px 12px;background:var(--surface2);border-radius:4px">지난 질문 “${esc(L.question)}”<br>평균 <b>나 ${f1(+L.avg)}</b>${L.team_avg!=null?` · <b>우리 팀 ${f1(+L.team_avg)}</b>${L.team_delta!=null?` (${+L.team_delta>=0?'+':''}${f1(+L.team_delta)})`:''}`:''} · ${L.n}명 참여</p>`:''}
   ${!D.open?'<h2>지금은 열린 질문이 없습니다</h2><p class="muted">다음 질문은 목요일 낮 12시에 문자로 보내 드립니다.</p>':P.sent?`<h2>고맙습니다, ${esc(D.name)}님</h2><p class="muted">이번 주도 한 가지만. 결과는 인사팀 확인 뒤 다음 주 문자에 함께 보내 드립니다.</p>`:`
   <p class="small muted" style="margin:0">${esc(D.name)}님, ${D.week_no}주차 질문입니다</p><h2 style="margin-top:6px">${esc(D.question)}</h2>
   ${D.done?'<div class="notice">이번 주에 이미 답하셨습니다. 다시 내면 이전 답을 덮어씁니다.</div>':''}
-  ${scaleHTML('ONE',P.score,['전혀 그렇지 않다','매우 그렇다'])}
+  <p class="qtext" style="margin:14px 0 6px"><b>나는</b></p>${scaleHTML('ONE',P.score,['전혀 그렇지 않다','매우 그렇다'])}
+  <p class="qtext" style="margin:14px 0 6px"><b>우리 팀은</b> <span class="small muted">(같이 일하는 사람들)</span></p>${scaleHTML('TEAM',P.team,['전혀 그렇지 않다','매우 그렇다'])}
   <div class="q"><label class="qtext" for="nt">이번 주 달라진 한 가지 (선택)</label><textarea id="nt" maxlength="200" style="min-height:64px">${esc(P.note||'')}</textarea></div>
   <p class="small muted">답은 이름과 연결되지 않게 저장되고, 결과는 평균으로만 보입니다. 인사팀에는 참여 여부만 전달됩니다.</p>
   <p class="err" id="pe"></p><div class="row"><button class="primary" id="ps">보내기</button></div>`}</div></div>`);
- el.querySelectorAll('.opt').forEach(o=>{const pick=()=>{P.score=+o.dataset.v;o.parentElement.querySelectorAll('.opt').forEach(x=>x.setAttribute('aria-checked',x===o))};o.onclick=pick;o.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();pick()}}});
+ el.querySelectorAll('.opt').forEach(o=>{const pick=()=>{if(o.dataset.code==='TEAM')P.team=+o.dataset.v;else P.score=+o.dataset.v;o.parentElement.querySelectorAll('.opt').forEach(x=>x.setAttribute('aria-checked',x===o))};o.onclick=pick;o.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();pick()}}});
  const nt=el.querySelector('#nt');if(nt)nt.oninput=e=>P.note=e.target.value;
- const b=el.querySelector('#ps');if(b)b.onclick=async()=>{if(!P.score){el.querySelector('#pe').textContent='1~10 중 하나를 골라 주세요.';return}b.disabled=true;
-  try{const ok=await caps.ext.pulseSubmit(P.token,P.score,(P.note||'').trim());if(!ok)throw 0;P.sent=true;render()}catch(e){el.querySelector('#pe').textContent='보내지 못했습니다. 질문이 마감되었거나 연결이 끊겼을 수 있습니다.';b.disabled=false}};
+ const b=el.querySelector('#ps');if(b)b.onclick=async()=>{if(!P.score||!P.team){el.querySelector('#pe').textContent='‘나는’과 ‘우리 팀은’ 모두 1~10 중 하나를 골라 주세요.';return}b.disabled=true;
+  try{const ok=await caps.ext.pulseSubmit(P.token,P.score,P.team,(P.note||'').trim());if(!ok)throw 0;P.sent=true;render()}catch(e){el.querySelector('#pe').textContent='보내지 못했습니다. 질문이 마감되었거나 연결이 끊겼을 수 있습니다.';b.disabled=false}};
  return el;
 }
 async function loadPoneHr(){const H=st.ph;
@@ -731,12 +732,12 @@ function poneHrView(){
  const W=D.weeks||[];const cur=D.current;const ppl=cur?cur.people:[];const doneN=ppl.filter(x=>x.done).length;
  const pts=[...W].reverse().filter(w=>w.closed&&w.avg!=null);
  const chart=pts.length>=2?(()=>{const Wd=560,Ht=160,L=34,B=24,T=10;const X=i=>L+i*(Wd-L-10)/(pts.length-1),Y=v=>Ht-B-(v-1)/9*(Ht-B-T);
-  return `<svg viewBox="0 0 ${Wd} ${Ht}" style="width:100%;height:auto" role="img" aria-label="주차별 평균">${[1,4,7,10].map(v=>`<line x1="${L}" x2="${Wd-10}" y1="${Y(v)}" y2="${Y(v)}" stroke="var(--line)" ${v===7?'stroke-dasharray="4 4"':''}/><text x="${L-6}" y="${Y(v)+4}" text-anchor="end" font-size="11" fill="var(--muted)">${v}</text>`).join('')}<polyline fill="none" stroke="var(--navy)" stroke-width="2" points="${pts.map((w,i)=>X(i)+','+Y(+w.avg)).join(' ')}"/>${pts.map((w,i)=>`<circle cx="${X(i)}" cy="${Y(+w.avg)}" r="4" fill="${w.approved?'var(--navy)':'var(--surface)'}" stroke="var(--navy)" stroke-width="2"/><text x="${X(i)}" y="${Ht-6}" text-anchor="middle" font-size="11" fill="var(--muted)">${w.week_no}주</text>`).join('')}</svg>`})():'';
+  return `<svg viewBox="0 0 ${Wd} ${Ht}" style="width:100%;height:auto" role="img" aria-label="주차별 평균"><text x="${Wd-10}" y="${T+10}" text-anchor="end" font-size="11" fill="var(--navy)">— 우리 팀</text><text x="${Wd-10}" y="${T+24}" text-anchor="end" font-size="11" fill="var(--navy2)">- - 나</text>${[1,4,7,10].map(v=>`<line x1="${L}" x2="${Wd-10}" y1="${Y(v)}" y2="${Y(v)}" stroke="var(--line)" ${v===7?'stroke-dasharray="4 4"':''}/><text x="${L-6}" y="${Y(v)+4}" text-anchor="end" font-size="11" fill="var(--muted)">${v}</text>`).join('')}<polyline fill="none" stroke="var(--navy2)" stroke-width="1.5" stroke-dasharray="5 4" points="${pts.map((w,i)=>X(i)+','+Y(+w.avg)).join(' ')}"/>${pts.some(w=>w.team_avg!=null)?`<polyline fill="none" stroke="var(--navy)" stroke-width="2.5" points="${pts.filter(w=>w.team_avg!=null).map(w=>X(pts.indexOf(w))+','+Y(+w.team_avg)).join(' ')}"/>`:''}${pts.map((w,i)=>`${w.team_avg!=null?`<circle cx="${X(i)}" cy="${Y(+w.team_avg)}" r="4" fill="${w.approved?'var(--navy)':'var(--surface)'}" stroke="var(--navy)" stroke-width="2"/>`:''}<text x="${X(i)}" y="${Ht-6}" text-anchor="middle" font-size="11" fill="var(--muted)">${w.week_no}주</text>`).join('')}</svg>`})():'';
  const el=$(`<div><div class="panel" style="padding:28px"><p class="label">${esc(D.name)} · 바꿔보자! 한 가지만 · 인사팀 화면</p><h1>매주 한 가지, 우리는 이만큼 움직였다</h1>
-  <p class="small muted">수요일 18:00에 마감하고, 목요일 12:00에 다음 질문이 문자로 나갑니다. 마감된 주를 확인하고 <b>승인</b>하면, 그 평균이 다음 문자에 함께 실립니다. 평균이 7점을 넘거나 같은 질문을 3주 하면 다음 질문으로 넘어갑니다.</p>${chart}</div>
+  <p class="small muted">수요일 18:00에 마감하고, 목요일 12:00에 다음 질문이 문자로 나갑니다. 마감된 주를 확인하고 <b>승인</b>하면, 그 평균이 다음 문자에 함께 실립니다. <b>우리 팀</b> 평균이 7점을 넘거나 같은 질문을 3주 하면 다음 질문으로 넘어갑니다. ‘나’와 ‘우리 팀’의 차이가 크면, 각자는 하고 있다고 느끼지만 서로에게는 아직 전해지지 않았다는 뜻입니다.</p>${chart}</div>
   ${cur?`<div class="panel"><h2>${cur.week_no}주차 참여 <span class="small muted">${doneN} / ${ppl.length}명</span></h2><div class="row"><button id="cpTodo">미참여자 이름 복사</button></div><p class="small" style="margin-top:8px">${ppl.map(x=>`<span style="display:inline-block;margin:0 10px 6px 0;color:${x.done?'var(--navy)':'var(--red)'}">${x.done?'●':'○'} ${esc(x.name)}</span>`).join('')}</p></div>`:''}
-  <div class="panel"><h2>주차별 결과</h2><table><tr><th>주차</th><th>질문</th><th class="n">참여</th><th class="n">평균</th><th>상태</th></tr>${W.map((w,i)=>{const prev=W[i+1];const dl=prev&&w.avg!=null&&prev.avg!=null?(+w.avg-prev.avg):null;
-   return `<tr><td>${w.week_no}주<br><span class="small muted">${esc(w.opened_on||'')}</span></td><td>${esc(w.question)}${w.closed&&(w.notes||[]).length?`<details class="small" style="margin-top:6px"><summary>달라진 한 가지 ${w.notes.length}개 (확인 후 승인)</summary>${w.notes.map(t=>`<p class="voice small">${esc(t)}</p>`).join('')}</details>`:''}</td><td class="n">${w.n}명</td><td class="n"><b>${f1(+w.avg)}</b>${dl!=null?`<br><span class="small" style="color:${dl>=0?'var(--navy)':'var(--red)'}">${dl>=0?'+':''}${f1(dl)}</span>`:''}</td><td>${!w.closed?'진행 중':w.approved?'<b style="color:var(--navy)">승인됨</b>':`<button data-ap="${w.id}">승인</button>`}</td></tr>`}).join('')||'<tr><td colspan="5" class="muted">아직 보낸 질문이 없습니다.</td></tr>'}</table></div>
+  <div class="panel"><h2>주차별 결과</h2><table><tr><th>주차</th><th>질문</th><th class="n">참여</th><th class="n">나</th><th class="n">우리 팀</th><th>상태</th></tr>${W.map((w,i)=>{const prev=W[i+1];const dl=prev&&w.team_avg!=null&&prev.team_avg!=null?(+w.team_avg-prev.team_avg):null;
+   return `<tr><td>${w.week_no}주<br><span class="small muted">${esc(w.opened_on||'')}</span></td><td>${esc(w.question)}${w.closed&&(w.notes||[]).length?`<details class="small" style="margin-top:6px"><summary>달라진 한 가지 ${w.notes.length}개 (확인 후 승인)</summary>${w.notes.map(t=>`<p class="voice small">${esc(t)}</p>`).join('')}</details>`:''}</td><td class="n">${w.n}명</td><td class="n">${f1(+w.avg)}</td><td class="n"><b>${w.team_avg==null?'–':f1(+w.team_avg)}</b>${dl!=null?`<br><span class="small" style="color:${dl>=0?'var(--navy)':'var(--red)'}">${dl>=0?'+':''}${f1(dl)}</span>`:''}</td><td>${!w.closed?'진행 중':w.approved?'<b style="color:var(--navy)">승인됨</b>':`<button data-ap="${w.id}">승인</button>`}</td></tr>`}).join('')||'<tr><td colspan="6" class="muted">아직 보낸 질문이 없습니다.</td></tr>'}</table></div>
   <div class="row"><button id="rf">새로고침</button></div></div>`);
  {const b=el.querySelector('#cpTodo');if(b)b.onclick=()=>{try{navigator.clipboard.writeText(ppl.filter(x=>!x.done).map(x=>x.name).join(', '))}catch(e){}b.textContent='복사했습니다'}}
  el.querySelectorAll('[data-ap]').forEach(b=>b.onclick=async()=>{b.disabled=true;try{await caps.ext.pulseApprove(H.code,H.tok,+b.dataset.ap)}catch(e){}H.data=null;render();loadPoneHr()});
@@ -752,7 +753,7 @@ function ponesView(){
   <label class="small" for="pn">이름</label><input type="text" id="pn" maxlength="60" placeholder="예: 대덕전자 · 한 가지만" style="${inp}">
   <div style="height:10px"></div><label class="small" for="pm">참여자 명단 (한 줄에 ‘이름, 부서, 전화번호’) · 전화번호는 문자 발송에만 쓰고 응답과 연결하지 않습니다</label><textarea id="pm" placeholder="홍길동, 영업, 010-1234-5678"></textarea>
   <div style="height:10px"></div><label class="small" for="porg">POCA 결과로 질문 순서 정하기 (선택)</label><div class="row"><select id="porg"><option value="">선택 안 함</option>${(st.orgs||[]).filter(o=>o.type!=='pulse').map(o=>`<option value="${esc(o.code)}">${esc(o.name)} (${esc(o.code)})</option>`).join('')}</select><button id="sortb">가장 바라는 문화부터 정렬</button></div>
-  <p class="small" style="margin:12px 0 4px">질문 순서 (위에서부터 · 평균 7점 이상이거나 3주가 되면 다음 질문 · 체크한 것만 · 문구는 고칠 수 있습니다). 네 문화는 POCA ‘조직의 현재와 미래’와 같습니다.</p>
+  <p class="small" style="margin:12px 0 4px">질문 순서 (위에서부터 · ‘우리 팀’ 평균 7점 이상이거나 3주가 되면 다음 질문 · 체크한 것만 · 문구는 고칠 수 있습니다). 네 문화는 POCA ‘조직의 현재와 미래’와 같습니다.</p>
   ${Z.order.map((x,i)=>`<div class="row" style="flex-wrap:nowrap;margin:4px 0"><input type="checkbox" data-on="${i}" ${x.on?'checked':''}><span class="small muted" style="min-width:150px">${esc(ONE_CN[x.c])}${x.gap!=null?' · 차이 '+(x.gap>=0?'+':'')+Math.round(x.gap):''}</span><input type="text" data-q="${i}" value="${esc(x.q)}" maxlength="80" style="${inp}"></div>`).join('')}
   <p class="err" id="perr">${esc(Z.err)}</p><div class="row"><button class="primary" id="pmk">만들기</button></div></div>
   <div class="panel"><h2>진행 중인 펄스</h2>${(Z.list||[]).map(p=>`<div class="act"><h3 style="margin:0">${esc(p.info.name)} <span class="small muted">· 코드 ${esc(p.code)} · 참여자 ${p.members??'–'}명 · ${p.weeks??0}주 진행</span></h3>
@@ -942,7 +943,7 @@ function privacyView(){
   async addInvites(code,rows){const {error}=await sb.from('poca_invites').insert(rows.map(r=>({org_code:code,name:r.name,dept:r.dept||null})));if(error)throw error},
   async listInvites(code){const {data,error}=await sb.from('poca_invites').select('token,name,dept,done').eq('org_code',code).order('name');if(error)throw error;return data||[]},
   async pulseGet(tok){const {data,error}=await sb.rpc('pulse_get',{p_token:tok});if(error)throw error;return data||null},
-  async pulseSubmit(tok,score,note){const {data,error}=await sb.rpc('pulse_submit',{p_token:tok,p_key:deviceKey('one_'+tok),p_score:score,p_note:note||null});if(error)throw error;return data===true},
+  async pulseSubmit(tok,score,team,note){const {data,error}=await sb.rpc('pulse_submit',{p_token:tok,p_key:deviceKey('one_'+tok),p_score:score,p_team:team,p_note:note||null});if(error)throw error;return data===true},
   async pulseHr(code,tok){const {data,error}=await sb.rpc('pulse_hr',{p_code:code,p_hr:tok});if(error)throw error;return data||null},
   async pulseApprove(code,tok,week){const {data,error}=await sb.rpc('pulse_hr_approve',{p_code:code,p_hr:tok,p_week:week});if(error)throw error;return data===true},
   async listPrograms(){const {data,error}=await sb.from('pulse_programs').select('code,info,created_at').order('created_at',{ascending:false});if(error)throw error;
