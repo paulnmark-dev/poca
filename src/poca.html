@@ -683,17 +683,16 @@ function invitesView(){
 }
 /* ---------- '바꿔보자! 한 가지만' 펄스 ---------- */
 const ONE_BANK=[
- {n:10,q:'이번 주, 나는 동료의 말을 끝까지 들었다.'},
- {n:6,q:'이번 주, 나는 내 의견을 분명하게 전했다.'},
- {n:9,q:'이번 주, 나는 동료의 기여를 구체적으로 인정했다.'},
- {n:5,q:'이번 주, 나는 결정의 이유를 함께 나눴다.'},
- {n:1,q:'이번 주, 나는 내 일의 방식을 스스로 정해 보았다.'},
- {n:8,q:'이번 주, 나는 다른 팀에 먼저 손을 내밀었다.'},
- {n:4,q:'이번 주, 나는 새로운 방법을 하나 시도했다.'},
- {n:7,q:'이번 주, 나는 ‘잘했다’의 기준을 동료와 맞춰 보았다.'},
- {n:2,q:'이번 주, 나는 맡은 일을 끝까지 책임지고 마무리했다.'},
- {n:3,q:'이번 주, 나는 동료가 배우고 성장하도록 도왔다.'},
- {n:16,q:'이번 주, 나는 팀원에게 먼저 묻고 들었다. (리더)'}];
+ {c:1,q:'이번 주, 나는 동료에게 먼저 웃으며 인사했다.'},
+ {c:1,q:'이번 주, 나는 동료의 작은 일을 구체적으로 인정하고 칭찬했다.'},
+ {c:2,q:'이번 주, 나는 모르는 부분을 구체적으로 물어보았다.'},
+ {c:2,q:'이번 주, 나는 문제를 정확히 이해한 뒤에 일을 시작했다.'},
+ {c:2,q:'이번 주, 나는 일에 필요한 것을 따로 공부했다.'},
+ {c:3,q:'이번 주, 나는 고민만 하지 않고 일단 시도했다.'},
+ {c:3,q:'이번 주, 나는 시작한 일 하나를 결과로 마무리했다.'},
+ {c:4,q:'이번 주, 나는 틀을 벗어난 아이디어를 하나 냈다.'},
+ {c:4,q:'이번 주, 나는 새로운 아이디어로 동료와 대화했다.'}];
+const ONE_CN={1:'함께 성장 (관계형 · Why)',2:'체계와 원칙 (질서형 · What)',3:'실행과 결과 (성과형 · How)',4:'도전과 변화 (혁신형 · If)'};
 const f1=x=>x==null||isNaN(x)?'–':(Math.round(x*10)/10).toFixed(1);
 async function loadPone(){const P=st.pone;
  if(!(caps.ext&&caps.ext.pulseGet)){P.err='이 화면에서는 열 수 없습니다.';render();return}
@@ -746,9 +745,9 @@ function ponesView(){
  const el=$(`<div><div class="panel"><p class="label">바꿔보자! 한 가지만</p><h2>새 펄스 만들기</h2>
   <label class="small" for="pn">이름</label><input type="text" id="pn" maxlength="60" placeholder="예: 대덕전자 · 한 가지만" style="${inp}">
   <div style="height:10px"></div><label class="small" for="pm">참여자 명단 (한 줄에 ‘이름, 부서, 전화번호’) · 전화번호는 문자 발송에만 쓰고 응답과 연결하지 않습니다</label><textarea id="pm" placeholder="홍길동, 영업, 010-1234-5678"></textarea>
-  <div style="height:10px"></div><label class="small" for="porg">POCA 결과로 질문 순서 정하기 (선택)</label><div class="row"><select id="porg"><option value="">선택 안 함</option>${(st.orgs||[]).filter(o=>o.type!=='pulse').map(o=>`<option value="${esc(o.code)}">${esc(o.name)} (${esc(o.code)})</option>`).join('')}</select><button id="sortb">낮은 지표부터 정렬</button></div>
-  <p class="small" style="margin:12px 0 4px">질문 순서 (위에서부터 한 주에 하나 · 체크한 것만 · 문구는 고칠 수 있습니다)</p>
-  ${Z.order.map((x,i)=>`<div class="row" style="flex-wrap:nowrap;margin:4px 0"><input type="checkbox" data-on="${i}" ${x.on?'checked':''}><span class="small muted" style="min-width:90px">${esc((IDXN[x.n]||{}).name||'')}${x.score!=null?' '+Math.round(x.score):''}</span><input type="text" data-q="${i}" value="${esc(x.q)}" maxlength="80" style="${inp}"></div>`).join('')}
+  <div style="height:10px"></div><label class="small" for="porg">POCA 결과로 질문 순서 정하기 (선택)</label><div class="row"><select id="porg"><option value="">선택 안 함</option>${(st.orgs||[]).filter(o=>o.type!=='pulse').map(o=>`<option value="${esc(o.code)}">${esc(o.name)} (${esc(o.code)})</option>`).join('')}</select><button id="sortb">가장 바라는 문화부터 정렬</button></div>
+  <p class="small" style="margin:12px 0 4px">질문 순서 (위에서부터 · 평균 7점 이상이거나 3주가 되면 다음 질문 · 체크한 것만 · 문구는 고칠 수 있습니다). 네 문화는 POCA ‘조직의 현재와 미래’와 같습니다.</p>
+  ${Z.order.map((x,i)=>`<div class="row" style="flex-wrap:nowrap;margin:4px 0"><input type="checkbox" data-on="${i}" ${x.on?'checked':''}><span class="small muted" style="min-width:150px">${esc(ONE_CN[x.c])}${x.gap!=null?' · 차이 '+(x.gap>=0?'+':'')+Math.round(x.gap):''}</span><input type="text" data-q="${i}" value="${esc(x.q)}" maxlength="80" style="${inp}"></div>`).join('')}
   <p class="err" id="perr">${esc(Z.err)}</p><div class="row"><button class="primary" id="pmk">만들기</button></div></div>
   <div class="panel"><h2>진행 중인 펄스</h2>${(Z.list||[]).map(p=>`<div class="act"><h3 style="margin:0">${esc(p.info.name)} <span class="small muted">· 코드 ${esc(p.code)} · 참여자 ${p.members??'–'}명 · ${p.weeks??0}주 진행</span></h3>
    <p class="small" style="margin:6px 0 0">인사팀 링크<input type="text" readonly value="${pageBase()}#ph/${esc(p.code)}/${esc(p.info.hr)}" style="${inp};font-size:13px;background:var(--surface2)" onclick="this.select()"></p>
@@ -759,11 +758,11 @@ function ponesView(){
  el.querySelectorAll('[data-q]').forEach(c=>c.oninput=()=>{Z.order[+c.dataset.q].q=c.value});
  el.querySelector('#sortb').onclick=async()=>{const code=el.querySelector('#porg').value;if(!code)return;
   try{const snap=await caps.db.collection('poca_resp').limit(1000).get();const rows=snap.docs.map(d=>d.data()).filter(Boolean).filter(x=>x[code]).map(x=>x[code]);if(rows.length<1)throw 0;const A=aggregate(rows);
-   Z.order=Z.order.map(x=>({...x,score:A.idx[x.n]})).sort((a,b)=>(isNaN(a.score)?999:a.score)-(isNaN(b.score)?999:b.score));render()}catch(e){el.querySelector('#perr').textContent='이 진단의 응답을 불러오지 못했습니다.'}};
+   const gap=q=>A.des[q]-A.cur[q];Z.order=Z.order.map((x,i)=>({...x,gap:gap(x.c),i})).sort((a,b)=>(isNaN(b.gap)?-999:b.gap)-(isNaN(a.gap)?-999:a.gap)||a.i-b.i);render()}catch(e){el.querySelector('#perr').textContent='이 진단의 응답을 불러오지 못했습니다.'}};
  el.querySelector('#pmk').onclick=async()=>{const name=el.querySelector('#pn').value.trim().slice(0,60);const er=el.querySelector('#perr');
   if(!name){er.textContent='이름을 적어 주세요.';return}
   const mem=el.querySelector('#pm').value.split('\n').map(x=>x.trim()).filter(Boolean).map(l=>{const a=l.split(/[,\t]/).map(x=>x.trim());const ph=(a.find(x=>/[0-9]{3}.?[0-9]{3,4}.?[0-9]{4}/.test(x))||'').replace(/[^0-9]/g,'');const rest=a.filter(x=>x.replace(/[^0-9]/g,'')!==ph||!ph);return {name:(rest[0]||'').slice(0,40),dept:(rest[1]||'').slice(0,40)||null,phone:ph&&ph.length>=9&&ph.length<=12?ph:null}}).filter(x=>x.name);
-  const items=Z.order.filter(x=>x.on&&x.q.trim()).map(x=>({n:x.n,q:x.q.trim().slice(0,80)}));
+  const items=Z.order.filter(x=>x.on&&x.q.trim()).map(x=>({c:x.c,q:x.q.trim().slice(0,80)}));
   if(!mem.length){er.textContent='참여자 명단을 넣어 주세요.';return}if(!items.length){er.textContent='질문을 하나 이상 고르세요.';return}
   const noPh=mem.filter(m=>!m.phone).length;
   const A='ACDEFGHJKMNPQRTUVWXY3479';const code='P'+Array.from({length:5},()=>A[Math.floor(Math.random()*A.length)]).join('');

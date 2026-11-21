@@ -227,7 +227,7 @@ begin
       if (last.avg is not null and last.avg >= 7) or streak >= 3 then idx := (last.item_idx + 1) % nitems;
       else idx := last.item_idx; end if;
     end if;
-    q := items->idx->>'q'; itn := nullif(items->idx->>'n','')::int;
+    q := items->idx->>'q'; itn := nullif(coalesce(items->idx->>'c', items->idx->>'n'),'')::int;  -- c = 문화 1~4 (관계·질서·성과·혁신)
     insert into public.pulse_weeks (program_code, week_no, item_idx, item_n, question)
     values (p.code, coalesce(last.week_no, 0) + 1, idx, itn, q);
     made := made + 1;
