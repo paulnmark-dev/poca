@@ -23,8 +23,8 @@ _seg=_seg.replace("el.querySelector('#smp').onclick=()=>{st.R=aggregate(sampleDa
 s=s[:_i]+_seg+s[_j:]
 rep("el.querySelector('#psmp').onclick=()=>{st.P=samplePulse();st.src='sample';st.screen='pulse';render()};",
     "}{const ps=el.querySelector('#psmp');if(ps)ps.onclick=()=>{st.P=samplePulse();st.src='sample';st.screen='pulse';render()};}\n el.querySelector('#privacy').onclick=e=>{e.preventDefault();st.screen='privacy';render()};\n {const li=el.querySelector('#login');if(li)li.onclick=e=>{e.preventDefault();st.screen='login';render()};const lo=el.querySelector('#logout');if(lo)lo.onclick=async e=>{e.preventDefault();try{await sb.auth.signOut()}catch(_){}caps.canEdit=false;st.screen='intro';render()};}")
-rep("const v={intro:introView,survey:surveyView,result:resultView,report:reportView,admin:adminView,pulse:pulseView,hr:hrView,invites:invitesView}[st.screen];",
-    "const v={intro:introView,survey:surveyView,result:resultView,report:reportView,admin:adminView,pulse:pulseView,hr:hrView,invites:invitesView,login:loginView,privacy:privacyView}[st.screen];")
+s=s.replace("}[st.screen];app.append(v())",",login:loginView,privacy:privacyView}[st.screen];app.append(v())",1)
+assert ",login:loginView,privacy:privacyView}[st.screen]" in s
 rep("st.orgErr='진단에 연결하지 못했습니다. 이 페이지에 참여 권한이 있는지 확인해 주세요.';","st.orgErr='진단에 연결하지 못했습니다. 인터넷 연결을 확인하고 다시 시도해 주세요.';")
 
 # submit -> rpc
@@ -99,7 +99,18 @@ function privacyView(){
   async hrStatus(code,tok){const {data,error}=await sb.rpc('poca_hr_status',{p_code:code,p_token:tok});if(error)throw error;return data||null},
   async hrResponses(code,tok){const {data,error}=await sb.rpc('poca_hr_responses',{p_code:code,p_token:tok});if(error)throw error;return data||[]},
   async addInvites(code,rows){const {error}=await sb.from('poca_invites').insert(rows.map(r=>({org_code:code,name:r.name,dept:r.dept||null})));if(error)throw error},
-  async listInvites(code){const {data,error}=await sb.from('poca_invites').select('token,name,dept,done').eq('org_code',code).order('name');if(error)throw error;return data||[]}
+  async listInvites(code){const {data,error}=await sb.from('poca_invites').select('token,name,dept,done').eq('org_code',code).order('name');if(error)throw error;return data||[]},
+  async pulseGet(tok){const {data,error}=await sb.rpc('pulse_get',{p_token:tok});if(error)throw error;return data||null},
+  async pulseSubmit(tok,score,note){const {data,error}=await sb.rpc('pulse_submit',{p_token:tok,p_key:deviceKey('one_'+tok),p_score:score,p_note:note||null});if(error)throw error;return data===true},
+  async pulseHr(code,tok){const {data,error}=await sb.rpc('pulse_hr',{p_code:code,p_hr:tok});if(error)throw error;return data||null},
+  async pulseApprove(code,tok,week){const {data,error}=await sb.rpc('pulse_hr_approve',{p_code:code,p_hr:tok,p_week:week});if(error)throw error;return data===true},
+  async listPrograms(){const {data,error}=await sb.from('pulse_programs').select('code,info,created_at').order('created_at',{ascending:false});if(error)throw error;
+   const [{data:mm},{data:ww}]=await Promise.all([sb.from('pulse_members').select('program_code').eq('active',true),sb.from('pulse_weeks').select('program_code')]);
+   return data.map(p=>({...p,members:(mm||[]).filter(x=>x.program_code===p.code).length,weeks:(ww||[]).filter(x=>x.program_code===p.code).length}))},
+  async createProgram(code,info){const {error}=await sb.from('pulse_programs').insert({code,info});if(error)throw error},
+  async setProgram(code,info){const {error}=await sb.from('pulse_programs').update({info}).eq('code',code);if(error)throw error},
+  async addMembers(code,rows){const {error}=await sb.from('pulse_members').insert(rows.map(r=>({program_code:code,name:r.name,dept:r.dept||null,phone:r.phone||null})));if(error)throw error},
+  async startNow(code){const {data,error}=await sb.rpc('pulse_start_now',{p_code:code});if(error)throw error;return data}
  }}
  await route();
  if(st.screen==='intro')render();

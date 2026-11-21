@@ -10,7 +10,7 @@
 | `wfg-site/` | Next Culture · WFG 팀 대화 워크숍 웹사이트 (별도 Netlify 프로젝트) |
 | `src/` | 원본. `poca.html`(진단·결과보고서), `wfg.html`(WFG), `lovak-board.html`, `lti-dialogue.html` |
 | `tools/` | 원본을 웹사이트로 바꾸는 스크립트 |
-| `sql/` | Supabase 설정 SQL (`poca_setup.sql` → `poca_update_202611.sql` → `wfg_setup.sql`) |
+| `sql/` | Supabase 설정 SQL (`poca_setup.sql` → `poca_update_202611.sql` → `pulse_one_setup.sql` → `pulse_one_schedule.sql`, WFG는 `wfg_setup.sql`) |
 | `samples/` | 예시 결과보고서 PDF (한국어 · 영어, 전체판 · 요약판) |
 
 ## 고치는 순서
@@ -33,3 +33,12 @@
 - 웹사이트 안의 Supabase 주소와 publishable 키는 공개용입니다. 데이터는 관리자 로그인과 RLS 접근 규칙이 보호합니다.
 - Supabase의 secret 키, service_role 키, 데이터베이스 비밀번호, 관리자 비밀번호는 **절대 이 저장소에 넣지 않습니다.**
 - 응답자 이름은 받지 않으며, 3명 미만 집단은 결과에 표시하지 않습니다.
+
+## 펄스 ‘바꿔보자! 한 가지만!’
+
+- 매주 **목요일 12:00** 문자로 질문 하나 (나의 행동을 돌아보는 질문, POCA 동기요인 지표와 연결)
+- **수요일 18:00** 마감 → 인사팀 화면(`#ph/코드/토큰`)에서 확인·**승인** → 다음 문자에 우리 평균과 지난주 대비 변화가 실림
+- 평균 **7점 이상**이거나 같은 질문 **3주**면 다음 질문으로
+- 응답자 링크 `#p/개인토큰` · 명단(이름·전화번호)과 응답은 연결하지 않음
+- 설정: `sql/pulse_one_setup.sql` 실행 → 솔라피 키를 Vault에 저장 → `sql/pulse_one_schedule.sql` 실행
+- 발송 통로는 `pulse_outbox` 표에 모였다가 나갑니다. 나중에 사내 메신저·그룹웨어로 바꿀 때는 `pulse_send()`만 바꾸면 됩니다.
