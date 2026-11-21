@@ -1,18 +1,19 @@
 # Cloud Build: 이미지 빌드 → Artifact Registry 푸시 → Cloud Run 배포
-# 실행: gcloud builds submit --config cloudbuild.yaml --project poca-515310 .
+# 자동: GitHub main 브랜치에 올리면 Cloud Build 트리거가 실행
+# 수동: gcloud builds submit --config cloudbuild.yaml --project poca-515310 .
+# 이미지 태그는 빌드마다 다른 BUILD_ID를 써서, 이전 판으로 되돌릴 수 있게 함
+# 리전은 도메인 연결(poca.paulnmark.com)이 있는 도쿄(asia-northeast1)를 유지
 substitutions:
   _REGION: asia-northeast1
   _REPO: poca
   _SERVICE: poca
-  # 수동 빌드 시 --substitutions=_TAG=<태그> 로 지정 (예: 날짜-시간)
-  _TAG: manual
 
 steps:
   - name: gcr.io/cloud-builders/docker
     args:
       - build
       - -t
-      - ${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPO}/${_SERVICE}:${_TAG}
+      - ${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPO}/${_SERVICE}:${BUILD_ID}
       - -t
       - ${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPO}/${_SERVICE}:latest
       - .
@@ -26,14 +27,14 @@ steps:
       - run
       - deploy
       - ${_SERVICE}
-      - --image=${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPO}/${_SERVICE}:${_TAG}
+      - --image=${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPO}/${_SERVICE}:${BUILD_ID}
       - --region=${_REGION}
       - --platform=managed
       - --allow-unauthenticated
       - --port=8080
 
 images:
-  - ${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPO}/${_SERVICE}:${_TAG}
+  - ${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPO}/${_SERVICE}:${BUILD_ID}
   - ${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPO}/${_SERVICE}:latest
 
 options:
