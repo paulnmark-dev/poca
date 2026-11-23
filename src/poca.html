@@ -615,7 +615,8 @@ function reportView(){
  return el;
 }
 async function route(){
- const raw=(location.hash||'').replace('#','').trim();
+ const qp=new URLSearchParams(location.search).get('p');  /* 카카오 알림톡 버튼: ?p=<토큰> */
+ const raw=qp&&/^[0-9a-fA-F-]{36}$/.test(qp)?'p/'+qp:(location.hash||'').replace('#','').trim();
  let m=raw.match(/^hr\/([A-Za-z0-9]{4,8})\/([a-z0-9]{10,40})$/);
  if(m){st.hr={code:m[1].toUpperCase(),tok:m[2],data:null,err:''};st.screen='hr';render();await loadHr();return}
  m=raw.match(/^ph\/([A-Za-z0-9]{4,8})\/([a-z0-9]{10,40})$/);

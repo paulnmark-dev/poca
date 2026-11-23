@@ -1,4 +1,4 @@
--- POCA Atomic Culture · 문자 자동 발송 켜기
+-- POCA Atomic Culture · 카카오 알림톡(또는 문자) 자동 발송 켜기
 -- pulse_one_setup.sql 을 먼저 실행하세요.
 --
 -- [먼저 할 일 · 한 번만]
@@ -9,6 +9,28 @@
 --   select vault.create_secret('여기에_API_KEY',    'solapi_api_key');
 --   select vault.create_secret('여기에_API_SECRET', 'solapi_api_secret');
 --   select vault.create_secret('여기에_발신번호(숫자만)', 'solapi_from');
+--
+-- [카카오 알림톡으로 보낼 때 · 추가로 두 줄]
+--   카카오톡 채널을 솔라피에 연동하고, 아래 템플릿을 등록해 검수를 받은 뒤
+--   솔라피 화면의 채널 ID(pfId)와 템플릿 ID를 금고에 넣으세요. 두 값이 있으면 알림톡으로,
+--   없으면 문자로 보냅니다. 알림톡이 실패한 사람에게는 문자로 대신 보냅니다.
+--
+--   select vault.create_secret('여기에_채널ID(pfId)',  'solapi_pfid');
+--   select vault.create_secret('여기에_템플릿ID',      'solapi_template');
+--
+--   템플릿 본문(변수 #{...} 이름을 그대로 쓰세요):
+--     #{이름}님, 이번 주 Atomic Culture 질문이 도착했습니다.
+--     작은 습관의 변화가 문화를 바꿉니다.
+--
+--     ■ 지난주 결과
+--     #{지난주}
+--
+--     ■ 이번 주 질문
+--     #{질문}
+--
+--     수요일 오후 6시까지 아래 버튼을 눌러 답해 주세요.
+--     답은 이름과 연결되지 않게 저장됩니다.
+--   버튼: 웹링크 · 이름 '응답하기' · 링크 https://poca.paulnmark.com/?p=#{토큰}
 --
 -- 3) 그다음 이 파일 전체를 실행하세요. (여러 번 실행해도 괜찮습니다)
 
@@ -22,16 +44,22 @@ create or replace function public.pulse_send()
 returns int
 language plpgsql security definer set search_path = public, extensions
 as $$
-declare k text; s text; f text; d text; salt text; sig text; msgs jsonb; ids bigint[]; rid bigint;
+declare k text; s text; f text; pf text; tp text; d text; salt text; sig text; msgs jsonb; ids bigint[]; rid bigint;
 begin
   select decrypted_secret into k from vault.decrypted_secrets where name = 'solapi_api_key';
   select decrypted_secret into s from vault.decrypted_secrets where name = 'solapi_api_secret';
   select decrypted_secret into f from vault.decrypted_secrets where name = 'solapi_from';
+  select decrypted_secret into pf from vault.decrypted_secrets where name = 'solapi_pfid';
+  select decrypted_secret into tp from vault.decrypted_secrets where name = 'solapi_template';
   if k is null or s is null or f is null then return 0; end if;
   loop
-    select array_agg(id), jsonb_agg(jsonb_build_object('to', phone, 'from', f, 'text', text, 'autoTypeDetect', true))
+    select array_agg(id), jsonb_agg(
+             case when pf is not null and tp is not null and vars is not null
+               then jsonb_build_object('to', phone, 'from', f,
+                      'kakaoOptions', jsonb_build_object('pfId', pf, 'templateId', tp, 'variables', vars, 'disableSms', false))
+               else jsonb_build_object('to', phone, 'from', f, 'text', text, 'autoTypeDetect', true) end)
       into ids, msgs
-      from (select id, phone, text from public.pulse_outbox where status = 'pending' order by id limit 100) x;
+      from (select id, phone, text, vars from public.pulse_outbox where status = 'pending' order by id limit 100) x;
     exit when ids is null;
     d := to_char(now() at time zone 'UTC', 'YYYY-MM-DD"T"HH24:MI:SS"Z"');
     salt := encode(gen_random_bytes(16), 'hex');

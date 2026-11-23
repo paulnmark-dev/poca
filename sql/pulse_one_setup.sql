@@ -68,11 +68,14 @@ create table if not exists public.pulse_outbox (
   program_code  text not null references public.pulse_programs(code) on delete cascade,
   phone         text not null,
   text          text not null,
+  vars          jsonb,                       -- 카카오 알림톡 템플릿 변수 (#{이름} #{지난주} #{질문} #{토큰})
   status        text not null default 'pending' check (status in ('pending','sent','failed')),
   error         text,
   created_at    timestamptz not null default now(),
   sent_at       timestamptz
 );
+alter table public.pulse_outbox add column if not exists vars jsonb;
+
 
 do $$ declare t text; begin
   foreach t in array array['pulse_programs','pulse_members','pulse_weeks','pulse_answers','pulse_done','pulse_outbox'] loop
@@ -248,9 +251,11 @@ begin
            || case when res->>'team_delta' is null then '' else ' (' || case when (res->>'team_delta')::numeric >= 0 then '+' else '' end || to_char((res->>'team_delta')::numeric, 'FM90.0') || ')' end
            || '. ' end;
     base := coalesce(p.info->>'base', '');
-    for m in select token, phone from public.pulse_members where program_code = p.code and active and phone is not null loop
-      insert into public.pulse_outbox (program_code, phone, text)
-      values (p.code, m.phone, '[Atomic Culture] ' || line || '이번 주 질문: ' || q || ' ' || base || '#p/' || m.token);
+    for m in select token, name, phone from public.pulse_members where program_code = p.code and active and phone is not null loop
+      insert into public.pulse_outbox (program_code, phone, text, vars)
+      values (p.code, m.phone, '[Atomic Culture] ' || line || '이번 주 질문: ' || q || ' ' || base || '#p/' || m.token,
+              jsonb_build_object('#{이름}', m.name, '#{질문}', q, '#{토큰}', m.token::text,
+                                 '#{지난주}', case when line = '' then '첫 주라 지난 결과가 없습니다.' else rtrim(line) end));
     end loop;
   end loop;
   return made;
