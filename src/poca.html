@@ -632,7 +632,7 @@ function surveyView(){
   +`<div class="q"><p class="qtext">${esc(CFG.RES[1].t)}</p>${scaleHTML('R02',st.r.R02,ANCH)}</div>`;
  } else if(step.startsWith('f')){
   const fi=+step.slice(1); const idxs=CFG.IDX.filter(x=>x.f===fi);
-  body.innerHTML=`<p class="label">2 · 현재 조직 분석 (${fi+1}/8)</p><h2>${CFG.FQ[fi]}</h2>`+idxs.flatMap(x=>x.codes).map(c=>`<div class="q"><p class="qtext">${esc(ITEMC[c].t)}</p>${scaleHTML(c,st.r[c],ANCH)}</div>`).join('');
+  body.innerHTML=`<p class="label">2 · 현재 조직 분석</p><h2>${CFG.FQ[fi]}</h2>`+idxs.flatMap(x=>x.codes).map(c=>`<div class="q"><p class="qtext">${esc(ITEMC[c].t)}</p>${scaleHTML(c,st.r[c],ANCH)}</div>`).join('');
  } else if(step==='k'){
   body.innerHTML=`<p class="label">3 · 조직의 현재와 미래</p><h2>지금 우리 조직, 그리고 바라는 우리 조직</h2><p class="small muted">각 문장이 지금 얼마나 해당하는지, 앞으로 얼마나 해당하길 바라는지 답해 주세요.</p>`+
   CFG.K.map(k=>`<div class="q"><p class="qtext">${esc(k.t)}</p><div class="pair"><span class="lab">지금</span>${scaleHTML(k.c+'_n',st.r[k.c+'_n'],ANCH)}</div><div class="pair"><span class="lab">바라는 모습</span>${scaleHTML(k.c+'_d',st.r[k.c+'_d'],ANCH)}</div></div>`).join('');
