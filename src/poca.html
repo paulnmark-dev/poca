@@ -170,6 +170,13 @@ svg text{font-family:'Pretendard',sans-serif}
 .q:first-of-type{border-top:1px solid var(--line)}
 .q select{margin-top:4px}
 .opt{padding:14px 0;min-height:52px;display:flex;align-items:center;justify-content:center}
+
+.lmodal-chk{display:flex;gap:12px;align-items:flex-start;margin:18px 0 0;cursor:pointer;font-size:14px;line-height:1.6;color:var(--ink)}
+.lmodal-chk input{appearance:none;-webkit-appearance:none;width:20px;height:20px;flex:0 0 20px;margin:2px 0 0;border:1px solid #E6E8EC;border-radius:6px;background:#fff;cursor:pointer;display:grid;place-content:center}
+.lmodal-chk input:checked{background:#c61c2c;border-color:#c61c2c}
+.lmodal-chk input:checked::after{content:"";width:9px;height:5px;border-left:2px solid #fff;border-bottom:2px solid #fff;transform:rotate(-45deg) translate(1px,-1px)}
+.lmodal-chk input:focus-visible{outline:3px solid #c61c2c;outline-offset:2px}
+.lmodal-center{justify-content:center}
 </style>
 </head>
 <body>
@@ -470,7 +477,7 @@ function openCodeModal(opt){
  const bg=document.createElement('div');bg.className='lmodal-bg';bg.setAttribute('role','dialog');bg.setAttribute('aria-modal','true');bg.setAttribute('aria-label','진단 시작');
  const codeRow=opt.invite?'':'<h2>회사에서 받은 진단 코드를 입력하세요</h2><p class="muted small">코드는 인사 담당자에게 받을 수 있습니다.</p><div class="lmodal-row"><input type="text" id="lcode" maxlength="8" aria-label="진단 코드" autocomplete="off" value=""></div>';
  const head=opt.invite?'<h2>진단을 시작합니다</h2><p class="muted small">'+(opt.name?'<b>'+esc(opt.name)+'</b>님의 개인 링크입니다. ':'')+'응답 내용은 이름과 연결되지 않은 채 익명으로 저장되고, 인사 담당자에게는 <b>완료 여부만</b> 전달됩니다.</p>':codeRow;
- bg.innerHTML=`<div class="lmodal"><button class="lmodal-x" aria-label="닫기">×</button>${head}<p class="muted small lmodal-note">한 사람당 한 응답이 저장됩니다. 다시 하면 이전 응답을 덮어씁니다.</p><label class="chk lmodal-chk"><input type="checkbox" id="lagree"><span>응답은 이름과 연결되지 않게 저장되고 결과는 묶어서만 보인다는 안내를 확인했습니다. 참여는 자유이며, 참여하지 않아도 불이익이 없습니다.</span></label><div class="lmodal-row"><button class="primary lbtn" id="lenter">${opt.invite?'시작하기':'들어가기'}</button></div><p class="err" id="lcerr"></p></div>`;
+ bg.innerHTML=`<div class="lmodal"><button class="lmodal-x" aria-label="닫기">×</button>${head}<label class="lmodal-chk"><input type="checkbox" id="lagree"><span>응답은 이름과 연결되지 않게 저장되고 결과는 묶어서만 보인다는 안내를 확인했습니다. 참여는 자유이며, 참여하지 않아도 불이익이 없습니다.</span></label><div class="lmodal-row lmodal-center"><button class="primary lbtn" id="lenter">${opt.invite?'시작하기':'들어가기'}</button></div><p class="err" id="lcerr"></p></div>`;
  const close=()=>{bg.remove();document.removeEventListener('keydown',onKey)};
  const onKey=(e)=>{if(e.key==='Escape')close()};
  document.addEventListener('keydown',onKey);
