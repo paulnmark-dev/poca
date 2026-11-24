@@ -690,8 +690,7 @@ function resultView(){
   <p class="small" style="margin-top:10px">가장 아쉽게 느끼는 부분: ${low.map(x=>`<b>${x.plain}</b> ${r0(s.idx[x.n])}`).join(' · ')}</p></div>
  <div class="panel"><p class="label">조직의 현재와 미래</p><h2>가장 바라는 변화는 ‘${QP[gap[0]]}’ 쪽입니다</h2>${[1,2,3,4].map(q=>`<p class="small" style="margin:10px 0 2px"><b>${QP[q]}</b> <span class="muted">현재 ${r0(s.cur[q])} → 지향 ${r0(s.des[q])}</span></p>${bars([['현재',s.cur[q],'var(--muted)'],['지향',s.des[q],'var(--navy)']])}`).join('')}</div>
  <div class="panel"><h3>스스로에게 던져볼 질문</h3><p class="small">· ‘${CFG.REASONS[[0,1,2,3,4,5].sort((a,b)=>s.rs[b]-s.rs[a])[0]]}’가 지금 나를 가장 크게 움직이고 있습니다. 1년 뒤에도 그럴까요?</p><p class="small">· ‘${low[0].plain}’${J(low[0].plain,'이','가').slice(-1)} 나아진다면 내 일은 어떻게 달라질까요?</p><p class="small">· 내가 바라는 ‘${QP[gap[0]]}’는 구체적으로 어떤 장면인가요?</p></div>
- <div class="row"><button class="primary" id="smp">조직 리포트 예시 보기</button><button id="home">처음으로</button></div></div>`);
- el.querySelector('#smp').onclick=()=>{st.R=aggregate(sampleData());st.R.prev=aggregate(sampleData(29,-0.25));st.src='sample';st.screen='report';render()};
+ <div class="row"><button class="primary" id="home">처음으로</button></div></div>`);
  el.querySelector('#home').onclick=()=>{st.screen='landing';render()};
  return el;
 }
