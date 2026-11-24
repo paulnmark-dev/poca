@@ -156,6 +156,20 @@ svg text{font-family:'Pretendard',sans-serif}
 .lmodal-row input{flex:1 1 220px;min-width:0;font:inherit;font-size:20px;letter-spacing:4px;text-transform:uppercase;padding:12px 14px;border:1px solid #E6E8EC;border-radius:6px;background:#fff;color:#111}
 .lmodal-row button{padding:12px 22px}
 .lmodal .err{margin-top:12px}
+.lmodal-note{margin:14px 0 4px}
+.lmodal-chk{margin:10px 0 0;max-width:none}
+.lmodal .lmodal-row{margin-top:16px}
+
+/* ---------- 설문 디자인 (피그마 반영) ---------- */
+.segs{display:flex;gap:4px;margin:0 0 28px}
+.segs i{flex:1;height:4px;border-radius:2px;background:var(--surface2)}
+.segs i.on{background:#c61c2c}
+#body>h2{margin-top:6px}
+#body>.label{margin-top:4px}
+.q{border:1px solid var(--line);border-radius:12px;background:var(--surface);padding:22px 22px 18px;margin:0 0 12px}
+.q:first-of-type{border-top:1px solid var(--line)}
+.q select{margin-top:4px}
+.opt{padding:14px 0;min-height:52px;display:flex;align-items:center;justify-content:center}
 </style>
 </head>
 <body>
@@ -449,28 +463,39 @@ function scatter(points,opt){
 }
 
 /* ---------- screens ---------- */
-function render(){const app=document.getElementById('app');app.innerHTML='';const v={landing:landingView,intro:introView,survey:surveyView,result:resultView,report:reportView,admin:adminView,pulse:pulseView,hr:hrView,invites:invitesView,pone:poneView,poneHr:poneHrView,pones:ponesView}[st.screen];app.append(v());window.scrollTo({top:0})}
-function openCodeModal(){
+function render(){const app=document.getElementById('app');app.innerHTML='';const v={landing:landingView,survey:surveyView,result:resultView,report:reportView,admin:adminView,pulse:pulseView,hr:hrView,invites:invitesView,pone:poneView,poneHr:poneHrView,pones:ponesView}[st.screen];app.append(v());window.scrollTo({top:0})}
+function openCodeModal(opt){
+ opt=opt||{};
  document.querySelectorAll('.lmodal-bg').forEach(n=>n.remove());
- const bg=document.createElement('div');bg.className='lmodal-bg';bg.setAttribute('role','dialog');bg.setAttribute('aria-modal','true');bg.setAttribute('aria-label','진단 코드 입력');
- bg.innerHTML=`<div class="lmodal"><button class="lmodal-x" aria-label="닫기">×</button><h2>회사에서 받은 진단 코드를 입력하세요</h2><p class="muted small">코드는 인사 담당자에게 받을 수 있습니다.</p><div class="lmodal-row"><input type="text" id="lcode" maxlength="8" aria-label="진단 코드" autocomplete="off"><button class="primary lbtn" id="lenter">들어가기</button></div><p class="err" id="lcerr"></p></div>`;
+ const bg=document.createElement('div');bg.className='lmodal-bg';bg.setAttribute('role','dialog');bg.setAttribute('aria-modal','true');bg.setAttribute('aria-label','진단 시작');
+ const codeRow=opt.invite?'':'<h2>회사에서 받은 진단 코드를 입력하세요</h2><p class="muted small">코드는 인사 담당자에게 받을 수 있습니다.</p><div class="lmodal-row"><input type="text" id="lcode" maxlength="8" aria-label="진단 코드" autocomplete="off" value=""></div>';
+ const head=opt.invite?'<h2>진단을 시작합니다</h2><p class="muted small">'+(opt.name?'<b>'+esc(opt.name)+'</b>님의 개인 링크입니다. ':'')+'응답 내용은 이름과 연결되지 않은 채 익명으로 저장되고, 인사 담당자에게는 <b>완료 여부만</b> 전달됩니다.</p>':codeRow;
+ bg.innerHTML=`<div class="lmodal"><button class="lmodal-x" aria-label="닫기">×</button>${head}<p class="muted small lmodal-note">한 사람당 한 응답이 저장됩니다. 다시 하면 이전 응답을 덮어씁니다.</p><label class="chk lmodal-chk"><input type="checkbox" id="lagree"><span>응답은 이름과 연결되지 않게 저장되고 결과는 묶어서만 보인다는 안내를 확인했습니다. 참여는 자유이며, 참여하지 않아도 불이익이 없습니다.</span></label><div class="lmodal-row"><button class="primary lbtn" id="lenter">${opt.invite?'시작하기':'들어가기'}</button></div><p class="err" id="lcerr"></p></div>`;
  const close=()=>{bg.remove();document.removeEventListener('keydown',onKey)};
  const onKey=(e)=>{if(e.key==='Escape')close()};
  document.addEventListener('keydown',onKey);
  bg.addEventListener('click',(e)=>{if(e.target===bg)close()});
  bg.querySelector('.lmodal-x').onclick=close;
+ const err=(m)=>{bg.querySelector('#lcerr').textContent=m};
  const input=bg.querySelector('#lcode');
- input.addEventListener('keydown',(e)=>{if(e.key==='Enter')enter()});
- const enter=()=>{
+ if(input){ input.value=(opt.code||''); input.addEventListener('keydown',(e)=>{if(e.key==='Enter')enter()}); }
+ const agree=bg.querySelector('#lagree');
+ const startSurvey=()=>{st={...st,screen:'survey',step:0,r:{_sc:7},u:[],o1:'',o2:'',o3:'',t0:Date.now(),err:'',saved:null};close();render()};
+ const enter=async()=>{
+  if(!agree.checked){err('안내를 확인하고 체크해 주세요.');return}
+  if(opt.invite){ startSurvey(); return }
   const c=input.value.trim().toUpperCase();
-  if(!c){bg.querySelector('#lcerr').textContent='진단 코드를 적어 주세요.';input.focus();return}
-  close();
-  st={...st,screen:'intro'};
-  loadOrg(c,true);
+  if(!c){err('진단 코드를 적어 주세요.');input.focus();return}
+  err('확인하고 있습니다...');
+  st.invite=null; st.org=null;
+  await loadOrg(c,true);
+  if(!st.org){err(st.orgErr||'이 코드의 진단을 찾지 못했습니다.');return}
+  if(st.org.open===false){err('이 진단은 마감되었습니다. 참여해 주셔서 감사합니다.');return}
+  startSurvey();
  };
  bg.querySelector('#lenter').onclick=enter;
  document.body.appendChild(bg);
- setTimeout(()=>input.focus(),0);
+ setTimeout(()=>{(input||agree).focus()},0);
 }
 function landingView(){
  const el=$(`<div class="land">
@@ -505,7 +530,7 @@ function landingView(){
    <p>이름은 받지 않으며, 결과는 묶어서만 보입니다.</p>
    <button class="primary lbtn" id="lgo3">진단 시작하기</button>
   </section>
-  <footer class="lfoot"><span>© Paul &amp; Mark Co. All rights reserved.</span><span>POCA · 조직문화 진단</span></footer>
+  <footer class="lfoot"><span>© Paul &amp; Mark Co. All rights reserved.</span><span><a href="#" id="lpriv">개인정보 처리 안내</a> · <a href="#" id="llog">관리자 로그인</a></span></footer>
  </div>`);
  const start=()=>openCodeModal();
  el.querySelector('#lgo').onclick=start;
@@ -514,27 +539,9 @@ function landingView(){
  const sample=()=>{st.R=aggregate(sampleData());st.R.prev=aggregate(sampleData(29,-0.25));st.src='sample';st.screen='report';render()};
  el.querySelector('#lsmp').onclick=sample;
  el.querySelector('#lsmp2').onclick=sample;
- return el;
-}
-function introView(){
- const O=st.org;
- const done=O?(()=>{try{return localStorage.getItem('poca_done_'+O.code)}catch(e){return null}})():null;
- const closed=O&&O.open===false;
- const el=$(`<div><div class="panel home-v3" style="padding:30px">
-  <p class="label">PAUL &amp; MARK · POCA 조직문화 진단</p>
-  ${O?`<p class="small" style="margin:0 0 6px"><b>${esc(O.name)}</b></p>`:''}
-  <h1>우리 조직은 지금 어떤 문화이고, 사람들은 왜 일하고 있을까요?</h1>
-  <p class="muted">${O&&O.type==='pulse'?'지난 진단 이후 달라진 것을 짧게 점검합니다. 약 3분.':'약 11분, 80문항입니다.'} 이름은 받지 않으며, 결과는 묶어서만 보입니다.</p>
-  <div class="three"><div><h3>나의 업무 동기</h3><p class="small muted">나의 업무 동기요인을 돌아봅니다.</p></div><div><h3>현재 조직 분석</h3><p class="small muted">여덟 가지 질문으로 우리 조직을 봅니다.</p></div><div><h3>조직의 현재와 미래</h3><p class="small muted">우리 문화가 어디에 있고, 어디로 가고 싶은지 봅니다.</p></div></div>
-  ${O?'<p class="small muted" style="margin-top:14px">한 사람당 한 응답이 저장됩니다. 다시 하면 이전 응답을 덮어씁니다.</p>':''}${st.invite?`<p class="small" style="margin-top:10px;padding:10px 12px;background:var(--surface2);border-radius:4px"><b>${esc(st.invite.name)}</b>님의 개인 링크입니다. 응답 내용은 이름과 연결되지 않은 채 익명으로 저장되고, 인사 담당자에게는 <b>완료 여부만</b> 전달됩니다.</p>`:''}</div>
-  ${closed?'<div class="notice">이 진단은 마감되었습니다. 참여해 주셔서 감사합니다.</div>':st.invite&&st.invite.done?'<div class="notice">이미 응답을 마치셨습니다. 다시 하면 이전 응답을 덮어씁니다.</div>':done?'<div class="notice">이 기기에서 이미 응답하셨습니다. 다시 하면 이전 응답을 덮어씁니다.</div>':''}
-  ${O?'':`<div class="panel"><h3>회사에서 받은 진단 코드를 입력하세요</h3><div class="row"><input type="text" id="code" maxlength="8" style="max-width:200px;font-size:20px;letter-spacing:4px;text-transform:uppercase;font:inherit;padding:10px 12px;border:1px solid var(--line);border-radius:4px;background:var(--surface);color:var(--ink)" aria-label="진단 코드"><button id="enter">들어가기</button></div><p class="err" id="cerr">${esc(st.orgErr)}</p></div>`}
-  ${O&&!closed?'<label class="chk" style="max-width:640px;margin-bottom:10px"><input type="checkbox" id="agree"><span>응답은 이름과 연결되지 않게 저장되고 결과는 묶어서만 보인다는 안내를 확인했습니다. 참여는 자유이며, 참여하지 않아도 불이익이 없습니다.</span></label><p class="err" id="agErr"></p>':''}<div class="row">${O&&!closed?'<button class="primary" id="go">진단 시작하기</button>':''}<button id="smp">조직 리포트 예시 보기</button><button id="asmp">Atomic Culture 예시 보기</button><span id="adm"></span></div></div>`);
- const go=el.querySelector('#go'); if(go)go.onclick=()=>{if(!el.querySelector('#agree').checked){el.querySelector('#agErr').textContent='안내를 확인하고 체크해 주세요.';return}st={...st,screen:'survey',step:0,r:{_sc:7},u:[],o1:'',o2:'',o3:'',t0:Date.now(),err:'',saved:null};render()};
- const en=el.querySelector('#enter'); if(en)en.onclick=()=>{const c=el.querySelector('#code').value.trim().toUpperCase();if(c)loadOrg(c,true)};
- el.querySelector('#smp').onclick=()=>{st.R=aggregate(sampleData());st.R.prev=aggregate(sampleData(29,-0.25));st.src='sample';st.screen='report';render()};
- {const a=el.querySelector('#asmp');if(a)a.onclick=openAtomicSample;}
-  if(caps.canEdit){const b=$(`<button>진단 관리 (폴앤마크)</button>`);b.onclick=openAdmin;el.querySelector('#adm').append(b)}
+ el.querySelector('#lpriv').onclick=e=>{e.preventDefault();st.screen='privacy';render()};
+ el.querySelector('#llog').onclick=e=>{e.preventDefault();st.screen='login';render()};
+ if(caps.canEdit){const b=$(`<button class="lbtn2" style="margin-left:12px">진단 관리 (폴앤마크)</button>`);b.onclick=openAdmin;el.querySelector('.lfoot').append(b)}
  return el;
 }
 async function loadOrg(code,manual){
@@ -542,8 +549,8 @@ async function loadOrg(code,manual){
  if(!caps.db){if(manual){st.orgErr='이 화면에서는 진단에 연결할 수 없습니다.';render()}return}
  try{const sn=await caps.db.doc('poca_orgs/'+code).get();const d=sn&&sn.data?sn.data():null;
   if(!d){st.org=null;st.orgErr='이 코드의 진단을 찾지 못했습니다.';render();return}
-  st.org={code,...d};setMinN(st.org);if(st.screen==='intro')render()}
- catch(e){st.orgErr='진단에 연결하지 못했습니다. 이 페이지에 참여 권한이 있는지 확인해 주세요.';if(st.screen==='intro')render()}
+  st.org={code,...d};setMinN(st.org);if(st.screen==='landing')render()}
+ catch(e){st.orgErr='진단에 연결하지 못했습니다. 이 페이지에 참여 권한이 있는지 확인해 주세요.';if(st.screen==='landing')render()}
 }
 async function openAdmin(){
  st.screen='admin';render();
@@ -570,7 +577,7 @@ function adminView(){
    <p class="small" style="margin:8px 0 0">공유 링크: <input type="text" readonly value="${PAGE_URL}#${esc(o.code)}" style="font:inherit;font-size:13px;width:100%;padding:6px 8px;border:1px solid var(--line);border-radius:4px;background:var(--surface2);color:var(--ink)" onclick="this.select()"></p></div>`).join(''):'<p class="small muted">아직 만든 진단이 없습니다.</p>'}</div>
   <div class="row"><button id="home">처음으로</button><button id="pones">Atomic Culture 관리</button></div></div>`);
  el.querySelector('#pones').onclick=openPones;
- el.querySelector('#home').onclick=()=>{st.screen='intro';render()};
+ el.querySelector('#home').onclick=()=>{st.screen='landing';render()};
  el.querySelector('#mk').onclick=async()=>{
   const name=el.querySelector('#nm').value.trim().slice(0,60);if(!name){el.querySelector('#aerr').textContent='회사 이름을 적어 주세요.';return}
   const depts=el.querySelector('#dp').value.split('\n').map(x=>x.trim()).filter(Boolean).slice(0,40);
@@ -595,10 +602,10 @@ function scaleHTML(code,val,anch,np){np=np||7;return `<div><div class="scale" st
 const ANCH=['전혀 그렇지 않다','매우 그렇다'];
 function surveyView(){
  const step=STEPS[st.step],total=STEPS.length;
- const el=$(`<div><div class="progress" aria-hidden="true"><i style="width:${st.step/total*100}%"></i></div><div class="panel" id="body"></div><div class="row" style="justify-content:space-between"><button id="prev">이전</button><span class="small muted">${st.step+1} / ${total}</span><button class="primary" id="next">${st.step===total-1?'제출하고 결과 보기':'다음'}</button></div></div>`);
+ const el=$(`<div><div class="segs" aria-hidden="true">${Array.from({length:total},(_,i)=>`<i class="${i<=st.step?'on':''}"></i>`).join('')}</div><div id="body"></div><div class="row" style="justify-content:space-between"><button id="prev">이전</button><span class="small muted">${st.step+1} / ${total}</span><button class="primary" id="next">${st.step===total-1?'제출하고 결과 보기':'다음'}</button></div></div>`);
  const body=el.querySelector('#body');
  if(step==='info'){
-  const sel=(id,lab,opts,val)=>`<label class="small" for="${id}">${lab}</label><select id="${id}"><option value="">선택하세요</option>${opts.map(o=>`<option ${val===o?'selected':''}>${o}</option>`).join('')}</select><div style="height:12px"></div>`;
+  const sel=(id,lab,opts,val)=>`<div class="q"><label class="qtext" for="${id}">${lab}</label><select id="${id}"><option value="">선택하세요</option>${opts.map(o=>`<option ${val===o?'selected':''}>${o}</option>`).join('')}</select></div>`;
   body.innerHTML=`<p class="label">시작하기 전에</p><h2>소속을 알려주세요</h2><p class="small muted">그룹별 결과는 응답이 ${MIN_N}명 이상일 때만 보입니다.${st.invite?' 개인 링크로 응답해도, 응답 내용은 이름과 연결되지 않습니다.':''}</p>${sel('dept','부서',(st.org&&st.org.depts)||DEPTS,st.dept)}${sel('role','직급',ROLES,st.role)}${sel('ten','근속',TENURE,st.ten)}`;
   body.querySelector('#dept').onchange=e=>{st.dept=e.target.value;clr(el)};body.querySelector('#role').onchange=e=>{st.role=e.target.value;clr(el)};body.querySelector('#ten').onchange=e=>{st.ten=e.target.value;clr(el)};
  } else if(step==='pulse'){
@@ -665,7 +672,7 @@ function resultView(){
  <div class="panel"><h3>스스로에게 던져볼 질문</h3><p class="small">· ‘${CFG.REASONS[[0,1,2,3,4,5].sort((a,b)=>s.rs[b]-s.rs[a])[0]]}’가 지금 나를 가장 크게 움직이고 있습니다. 1년 뒤에도 그럴까요?</p><p class="small">· ‘${low[0].plain}’${J(low[0].plain,'이','가').slice(-1)} 나아진다면 내 일은 어떻게 달라질까요?</p><p class="small">· 내가 바라는 ‘${QP[gap[0]]}’는 구체적으로 어떤 장면인가요?</p></div>
  <div class="row"><button class="primary" id="smp">조직 리포트 예시 보기</button><button id="home">처음으로</button></div></div>`);
  el.querySelector('#smp').onclick=()=>{st.R=aggregate(sampleData());st.R.prev=aggregate(sampleData(29,-0.25));st.src='sample';st.screen='report';render()};
- el.querySelector('#home').onclick=()=>{st.screen='intro';render()};
+ el.querySelector('#home').onclick=()=>{st.screen='landing';render()};
  return el;
 }
 
@@ -683,7 +690,7 @@ function pilotPanel(A){const R=A.recs||[];const ds=R.map(r=>r.dur).filter(x=>typ
 function reportView(){
  const A=st.R; const el=$(`<div></div>`);
  if(!A||!A.n){{const pp=pilotPanel(A);if(pp)el.append($(pp));}
- el.append($(`<div class="panel"><h2>아직 응답이 없습니다</h2><p class="muted">진단 링크를 공유하고 응답이 모이면 이 화면에서 조직 리포트를 볼 수 있습니다.</p><div class="row"><button class="primary" id="smp">예시 리포트 보기</button><button id="home">처음으로</button></div></div>`));el.querySelector('#smp').onclick=()=>{st.R=aggregate(sampleData());st.R.prev=aggregate(sampleData(29,-0.25));st.src='sample';render()};el.querySelector('#home').onclick=()=>{st.screen='intro';render()};return el}
+ el.append($(`<div class="panel"><h2>아직 응답이 없습니다</h2><p class="muted">진단 링크를 공유하고 응답이 모이면 이 화면에서 조직 리포트를 볼 수 있습니다.</p><div class="row"><button class="primary" id="smp">예시 리포트 보기</button><button id="home">처음으로</button></div></div>`));el.querySelector('#smp').onclick=()=>{st.R=aggregate(sampleData());st.R.prev=aggregate(sampleData(29,-0.25));st.src='sample';render()};el.querySelector('#home').onclick=()=>{st.screen='landing';render()};return el}
  const N=A.n; const idxSorted=[...CFG.IDX].sort((a,b)=>A.idx[b.n]-A.idx[a.n]);
  const top3=idxSorted.slice(0,3), bot3=idxSorted.slice(-3).reverse();
  const priTop=[...A.pri].sort((a,b)=>b.rate-a.rate)[0];
@@ -757,7 +764,7 @@ function reportView(){
 
  <div class="panel" id="aiPanel"><p class="label">Claude의 해석</p><p class="small muted">위 결과를 Claude가 읽고 해석과 워크숍 질문을 써 줍니다.</p><div class="row"><button id="aiBtn">해석 받기</button></div><div class="ai small" id="aiOut" style="margin-top:12px"></div></div>
  <div class="row"><button class="primary" id="dlRep">요약판 내려받기 (경영진용, 약 22쪽)</button><button class="primary" id="dlFull">전체판 내려받기 (HR용, 약 60쪽)</button><button id="items">문항별 점수 (엑셀용 CSV)</button><button id="csv">원자료 내려받기 (CSV)</button><button id="home">처음으로</button></div><p class="small muted" style="margin-top:8px">내려받은 파일을 브라우저로 열고 인쇄에서 ‘PDF로 저장’을 고르면, A4 가로 리포트가 됩니다.</p></div>`));
- el.querySelector('#home').onclick=()=>{if(st.src==='hr'){st.screen='hr';render()}else if(st.src==='real'){openAdmin()}else{st.screen='intro';render()}};
+ el.querySelector('#home').onclick=()=>{if(st.src==='hr'){st.screen='hr';render()}else if(st.src==='real'){openAdmin()}else{st.screen='landing';render()}};
  const cb=el.querySelector('#csv'); if(!caps.downloads||!caps.canEdit)cb.remove(); else cb.onclick=()=>downloadCSV(A);
  {const ib=el.querySelector('#items'); if(!caps.downloads)ib.remove(); else ib.onclick=()=>downloadItems(A);}
  const dr=el.querySelector('#dlRep'),df=el.querySelector('#dlFull'); if(!caps.downloads){dr.remove();df.remove()} else {dr.onclick=()=>downloadReport(A,false);df.onclick=()=>downloadReport(A,true)}
@@ -775,13 +782,13 @@ async function route(){
  if(m){st.pone={token:m[1],data:null,err:'',score:null,team:null,note:'',sent:false};st.screen='pone';render();await loadPone();return}
  m=raw.match(/^i\/([0-9a-fA-F-]{36})$/);
  if(m){await loadInvite(m[1]);return}
- const c=raw.toUpperCase();if(c&&/^[A-Z0-9]{4,8}$/.test(c)){st.invite=null;st.screen='intro';await loadOrg(c,false)}
+ const c=raw.toUpperCase();if(c&&/^[A-Z0-9]{4,8}$/.test(c)){st.invite=null;st.screen='landing';render();openCodeModal({code:c})}
 }
 async function loadInvite(tok){
- st.orgErr='';st.screen='intro';
+ st.orgErr='';st.screen='landing';
  if(!(caps.ext&&caps.ext.getInvite)){st.orgErr='이 화면에서는 개인 링크를 열 수 없습니다.';render();return}
  try{const d=await caps.ext.getInvite(tok);if(!d){st.org=null;st.invite=null;st.orgErr='이 개인 링크를 찾지 못했습니다. 인사 담당자에게 링크를 다시 받아 주세요.';render();return}
-  st.org={code:d.code,...d.info};setMinN(st.org);st.invite={token:tok,name:d.name,done:!!d.done};render()}
+  st.org={code:d.code,...d.info};setMinN(st.org);st.invite={token:tok,name:d.name,done:!!d.done};render();openCodeModal({invite:true,name:d.name})}
  catch(e){st.orgErr='진단에 연결하지 못했습니다. 인터넷 연결을 확인하고 다시 시도해 주세요.';render()}
 }
 async function loadHr(){
@@ -887,7 +894,7 @@ function poneHrView(){
  {const b=el.querySelector('#cpTodo');if(b)b.onclick=()=>{try{navigator.clipboard.writeText(ppl.filter(x=>!x.done).map(x=>x.name).join(', '))}catch(e){}b.textContent='복사했습니다'}}
  el.querySelectorAll('[data-ap]').forEach(b=>b.onclick=async()=>{b.disabled=true;if(H.sample){const w=D.weeks.find(x=>x.id===+b.dataset.ap);if(w)w.approved=true;render();return}try{await caps.ext.pulseApprove(H.code,H.tok,+b.dataset.ap)}catch(e){}H.data=null;render();loadPoneHr()});
  {const pv=el.querySelector('#pv');if(pv)pv.onclick=e=>{e.preventDefault();const W=D.weeks;const last=W.find(w=>w.approved);const prev=W.find(w=>w.approved&&w.week_no===last.week_no-1);st.pone={token:'',sample:true,score:null,team:null,note:'',sent:false,err:'',data:{program:D.name,name:'김민준',open:true,week_no:W[0].week_no,question:W[0].question,done:false,last:{question:last.question,avg:last.avg,team_avg:last.team_avg,team_delta:prev?last.team_avg-prev.team_avg:null,n:last.n}}};st.screen='pone';render()};
-  const hm=el.querySelector('#hm');if(hm)hm.onclick=e=>{e.preventDefault();st.screen='intro';render()}}
+  const hm=el.querySelector('#hm');if(hm)hm.onclick=e=>{e.preventDefault();st.screen='landing';render()}}
  el.querySelector('#rf').onclick=()=>{if(H.sample){H.data=sampleAtomic();render();return}H.data=null;render();loadPoneHr()};
  return el;
 }
@@ -965,7 +972,7 @@ function pulseView(){
  <div class="panel"><p class="label">구성원의 목소리</p><h2>지난 진단 이후 가장 달라진 것</h2>${P.voices.slice(0,8).map(v=>`<p class="voice small">${esc(v)}</p>`).join('')||'<p class="small muted">응답 없음</p>'}</div>
  <div class="panel"><p class="label">다음 단계</p><p class="small">움직인 문항은 결과 공유회에서 함께 축하하고, 움직이지 않은 맞춤 문항은 WFG 팀 대화의 명제로 다시 꺼냅니다. 다음 정식 진단에서 전체를 다시 봅니다.</p></div>
  <div class="row"><button id="home">처음으로</button></div></div>`));
- el.querySelector('#home').onclick=()=>{if(st.src==='real')openAdmin();else{st.screen='intro';render()}};
+ el.querySelector('#home').onclick=()=>{if(st.src==='real')openAdmin();else{st.screen='landing';render()}};
  return el;
 }
 function samplePulse(){
@@ -1055,7 +1062,7 @@ render();
  if(!caps.db)caps.canEdit=false;
  if(!caps.canEdit)caps.sample=null;
  await route();
- if(st.screen==='intro')render();
+ if(st.screen==='landing')render();
  window.addEventListener('hashchange',()=>{route()});
 })();
 </script>

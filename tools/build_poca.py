@@ -13,16 +13,6 @@ rep('<title>POCA 조직문화 진단 (테스트)</title>','<title>POCA 조직문
 i=s.find('<script>'); assert i>0
 s=s[:i]+'<script src="supabase.js"></script>\n'+s[i:]
 
-# respondent intro: sample buttons only for admin; admin/login button
-rep('<button id="smp">조직 리포트 예시 보기</button><button id="asmp">Atomic Culture 예시 보기</button><span id="adm"></span></div></div>`);',
-    '${caps.canEdit?\'<button id="smp">조직 리포트 예시 보기</button><button id="asmp">Atomic Culture 예시 보기</button>\':\'\'}<span id="adm"></span></div><p class="small muted" style="margin-top:18px"><a href="#" id="privacy">개인정보 처리 안내</a> · ${caps.canEdit?\'<a href="#" id="logout">로그아웃</a>\':\'<a href="#" id="login">관리자 로그인</a>\'}</p></div>`);')
-_i=s.find('function introView');_j=s.find('\nfunction ',_i+10)
-_seg=s[_i:_j]
-assert _seg.count("el.querySelector('#smp').onclick=()=>{st.R=aggregate(sampleData());")==1
-_seg=_seg.replace("el.querySelector('#smp').onclick=()=>{st.R=aggregate(sampleData());","{const sm=el.querySelector('#smp');if(sm)sm.onclick=()=>{st.R=aggregate(sampleData());")
-s=s[:_i]+_seg+s[_j:]
-rep("if(caps.canEdit){const b=$(`<button>진단 관리 (폴앤마크)</button>`);",
-    "}\n el.querySelector('#privacy').onclick=e=>{e.preventDefault();st.screen='privacy';render()};\n {const li=el.querySelector('#login');if(li)li.onclick=e=>{e.preventDefault();st.screen='login';render()};const lo=el.querySelector('#logout');if(lo)lo.onclick=async e=>{e.preventDefault();try{await sb.auth.signOut()}catch(_){}caps.canEdit=false;st.screen='intro';render()};}\n if(caps.canEdit){const b=$(`<button>진단 관리 (폴앤마크)</button>`);")
 s=s.replace("}[st.screen];app.append(v())",",login:loginView,privacy:privacyView}[st.screen];app.append(v())",1)
 assert ",login:loginView,privacy:privacyView}[st.screen]" in s
 rep("st.orgErr='진단에 연결하지 못했습니다. 이 페이지에 참여 권한이 있는지 확인해 주세요.';","st.orgErr='진단에 연결하지 못했습니다. 인터넷 연결을 확인하고 다시 시도해 주세요.';")
@@ -34,10 +24,6 @@ assert a>0 and b>a
 s=s[:a]+"if(sb&&st.org){try{const {data,error}=inviteTok?await sb.rpc('poca_submit_invite',{p_code:st.org.code,p_key:deviceKey(st.org.code),p_data:rec,p_token:inviteTok}):await sb.rpc('poca_submit',{p_code:st.org.code,p_key:deviceKey(st.org.code),p_data:rec});if(error||data!==true)throw error||new Error('closed');st.saved=true;if(st.invite)st.invite.done=true}catch(e){st.saved=false}}else st.saved=false;"+s[b:]
 rep("'이 화면에서는 응답이 저장되지 않았습니다. 결과는 아래에서 확인할 수 있습니다. (저장하려면 이 페이지에 참여자 이상 권한이 필요합니다)'",
     "'응답을 저장하지 못했습니다. 인터넷 연결을 확인한 뒤 같은 기기에서 다시 제출해 주세요. 진단이 마감된 경우에도 저장되지 않습니다.'")
-
-# code entry: Enter key + loading message
-rep("const en=el.querySelector('#enter'); if(en)en.onclick=()=>{const c=el.querySelector('#code').value.trim().toUpperCase();if(c)loadOrg(c,true)};",
-    "const en=el.querySelector('#enter'); if(en){const sub=()=>{const c0=el.querySelector('#code').value.replace(/\\s/g,'');const c2=koToEn(c0).toUpperCase();const c=c2;const ce=el.querySelector('#cerr');if(!c){ce.textContent='진단 코드를 적어 주세요.';return}ce.textContent='확인하는 중…';en.disabled=true;loadOrg(c,true).finally(()=>{en.disabled=false})};en.onclick=sub;el.querySelector('#code').onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();sub()}}};")
 
 # admin list: share link
 rep('<p class="small muted" style="margin:2px 0 0">응답 ${o.n}명',
@@ -76,7 +62,7 @@ function loginView(){
   er.textContent='확인하는 중…';const {error}=await sb.auth.signInWithPassword({email:em,password:pw});if(error){er.textContent='로그인하지 못했습니다. 이메일과 비밀번호를 확인해 주세요.';return}
   if(await checkAdmin()){openAdmin()}else{await sb.auth.signOut();er.textContent='관리자로 등록된 이메일이 아닙니다.'}};
  el.querySelector('#li').onclick=go;el.querySelector('#pw').onkeydown=e=>{if(e.key==='Enter')go()};
- el.querySelector('#back').onclick=()=>{st.screen='intro';render()};
+ el.querySelector('#back').onclick=()=>{st.screen='landing';render()};
  return el;
 }
 function privacyView(){
@@ -90,7 +76,7 @@ function privacyView(){
   <p><b>보관과 파기</b> · 응답과 명단은 폴앤마크가 이용하는 클라우드 데이터베이스(Supabase)에 저장되며, 진단을 의뢰한 회사와 정한 기간이 지나면 지웁니다.</p>
   <p><b>문의</b> · 폴앤마크 (Paul &amp; Mark Co., Ltd.)</p>
   <div class="row"><button id="back">처음으로</button></div></div>`);
- el.querySelector('#back').onclick=()=>{st.screen='intro';render()};return el;
+ el.querySelector('#back').onclick=()=>{st.screen='landing';render()};return el;
 }
 (async()=>{
  try{if(!window.supabase)throw new Error('no sdk');sb=window.supabase.createClient(SB_URL,SB_KEY,{auth:{persistSession:true,autoRefreshToken:true}});caps.db=makeDb();caps.user={};}catch(e){sb=null;caps.db=null}
@@ -113,7 +99,7 @@ function privacyView(){
   async startNow(code){const {data,error}=await sb.rpc('pulse_start_now',{p_code:code});if(error)throw error;return data}
  }}
  await route();
- if(st.screen==='intro')render();
+ if(st.screen==='landing')render();
  window.addEventListener('hashchange',()=>{route()});
 })();"""
 s=s[:a]+boot+s[b:]
