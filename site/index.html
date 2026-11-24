@@ -147,6 +147,16 @@ svg text{font-family:'Pretendard',sans-serif}
  .lcta h2{font-size:32px}
  .lfoot{padding:24px 20px;flex-direction:column;gap:6px}
 }
+
+/* ---------- 진단 코드 팝업 ---------- */
+.lmodal-bg{position:fixed;inset:0;background:rgba(17,17,17,.5);display:flex;align-items:center;justify-content:center;z-index:1000;padding:20px}
+.lmodal{position:relative;background:#fff;border-radius:12px;padding:36px 32px 28px;width:min(520px,100%);box-shadow:0 20px 60px rgba(0,0,0,.2)}
+.lmodal h2{font-family:'Pretendard',-apple-system,'Apple SD Gothic Neo','Malgun Gothic',sans-serif;font-size:22px;font-weight:800;letter-spacing:-.02em;margin:0 0 8px}
+.lmodal-x{position:absolute;top:12px;right:14px;border:0;background:none;font-size:26px;line-height:1;color:#6B7280;padding:4px 8px}
+.lmodal-row{display:flex;gap:10px;margin-top:20px;flex-wrap:wrap}
+.lmodal-row input{flex:1 1 220px;min-width:0;font:inherit;font-size:20px;letter-spacing:4px;text-transform:uppercase;padding:12px 14px;border:1px solid #E6E8EC;border-radius:6px;background:#fff;color:#111}
+.lmodal-row button{padding:12px 22px}
+.lmodal .err{margin-top:12px}
 a{color:var(--muted)}
 </style>
 </head>
@@ -444,6 +454,28 @@ function scatter(points,opt){
 
 /* ---------- screens ---------- */
 function render(){const app=document.getElementById('app');app.innerHTML='';const v={landing:landingView,intro:introView,survey:surveyView,result:resultView,report:reportView,admin:adminView,pulse:pulseView,hr:hrView,invites:invitesView,pone:poneView,poneHr:poneHrView,pones:ponesView,login:loginView,privacy:privacyView}[st.screen];app.append(v());window.scrollTo({top:0})}
+function openCodeModal(){
+ document.querySelectorAll('.lmodal-bg').forEach(n=>n.remove());
+ const bg=document.createElement('div');bg.className='lmodal-bg';bg.setAttribute('role','dialog');bg.setAttribute('aria-modal','true');bg.setAttribute('aria-label','진단 코드 입력');
+ bg.innerHTML=`<div class="lmodal"><button class="lmodal-x" aria-label="닫기">×</button><h2>회사에서 받은 진단 코드를 입력하세요</h2><p class="muted small">코드는 인사 담당자에게 받을 수 있습니다.</p><div class="lmodal-row"><input type="text" id="lcode" maxlength="8" aria-label="진단 코드" autocomplete="off"><button class="primary lbtn" id="lenter">들어가기</button></div><p class="err" id="lcerr"></p></div>`;
+ const close=()=>{bg.remove();document.removeEventListener('keydown',onKey)};
+ const onKey=(e)=>{if(e.key==='Escape')close()};
+ document.addEventListener('keydown',onKey);
+ bg.addEventListener('click',(e)=>{if(e.target===bg)close()});
+ bg.querySelector('.lmodal-x').onclick=close;
+ const input=bg.querySelector('#lcode');
+ input.addEventListener('keydown',(e)=>{if(e.key==='Enter')enter()});
+ const enter=()=>{
+  const c=input.value.trim().toUpperCase();
+  if(!c){bg.querySelector('#lcerr').textContent='진단 코드를 적어 주세요.';input.focus();return}
+  close();
+  st={...st,screen:'intro'};
+  loadOrg(c,true);
+ };
+ bg.querySelector('#lenter').onclick=enter;
+ document.body.appendChild(bg);
+ setTimeout(()=>input.focus(),0);
+}
 function landingView(){
  const el=$(`<div class="land">
   <header class="lnav"><b class="lbrand">POCA</b><nav class="lmenu"><a href="#why">진단 소개</a><button class="lnk" id="lsmp">예시 리포트</button><button class="primary lbtn" id="lgo">진단 시작하기</button></nav></header>
@@ -479,7 +511,7 @@ function landingView(){
   </section>
   <footer class="lfoot"><span>© Paul &amp; Mark Co. All rights reserved.</span><span>POCA · 조직문화 진단</span></footer>
  </div>`);
- const start=()=>{st={...st,screen:'intro'};render()};
+ const start=()=>openCodeModal();
  el.querySelector('#lgo').onclick=start;
  el.querySelector('#lgo2').onclick=start;
  el.querySelector('#lgo3').onclick=start;
