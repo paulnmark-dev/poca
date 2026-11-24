@@ -620,8 +620,8 @@ async function openAdmin(){
   st.resp=resp;render()}
  catch(e){st.orgs=[];st.adminErr='진단 목록을 불러오지 못했습니다.';render()}
 }
-function diagSection(){
- const el=$(`<div><p class="label">진단 관리</p><h2>진단 만들기 · 진행 중인 진단</h2><div class="panel" id="sec-new"><h3 style="margin:0 0 12px;font-size:18px">새 진단 만들기</h3>
+function newDiagSection(){
+ const el=$(`<div><div class="ahead"><h2>새 진단 만들기</h2><button id="gback">진단관리로</button></div><div class="panel" id="sec-new"><h3 style="margin:0 0 12px;font-size:18px">새 진단 만들기</h3>
   <label class="small" for="nm">회사(조직) 이름</label><input type="text" id="nm" maxlength="60" placeholder="예: 대덕전자" style="font:inherit;width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:4px;background:var(--surface);color:var(--ink)">
   <div style="height:10px"></div><label class="small" for="dp">부서 목록 (한 줄에 하나)</label><textarea id="dp" placeholder="경영지원&#10;영업&#10;생산"></textarea>
   <div style="height:10px"></div><label class="small" for="hc">대상 인원 (참여율 계산용, 선택)</label><input type="text" id="hc" inputmode="numeric" maxlength="6" style="font:inherit;max-width:160px;padding:10px 12px;border:1px solid var(--line);border-radius:4px;background:var(--surface);color:var(--ink)">
@@ -631,11 +631,8 @@ function diagSection(){
   <div style="height:14px"></div><label class="chk" style="max-width:420px"><input type="checkbox" id="isPilot"><span><b>시범 운영</b> (응답 시간을 기록하고, 헷갈린 문항 의견을 받습니다)</span></label>
   <div style="height:10px"></div><label class="small" for="base">비교할 이전 진단 (재진단일 때 선택)</label><select id="base"><option value="">없음</option>${st.orgs.filter(o=>o.type!=='pulse').map(o=>`<option value="${esc(o.code)}">${esc(o.name)} (${esc(o.code)})</option>`).join('')}</select>
   <p class="err" id="aerr"></p><div class="row"><button class="primary" id="mk">만들고 코드 받기</button></div></div>
-  <div class="panel" id="sec-list"><h3 style="margin:0 0 12px;font-size:18px">진행 중인 진단</h3>${st.adminErr?`<p class="err">${esc(st.adminErr)}</p>`:''}${st.orgs.length?st.orgs.map(o=>`<div class="act" style="border-top-color:${o.open===false?'var(--muted)':'var(--navy)'}"><div class="row" style="justify-content:space-between"><div><h3 style="margin:0">${esc(o.name)} <span class="small muted">· ${o.type==='pulse'?'펄스 · ':''}코드 ${esc(o.code)}${o.open===false?' · 마감':''}</span></h3><p class="small muted" style="margin:2px 0 0">응답 ${o.n}명${o.headcount?` / 대상 ${o.headcount}명 (${Math.round(o.n/o.headcount*100)}%)`:''}</p></div>
-   <div class="row"><button data-rep="${esc(o.code)}">리포트 보기</button>${o.roster?`<button data-inv="${esc(o.code)}">명단 · 개인 링크</button>`:''}<button data-tog="${esc(o.code)}">${o.open===false?'다시 열기':'마감하기'}</button></div></div>
-   ${o.hr?`<p class="small" style="margin:8px 0 0">인사 담당자 링크 (응답 현황${o.hrReport?' + 결과 보고서':''}) · 익명 기준 ${o.minN||3}명 · <a href="#" data-hrt="${esc(o.code)}">${o.hrReport?'보고서 공개 끄기':'보고서 공개 켜기'}</a><input type="text" readonly value="${pageBase()}#hr/${esc(o.code)}/${esc(o.hr)}" style="font:inherit;font-size:13px;width:100%;padding:6px 8px;border:1px solid var(--line);border-radius:4px;background:var(--surface2);color:var(--ink)" onclick="this.select()"></p>`:''}
-   <p class="small" style="margin:8px 0 0">공유 링크: <input type="text" readonly value="${PAGE_URL}#${esc(o.code)}" style="font:inherit;font-size:13px;width:100%;padding:6px 8px;border:1px solid var(--line);border-radius:4px;background:var(--surface2);color:var(--ink)" onclick="this.select()"></p></div>`).join(''):'<p class="small muted">아직 만든 진단이 없습니다.</p>'}</div>
   </div>`);
+ el.querySelector('#gback').onclick=()=>{st.adm='diag';render()};
  el.querySelector('#mk').onclick=async()=>{
   const name=el.querySelector('#nm').value.trim().slice(0,60);if(!name){el.querySelector('#aerr').textContent='회사 이름을 적어 주세요.';return}
   const depts=el.querySelector('#dp').value.split('\n').map(x=>x.trim()).filter(Boolean).slice(0,40);
@@ -648,8 +645,18 @@ function diagSection(){
   const roster=el.querySelector('#roster').value.split('\n').map(x=>x.trim()).filter(Boolean).slice(0,2000).map(l=>{const [nm,...dp]=l.split(/[,\t]/);return {name:nm.trim().slice(0,40),dept:(dp.join(',')||'').trim().slice(0,40)||null}}).filter(x=>x.name);
   if(roster.length&&!(caps.ext&&caps.ext.addInvites)){el.querySelector('#aerr').textContent='직원 명단은 웹사이트(poca 사이트)의 관리 화면에서만 넣을 수 있습니다.';return}
   const rDepts=[...new Set(roster.map(x=>x.dept).filter(Boolean))];try{await caps.db.doc('poca_orgs/'+code).set({name,depts:depts.length?depts:rDepts.length?rDepts:DEPTS,headcount:hc||(roster.length||null),open:true,at:Date.now(),type:isP?'pulse':'full',base:base||null,extra:isP?extra:[],pilot,minN,hrReport,hr:rnd20(),roster:roster.length>0});
-   if(roster.length)await caps.ext.addInvites(code,roster);openAdmin()}catch(e){el.querySelector('#aerr').textContent='진단을 만들지 못했습니다.'+(roster.length?' (명단 저장에 필요한 데이터베이스 설정이 아직 안 되어 있을 수 있습니다)':'')}
+   if(roster.length)await caps.ext.addInvites(code,roster);st.adm='diag';openAdmin()}catch(e){el.querySelector('#aerr').textContent='진단을 만들지 못했습니다.'+(roster.length?' (명단 저장에 필요한 데이터베이스 설정이 아직 안 되어 있을 수 있습니다)':'')}
  };
+ return el;
+}
+function diagSection(){
+ const el=$(`<div><div class="ahead"><h2>진단 관리</h2><button class="primary" id="gnew">새 진단 만들기</button></div>
+  <div class="panel" id="sec-list"><h3 style="margin:0 0 12px;font-size:18px">진행 중인 진단</h3>${st.adminErr?`<p class="err">${esc(st.adminErr)}</p>`:''}${st.orgs.length?st.orgs.map(o=>`<div class="act" style="border-top-color:${o.open===false?'var(--muted)':'var(--navy)'}"><div class="row" style="justify-content:space-between"><div><h3 style="margin:0">${esc(o.name)} <span class="small muted">· ${o.type==='pulse'?'펄스 · ':''}코드 ${esc(o.code)}${o.open===false?' · 마감':''}</span></h3><p class="small muted" style="margin:2px 0 0">응답 ${o.n}명${o.headcount?` / 대상 ${o.headcount}명 (${Math.round(o.n/o.headcount*100)}%)`:''}</p></div>
+   <div class="row"><button data-rep="${esc(o.code)}">리포트 보기</button>${o.roster?`<button data-inv="${esc(o.code)}">명단 · 개인 링크</button>`:''}<button data-tog="${esc(o.code)}">${o.open===false?'다시 열기':'마감하기'}</button></div></div>
+   ${o.hr?`<p class="small" style="margin:8px 0 0">인사 담당자 링크 (응답 현황${o.hrReport?' + 결과 보고서':''}) · 익명 기준 ${o.minN||3}명 · <a href="#" data-hrt="${esc(o.code)}">${o.hrReport?'보고서 공개 끄기':'보고서 공개 켜기'}</a><input type="text" readonly value="${pageBase()}#hr/${esc(o.code)}/${esc(o.hr)}" style="font:inherit;font-size:13px;width:100%;padding:6px 8px;border:1px solid var(--line);border-radius:4px;background:var(--surface2);color:var(--ink)" onclick="this.select()"></p>`:''}
+   <p class="small" style="margin:8px 0 0">공유 링크: <input type="text" readonly value="${PAGE_URL}#${esc(o.code)}" style="font:inherit;font-size:13px;width:100%;padding:6px 8px;border:1px solid var(--line);border-radius:4px;background:var(--surface2);color:var(--ink)" onclick="this.select()"></p></div>`).join(''):'<p class="small muted">아직 만든 진단이 없습니다.</p>'}</div>
+  </div>`);
+ el.querySelector('#gnew').onclick=()=>{st.adm='new';render()};
  el.querySelectorAll('[data-rep]').forEach(b=>b.onclick=()=>loadReport(b.dataset.rep));
  el.querySelectorAll('[data-inv]').forEach(b=>b.onclick=()=>openInvites(b.dataset.inv));
  el.querySelectorAll('[data-hrt]').forEach(b=>b.onclick=async e=>{e.preventDefault();const o=st.orgs.find(x=>x.code===b.dataset.hrt);try{await caps.db.doc('poca_orgs/'+o.code).update({hrReport:!o.hrReport});openAdmin()}catch(_){}});
@@ -665,7 +672,7 @@ function adminView(){
  const sec=st.adm||'dash';
  const email=caps.userEmail||'';
  const el=$(`<div class="adash${st.admMenu?' open':''}"><header class="atop"><b>POCA</b><button class="abtn" id="amenu" aria-expanded="${!!st.admMenu}">${ADM_MENU}<span>메뉴</span></button></header><aside class="anav"><p class="abrand">POCA</p>${ADM_NAV.map(([k,t])=>`<button data-nav="${k}" class="${sec===k?'on':''}"${sec===k?' aria-current="page"':''}>${admIcon(k,sec===k)}<span>${t}</span></button>`).join('')}<div class="aspacer"></div><div class="aprof"><div class="apop" id="apop" hidden><button id="aedit">정보 수정</button><button id="alogout" class="lo">로그아웃</button></div><button class="aprofbtn" id="aprof" aria-expanded="false"><span class="aav">${esc(email?email[0].toUpperCase():'M')}</span><span class="ainfo"><b>${esc(email||'관리자')}</b><small>매니저</small></span>${ADM_CHEV}</button></div></aside><main class="amain"></main></div>`);
- const fn={dash:dashSection,diag:diagSection,clients:clientsSection,pones:ponesSection,managers:managersSection,settings:settingsSection}[sec]||dashSection;
+ const fn={dash:dashSection,diag:diagSection,new:newDiagSection,clients:clientsSection,pones:ponesSection,managers:managersSection,settings:settingsSection}[sec]||dashSection;
  el.querySelector('.amain').append(fn());
  el.querySelectorAll('[data-nav]').forEach(b=>b.onclick=()=>{const k=b.dataset.nav;if(k==='pones'){openPones();return}st.adm=k;st.admMenu=false;render()});
  el.querySelector('#amenu').onclick=()=>{st.admMenu=!st.admMenu;render()};
@@ -682,14 +689,14 @@ function dashSection(){
  const avg=withHc.length?Math.round(withHc.reduce((a,o)=>a+Math.min(1,(o.n||0)/o.headcount),0)/withHc.length*100):null;
  const rowHTML=o=>{const pct=o.headcount?Math.min(100,Math.round((o.n||0)/o.headcount*100)):null;
   return `<tr><td><b>${esc(o.name||'')}</b><div class="small muted">${o.type==='pulse'?'펄스':'POCA'} · 코드 ${esc(o.code)}</div></td><td><span class="b-s">진행 중</span></td><td style="min-width:220px"><div class="aprog"><i style="width:${pct??0}%"></i></div><div class="small muted">${pct!=null?`${pct}% · ${o.n||0}/${o.headcount}명`:`응답 ${o.n||0}명 (대상 인원 미입력)`}</div></td><td>${admDate(o.at)}</td></tr>`};
- const d=$(`<div><div class="ahead"><h2>대시보드</h2><button class="primary" data-goto="diag">새 진단 만들기</button></div>
+ const d=$(`<div><div class="ahead"><h2>대시보드</h2><button class="primary" data-goto="new">새 진단 만들기</button></div>
   ${st.adminErr?`<p class="err">${esc(st.adminErr)}</p>`:''}
   <div class="akpis">
    <div class="akpi"><span>진행 중인 진단</span><b>${live.length}</b><small>전체 ${orgs.length}개 중</small></div>
    <div class="akpi"><span>평균 진행률</span><b>${avg==null?'–':avg+'%'}</b><small>대상 인원을 입력한 진단 기준</small></div>
   </div>
   <div class="panel"><div class="ahead2"><h3>진행 중인 진단</h3><span class="small muted">진행 중 ${live.length}건</span></div>${live.length?`<table class="atbl"><thead><tr><th>진단</th><th>상태</th><th>진행률</th><th>만든 날</th></tr></thead><tbody>${live.map(rowHTML).join('')}</tbody></table>`:'<p class="small muted">진행 중인 진단이 없습니다. 진단관리에서 새 진단을 만들어 보세요.</p>'}</div></div>`);
- d.querySelector('[data-goto]').onclick=()=>{st.adm='diag';render()};
+ d.querySelector('[data-goto]').onclick=()=>{st.adm='new';render()};
  return d;
 }
 function clientsSection(){
