@@ -190,6 +190,29 @@ textarea{border-radius:6px;padding:12px 16px}
 
 .admin-nav{gap:8px;margin:0 0 16px;flex-wrap:wrap}
 .admin-nav button{font-size:15px}
+.adash{display:grid;grid-template-columns:232px minmax(0,1fr);min-height:100vh;margin:-28px -20px -80px;background:var(--bg)}
+.anav{background:var(--surface);border-right:1px solid var(--line);padding:24px 14px;display:flex;flex-direction:column;gap:4px;position:sticky;top:0;height:100vh}
+.abrand{font-weight:800;font-size:15px;letter-spacing:.5px;margin:0 10px 18px}
+.anav button{text-align:left;border:none;background:none;padding:10px 12px;border-radius:6px;font-size:15px;color:var(--muted);font-weight:500}
+.anav button:hover{background:var(--surface2);color:var(--ink)}
+.anav button.on{background:var(--tR);color:var(--navy);font-weight:700}
+.aspacer{flex:1}
+.aback{font-size:14px}
+.amain{padding:32px 36px 80px;min-width:0;max-width:1120px}
+.amain .panel{margin-top:12px}
+.wide{max-width:none}
+.akpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:8px 0 16px}
+.akpi{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px 20px}
+.akpi span{font-size:13px;color:var(--muted)}
+.akpi b{display:block;font-size:30px;letter-spacing:-.02em;margin:4px 0 2px}
+.akpi small{color:var(--muted);font-size:12px}
+.aprog{height:8px;background:var(--surface2);border-radius:4px;overflow:hidden;margin-bottom:4px}
+.aprog i{display:block;height:100%;background:var(--navy)}
+.atbl{width:100%;border-collapse:collapse;font-size:14.5px}
+.atbl th{font-size:12.5px;color:var(--muted);font-weight:600;text-align:left;padding:8px 10px;border-bottom:1px solid var(--line)}
+.atbl td{padding:12px 10px;border-bottom:1px solid var(--line);vertical-align:middle}
+.atbl .b-s,.atbl .b-g{display:inline-block;padding:3px 9px;border-radius:999px;font-size:12.5px;font-weight:600}
+@media (max-width:760px){.adash{grid-template-columns:1fr;margin:-28px -20px -80px}.anav{position:static;height:auto;flex-direction:row;flex-wrap:wrap;border-right:none;border-bottom:1px solid var(--line);padding:12px}.abrand{width:100%;margin:0 0 4px}.aspacer{display:none}.amain{padding:20px}.akpis{grid-template-columns:1fr 1fr}}
 a{color:var(--muted)}
 </style>
 </head>
@@ -486,7 +509,7 @@ function scatter(points,opt){
 }
 
 /* ---------- screens ---------- */
-function render(){const app=document.getElementById('app');app.innerHTML='';const v={landing:landingView,survey:surveyView,result:resultView,report:reportView,admin:adminView,pulse:pulseView,hr:hrView,invites:invitesView,pone:poneView,poneHr:poneHrView,pones:ponesView,login:loginView,privacy:privacyView}[st.screen];app.append(v());window.scrollTo({top:0})}
+function render(){const app=document.getElementById('app');app.innerHTML='';app.className=st.screen==='admin'?'wrap wide':'wrap';const v={landing:landingView,survey:surveyView,result:resultView,report:reportView,admin:adminView,pulse:pulseView,hr:hrView,invites:invitesView,pone:poneView,poneHr:poneHrView,pones:ponesView,login:loginView,privacy:privacyView}[st.screen];app.append(v());window.scrollTo({top:0})}
 function openCodeModal(opt){
  opt=opt||{};
  document.querySelectorAll('.lmodal-bg').forEach(n=>n.remove());
@@ -564,7 +587,6 @@ function landingView(){
  el.querySelector('#lsmp2').onclick=sample;
  el.querySelector('#lpriv').onclick=e=>{e.preventDefault();st.screen='privacy';render()};
  
- if(caps.canEdit){const b=$(`<button class="lbtn2" style="margin-left:12px">진단 관리 (폴앤마크)</button>`);b.onclick=openAdmin;el.querySelector('.lfoot').append(b)}
  return el;
 }
 async function loadOrg(code,manual){
@@ -576,15 +598,15 @@ async function loadOrg(code,manual){
  catch(e){st.orgErr='진단에 연결하지 못했습니다. 인터넷 연결을 확인하고 다시 시도해 주세요.';if(st.screen==='landing')render()}
 }
 async function openAdmin(){
- st.screen='admin';render();
+ st.screen='admin';st.adm=st.adm||'dash';render();
  try{const [o,r]=await Promise.all([caps.db.collection('poca_orgs').limit(200).get(),caps.db.collection('poca_resp').limit(1000).get()]);
   const resp=r.docs.map(d=>d.data()).filter(Boolean);
   st.orgs=o.docs.map(d=>{const x=d.data()||{};return {code:d.id,...x,n:resp.filter(rr=>rr[d.id]).length}}).sort((a,b)=>(b.at||0)-(a.at||0));
   st.resp=resp;render()}
  catch(e){st.orgs=[];st.adminErr='진단 목록을 불러오지 못했습니다.';render()}
 }
-function adminView(){
- const el=$(`<div><div class="row admin-nav"><button id="anew">새 진단 만들기</button><button id="alist">진행 중인 진단</button><button id="pones">Atomic Culture 관리</button><button id="home">처음으로</button></div><div class="panel" id="sec-new"><p class="label">진단 관리</p><h2>새 진단 만들기</h2>
+function diagSection(){
+ const el=$(`<div><p class="label">진단 관리</p><h2>진단 만들기 · 진행 중인 진단</h2><div class="panel" id="sec-new"><h3 style="margin:0 0 12px;font-size:18px">새 진단 만들기</h3>
   <label class="small" for="nm">회사(조직) 이름</label><input type="text" id="nm" maxlength="60" placeholder="예: 대덕전자" style="font:inherit;width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:4px;background:var(--surface);color:var(--ink)">
   <div style="height:10px"></div><label class="small" for="dp">부서 목록 (한 줄에 하나)</label><textarea id="dp" placeholder="경영지원&#10;영업&#10;생산"></textarea>
   <div style="height:10px"></div><label class="small" for="hc">대상 인원 (참여율 계산용, 선택)</label><input type="text" id="hc" inputmode="numeric" maxlength="6" style="font:inherit;max-width:160px;padding:10px 12px;border:1px solid var(--line);border-radius:4px;background:var(--surface);color:var(--ink)">
@@ -594,15 +616,11 @@ function adminView(){
   <div style="height:14px"></div><label class="chk" style="max-width:420px"><input type="checkbox" id="isPilot"><span><b>시범 운영</b> (응답 시간을 기록하고, 헷갈린 문항 의견을 받습니다)</span></label>
   <div style="height:10px"></div><label class="small" for="base">비교할 이전 진단 (재진단일 때 선택)</label><select id="base"><option value="">없음</option>${st.orgs.filter(o=>o.type!=='pulse').map(o=>`<option value="${esc(o.code)}">${esc(o.name)} (${esc(o.code)})</option>`).join('')}</select>
   <p class="err" id="aerr"></p><div class="row"><button class="primary" id="mk">만들고 코드 받기</button></div></div>
-  <div class="panel" id="sec-list"><h2>진행 중인 진단</h2>${st.adminErr?`<p class="err">${esc(st.adminErr)}</p>`:''}${st.orgs.length?st.orgs.map(o=>`<div class="act" style="border-top-color:${o.open===false?'var(--muted)':'var(--navy)'}"><div class="row" style="justify-content:space-between"><div><h3 style="margin:0">${esc(o.name)} <span class="small muted">· ${o.type==='pulse'?'펄스 · ':''}코드 ${esc(o.code)}${o.open===false?' · 마감':''}</span></h3><p class="small" style="margin:2px 0 0">링크: <code>${esc(location.origin+location.pathname+'#'+o.code)}</code></p><p class="small muted" style="margin:2px 0 0">응답 ${o.n}명${o.headcount?` / 대상 ${o.headcount}명 (${Math.round(o.n/o.headcount*100)}%)`:''}</p></div>
+  <div class="panel" id="sec-list"><h3 style="margin:0 0 12px;font-size:18px">진행 중인 진단</h3>${st.adminErr?`<p class="err">${esc(st.adminErr)}</p>`:''}${st.orgs.length?st.orgs.map(o=>`<div class="act" style="border-top-color:${o.open===false?'var(--muted)':'var(--navy)'}"><div class="row" style="justify-content:space-between"><div><h3 style="margin:0">${esc(o.name)} <span class="small muted">· ${o.type==='pulse'?'펄스 · ':''}코드 ${esc(o.code)}${o.open===false?' · 마감':''}</span></h3><p class="small" style="margin:2px 0 0">링크: <code>${esc(location.origin+location.pathname+'#'+o.code)}</code></p><p class="small muted" style="margin:2px 0 0">응답 ${o.n}명${o.headcount?` / 대상 ${o.headcount}명 (${Math.round(o.n/o.headcount*100)}%)`:''}</p></div>
    <div class="row"><button data-rep="${esc(o.code)}">리포트 보기</button>${o.roster?`<button data-inv="${esc(o.code)}">명단 · 개인 링크</button>`:''}<button data-tog="${esc(o.code)}">${o.open===false?'다시 열기':'마감하기'}</button></div></div>
    ${o.hr?`<p class="small" style="margin:8px 0 0">인사 담당자 링크 (응답 현황${o.hrReport?' + 결과 보고서':''}) · 익명 기준 ${o.minN||3}명 · <a href="#" data-hrt="${esc(o.code)}">${o.hrReport?'보고서 공개 끄기':'보고서 공개 켜기'}</a><input type="text" readonly value="${pageBase()}#hr/${esc(o.code)}/${esc(o.hr)}" style="font:inherit;font-size:13px;width:100%;padding:6px 8px;border:1px solid var(--line);border-radius:4px;background:var(--surface2);color:var(--ink)" onclick="this.select()"></p>`:''}
    <p class="small" style="margin:8px 0 0">공유 링크: <input type="text" readonly value="${PAGE_URL}#${esc(o.code)}" style="font:inherit;font-size:13px;width:100%;padding:6px 8px;border:1px solid var(--line);border-radius:4px;background:var(--surface2);color:var(--ink)" onclick="this.select()"></p></div>`).join(''):'<p class="small muted">아직 만든 진단이 없습니다.</p>'}</div>
   </div>`);
- el.querySelector('#pones').onclick=openPones;
- el.querySelector('#home').onclick=()=>{st.screen='landing';render()};
- el.querySelector('#anew').onclick=()=>el.querySelector('#sec-new').scrollIntoView({behavior:'smooth'});
- el.querySelector('#alist').onclick=()=>el.querySelector('#sec-list').scrollIntoView({behavior:'smooth'});
  el.querySelector('#mk').onclick=async()=>{
   const name=el.querySelector('#nm').value.trim().slice(0,60);if(!name){el.querySelector('#aerr').textContent='회사 이름을 적어 주세요.';return}
   const depts=el.querySelector('#dp').value.split('\n').map(x=>x.trim()).filter(Boolean).slice(0,40);
@@ -621,6 +639,53 @@ function adminView(){
  el.querySelectorAll('[data-inv]').forEach(b=>b.onclick=()=>openInvites(b.dataset.inv));
  el.querySelectorAll('[data-hrt]').forEach(b=>b.onclick=async e=>{e.preventDefault();const o=st.orgs.find(x=>x.code===b.dataset.hrt);try{await caps.db.doc('poca_orgs/'+o.code).update({hrReport:!o.hrReport});openAdmin()}catch(_){}});
  el.querySelectorAll('[data-tog]').forEach(b=>b.onclick=async()=>{const o=st.orgs.find(x=>x.code===b.dataset.tog);try{await caps.db.doc('poca_orgs/'+o.code).update({open:o.open===false});openAdmin()}catch(e){}});
+ return el;
+}
+const ADM_NAV=[['dash','대시보드'],['diag','진단관리'],['clients','고객사'],['pones','Atomic Culture 관리'],['managers','매니저'],['settings','설정']];
+function adminView(){
+ const sec=st.adm||'dash';
+ const el=$(`<div class="adash"><aside class="anav"><p class="abrand">POCA 관리</p>${ADM_NAV.map(([k,t])=>`<button data-nav="${k}" class="${sec===k?'on':''}"${sec===k?' aria-current="page"':''}>${t}</button>`).join('')}<div class="aspacer"></div><button data-nav="site" class="aback">← 사이트로 돌아가기</button></aside><main class="amain"></main></div>`);
+ const fn={dash:dashSection,diag:diagSection,clients:clientsSection,pones:ponesSection,managers:managersSection,settings:settingsSection}[sec]||dashSection;
+ el.querySelector('.amain').append(fn());
+ el.querySelectorAll('[data-nav]').forEach(b=>b.onclick=()=>{const k=b.dataset.nav;if(k==='site'){st.screen='landing';render()}else if(k==='pones'){openPones()}else{st.adm=k;render()}});
+ return el;
+}
+function admDate(ts){return ts?new Date(ts).toLocaleDateString('ko-KR'):'–'}
+function dashSection(){
+ const orgs=st.orgs||[];
+ const live=orgs.filter(o=>o.open!==false);
+ const withHc=orgs.filter(o=>o.headcount);
+ const avg=withHc.length?Math.round(withHc.reduce((a,o)=>a+Math.min(1,(o.n||0)/o.headcount),0)/withHc.length*100):null;
+ const total=orgs.reduce((a,o)=>a+(o.n||0),0);
+ const clients=new Set(orgs.map(o=>o.name)).size;
+ const rowHTML=o=>{const pct=o.headcount?Math.min(100,Math.round((o.n||0)/o.headcount*100)):null;
+  return `<tr><td><b>${esc(o.name||'')}</b><div class="small muted">${o.type==='pulse'?'펄스':'POCA'} · 코드 ${esc(o.code)}</div></td><td>${o.open===false?'<span class="b-g">마감</span>':'<span class="b-s">진행 중</span>'}</td><td style="min-width:220px"><div class="aprog"><i style="width:${pct??0}%"></i></div><div class="small muted">${pct!=null?`${pct}% · ${o.n||0}/${o.headcount}명`:`응답 ${o.n||0}명 (대상 인원 미입력)`}</div></td><td>${admDate(o.at)}</td></tr>`};
+ return $(`<div><p class="label">대시보드</p><h2>한눈에 보기</h2>
+  ${st.adminErr?`<p class="err">${esc(st.adminErr)}</p>`:''}
+  <div class="akpis">
+   <div class="akpi"><span>진행 중인 진단</span><b>${live.length}</b><small>전체 ${orgs.length}개 중</small></div>
+   <div class="akpi"><span>평균 진행률</span><b>${avg==null?'–':avg+'%'}</b><small>대상 인원을 입력한 진단 기준</small></div>
+   <div class="akpi"><span>누적 응답</span><b>${total}</b><small>전체 진단 합계</small></div>
+   <div class="akpi"><span>고객사</span><b>${clients}</b><small>회사 이름 기준</small></div>
+  </div>
+  <div class="panel"><h3 style="margin:0 0 12px;font-size:18px">진단 목록</h3>${orgs.length?`<table class="atbl"><thead><tr><th>진단</th><th>상태</th><th>진행률</th><th>만든 날</th></tr></thead><tbody>${orgs.map(rowHTML).join('')}</tbody></table>`:'<p class="small muted">아직 만든 진단이 없습니다. 진단관리에서 새 진단을 만들어 보세요.</p>'}</div></div>`);
+}
+function clientsSection(){
+ const map={};(st.orgs||[]).forEach(o=>{const k=o.name||'(이름 없음)';(map[k]=map[k]||[]).push(o)});
+ const last=l=>Math.max(0,...l.map(o=>o.at||0));
+ const rows=Object.entries(map).sort((a,b)=>last(b[1])-last(a[1]));
+ return $(`<div><p class="label">고객사</p><h2>회사별 진단</h2><div class="panel">${rows.length?`<table class="atbl"><thead><tr><th>회사</th><th>진단 수</th><th>진행 중</th><th>응답 합계</th><th>최근 진단</th></tr></thead><tbody>${rows.map(([n,l])=>`<tr><td><b>${esc(n)}</b></td><td>${l.length}</td><td>${l.filter(o=>o.open!==false).length}</td><td>${l.reduce((a,o)=>a+(o.n||0),0)}</td><td>${admDate(last(l))}</td></tr>`).join('')}</tbody></table>`:'<p class="small muted">아직 고객사가 없습니다. 진단관리에서 진단을 만들면 여기에 나타납니다.</p>'}</div></div>`);
+}
+function ponesSection(){
+ if(!st.pz)return $(`<div><p class="small muted">불러오는 중…</p></div>`);
+ return ponesView();
+}
+function managersSection(){
+ return $(`<div><p class="label">매니저</p><h2>관리자 계정</h2><div class="panel"><p>관리자 목록은 Supabase의 <code>poca_admins</code> 표에서 관리합니다. 이 화면에서 추가·삭제하는 기능은 아직 없습니다.</p><p class="small muted">관리자로 등록된 이메일만 이 화면에 들어올 수 있습니다.</p></div></div>`);
+}
+function settingsSection(){
+ const el=$(`<div><p class="label">설정</p><h2>관리 설정</h2><div class="panel"><p class="small muted">익명 기준(3명 · 5명)과 인사 담당자 보고서 공개 여부는 진단을 만들 때 정합니다. 전체 설정 화면은 준비 중입니다.</p><div class="row" style="margin-top:12px"><button id="lo">로그아웃</button></div></div></div>`);
+ el.querySelector('#lo').onclick=async()=>{try{if(sb)await sb.auth.signOut()}catch(e){}caps.canEdit=false;st.screen='landing';render()};
  return el;
 }
 function scaleHTML(code,val,anch,np){np=np||7;return `<div><div class="scale" style="grid-template-columns:repeat(${np},1fr)" role="radiogroup" aria-label="${code}">${Array.from({length:np},(_,i)=>i+1).map(n=>`<div class="opt" role="radio" tabindex="0" data-code="${code}" data-v="${n}" aria-checked="${val===n}">${n}</div>`).join('')}</div><div class="anchors"><span>${anch[0]}</span><span>${anch[1]}</span></div></div>`}
@@ -923,7 +988,7 @@ function poneHrView(){
  el.querySelector('#rf').onclick=()=>{if(H.sample){H.data=sampleAtomic();render();return}H.data=null;render();loadPoneHr()};
  return el;
 }
-async function openPones(){st.pz={list:null,err:'',order:ONE_BANK.map(x=>({...x,on:true}))};st.screen='pones';render();
+async function openPones(){st.pz={list:null,err:'',order:ONE_BANK.map(x=>({...x,on:true}))};st.screen='admin';st.adm='pones';render();
  if(!(caps.ext&&caps.ext.listPrograms)){st.pz.err='Atomic Culture는 웹사이트의 관리 화면에서만 만들 수 있습니다.';st.pz.list=[];render();return}
  try{st.pz.list=await caps.ext.listPrograms()}catch(e){st.pz.err='목록을 불러오지 못했습니다. (데이터베이스 설정 pulse_one_setup.sql이 필요합니다)';st.pz.list=[]}render()}
 function ponesView(){
@@ -939,7 +1004,7 @@ function ponesView(){
    <p class="small" style="margin:6px 0 0">인사팀 링크<input type="text" readonly value="${pageBase()}#ph/${esc(p.code)}/${esc(p.info.hr)}" style="${inp};font-size:13px;background:var(--surface2)" onclick="this.select()"></p>
    <div class="row" style="margin-top:6px">${p.weeks?'':`<button data-start="${esc(p.code)}">지금 첫 질문 보내기</button>`}<button data-pclose="${esc(p.code)}">${p.info.open===false?'다시 열기':'멈추기'}</button></div></div>`).join('')||'<p class="small muted">아직 없습니다.</p>'}</div>
   <div class="row"><button id="back">진단 관리로</button></div></div>`);
- el.querySelector('#back').onclick=openAdmin;
+ el.querySelector('#back').onclick=()=>{st.adm='diag';openAdmin()};
  el.querySelectorAll('[data-on]').forEach(c=>c.onchange=()=>{Z.order[+c.dataset.on].on=c.checked});
  el.querySelectorAll('[data-q]').forEach(c=>c.oninput=()=>{Z.order[+c.dataset.q].q=c.value});
  el.querySelector('#sortb').onclick=async()=>{const code=el.querySelector('#porg').value;if(!code)return;
