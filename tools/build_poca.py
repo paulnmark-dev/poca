@@ -52,7 +52,7 @@ function makeDb(){return {
   throw new Error('unsupported')}};return q}
 }}
 caps.downloads={save:async({filename,data})=>{const b=new Blob([data],{type:filename.endsWith('.csv')?'text/csv;charset=utf-8':'text/html;charset=utf-8'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=filename;document.body.append(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},1500)}};
-async function checkAdmin(){try{const {data:{session}}=await sb.auth.getSession();if(!session){caps.canEdit=false;return false}const {data,error}=await sb.rpc('poca_is_admin');caps.canEdit=!error&&data===true;return caps.canEdit}catch(e){caps.canEdit=false;return false}}
+async function checkAdmin(){try{const {data:{session}}=await sb.auth.getSession();caps.userEmail=session&&session.user?session.user.email:'';if(!session){caps.canEdit=false;return false}const {data,error}=await sb.rpc('poca_is_admin');caps.canEdit=!error&&data===true;return caps.canEdit}catch(e){caps.canEdit=false;return false}}
 function loginView(){
  const el=$(`<div class="panel" style="max-width:460px;margin:40px auto"><p class="label">폴앤마크 관리자</p><h2>로그인</h2>
   <label class="small" for="em">이메일</label><input type="email" id="em" autocomplete="username" style="font:inherit;width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:4px;background:var(--surface);color:var(--ink)">
