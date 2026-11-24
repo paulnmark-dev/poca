@@ -58,6 +58,9 @@ textarea{min-height:80px;resize:vertical}
 .kpi .n{font-family:'Noto Serif KR',serif;font-size:40px;font-weight:600;line-height:1.1}
 .kpi .l{font-weight:700;font-size:14px} .kpi .s{font-size:13px;color:var(--muted)}
 .three{display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid var(--line);margin-top:16px}
+.home-v3 h1{font-family:'Noto Sans KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif;font-weight:700;font-size:44px;line-height:1.15;letter-spacing:-.02em;margin:8px 0 14px}
+.home-v3 .three{margin:26px 0 30px}
+.home-v3 button.primary{background:#c61c2c;border-color:#c61c2c;border-radius:6px;padding:12px 20px}
 .three>div{padding:14px 16px 0 0} .three>div+div{border-left:1px solid var(--line);padding-left:16px}
 .bal{display:grid;grid-template-columns:1fr 36px 1fr;gap:10px;align-items:stretch} .bal3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px} .lvn{display:inline-block;width:22px;height:22px;line-height:22px;border-radius:50%;background:var(--surface2);text-align:center;font-size:12px;margin-right:6px}
 .bun{background:var(--surface);border:1px solid var(--line);padding:16px 18px}
@@ -381,7 +384,7 @@ function introView(){
  const O=st.org;
  const done=O?(()=>{try{return localStorage.getItem('poca_done_'+O.code)}catch(e){return null}})():null;
  const closed=O&&O.open===false;
- const el=$(`<div><div class="panel" style="padding:30px">
+ const el=$(`<div><div class="panel home-v3" style="padding:30px">
   <p class="label">PAUL &amp; MARK · POCA 조직문화 진단</p>
   ${O?`<p class="small" style="margin:0 0 6px"><b>${esc(O.name)}</b></p>`:''}
   <h1>우리 조직은 지금 어떤 문화이고, 사람들은 왜 일하고 있을까요?</h1>
