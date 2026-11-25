@@ -130,6 +130,15 @@ svg text{font-family:'Pretendard',sans-serif}
 .lcta{padding:112px 64px;background:#F6F7F9}
 .lcta h2{font-family:'Pretendard',-apple-system,'Apple SD Gothic Neo','Malgun Gothic',sans-serif;font-size:52px;font-weight:800;letter-spacing:-.03em;line-height:1.15;margin:0 0 20px}
 .lcta p{font-size:18px;color:#6B7280;margin:0 0 32px}
+.lthree .lsrc{margin-top:10px;font-size:13px;color:#9AA1AD}
+.lbase{padding:104px 64px}
+.lrows{display:grid;grid-template-columns:repeat(5,1fr);gap:20px;border-top:1px solid #E6E8EC}
+.lrows>div{padding:24px 0 0}
+.lrows h3{font-size:18px;font-weight:800;margin:0 0 4px;letter-spacing:-.02em}
+.lrows .who{margin:0 0 12px;font-size:13px;color:#9AA1AD}
+.lrows p{margin:0;font-size:15px;line-height:1.6;color:#6B7280}
+.lrows .use{margin-top:10px;font-size:14px;font-weight:700;color:#c61c2c}
+.lexp{margin:48px 0 0;font-size:17px;line-height:1.7;color:#374151;max-width:880px}
 .lfoot{display:flex;justify-content:space-between;padding:32px 64px;font-size:14px;color:#6B7280;border-top:1px solid #E6E8EC}
 @media (max-width:820px){
  .lnav{padding:18px 20px;flex-wrap:wrap;gap:12px}
@@ -144,6 +153,9 @@ svg text{font-family:'Pretendard',sans-serif}
  .lh2{font-size:30px;margin-bottom:28px}
  .lcards{grid-template-columns:1fr}
  .lcard{min-height:0;padding:26px}
+ .lbase{padding:64px 20px}
+ .lrows{grid-template-columns:1fr;gap:4px}
+ .lrows>div{padding:18px 0;border-bottom:1px solid #E6E8EC}
  .lstats{grid-template-columns:1fr;padding:64px 20px;gap:28px}
  .lstats b{font-size:64px}
  .lcta{padding:72px 20px}
@@ -568,31 +580,43 @@ function landingView(){
   <section class="lhero">
    <p class="leyebrow">조직문화 진단 POCA</p>
    <h1 class="ltitle">우리 조직은 지금 어떤 문화이고,<br>사람들은 왜 일하고 있을까요?</h1>
-   <p class="lsub">약 11분, 80문항입니다. 이름은 받지 않으며, 결과는 묶어서만 보입니다.</p>
+   <p class="lsub">약 10분, 80문항입니다. 응답은 이름과 연결되지 않으며, 결과는 묶어서만 보입니다.</p>
    <div class="lacts"><button class="primary lbtn" id="lgo2">진단 시작하기</button><button class="lbtn2" id="lsmp2">예시 리포트 보기</button></div>
    <div class="lthree" id="why">
-    <div><h3>나의 업무 동기</h3><p>나의 업무 동기요인을 돌아봅니다.</p></div>
-    <div><h3>현재 조직 분석</h3><p>여덟 가지 질문으로 우리 조직을 봅니다.</p></div>
-    <div><h3>조직의 현재와 미래</h3><p>우리 문화가 어디에 있고, 어디로 가고 싶은지 봅니다.</p></div>
+    <div><h3>나의 업무 동기</h3><p>나는 왜 일하는가. ‘일이 즐거워서’부터 ‘먹고살려고’까지 일하는 이유 일곱 가지로 나를 돌아봅니다. 정답은 없습니다.</p><p class="lsrc">근거 · 자기결정이론</p></div>
+    <div><h3>현재 조직 분석</h3><p>8가지 요인, 21개 지표로 우리 조직에서 일하는 환경이 어떤지 봅니다.</p><p class="lsrc">근거 · Denison 모델, Herzberg 2요인 이론</p></div>
+    <div><h3>조직의 현재와 미래</h3><p>관계 · 질서 · 성과 · 혁신, 네 가지 문화가 지금 어떻고 어디로 가고 싶은지 봅니다.</p><p class="lsrc">근거 · 경쟁가치모형(OCAI)</p></div>
    </div>
   </section>
   <section class="lfeat">
    <p class="leyebrow">결과 보고서</p>
-   <h2 class="lh2">진단 결과는 한 장의 보고서로 정리됩니다.</h2>
+   <h2 class="lh2">진단 결과는 경영진 요약판과 인사팀 전체판으로 정리됩니다.</h2>
    <div class="lcards">
     <div class="lcard dark"><p class="lcap">8가지 요인</p><h3>전체 · 부서 · 직급별로 봅니다</h3><div class="lbars"><span style="width:82%"><i style="width:82%"></i></span><span style="width:70%"><i style="width:70%"></i></span><span style="width:64%"><i style="width:64%"></i></span><span style="width:52%"><i style="width:52%"></i></span></div></div>
     <div class="lcard red"><p class="lcap">재진단</p><h3>지난 진단과 비교합니다</h3><p>다시 진단하면 달라진 점을 함께 봅니다.</p></div>
     <div class="lcard"><p class="lcap">팀 워크숍</p><h3>팀과 함께 이야기합니다</h3><p>결과는 묶어서만 보이며, 개인이 드러나지 않습니다.</p></div>
    </div>
   </section>
+  <section class="lbase" id="basis">
+   <p class="leyebrow">진단의 근거</p>
+   <h2 class="lh2">검증된 이론 위에, 현장의 경험을 더했습니다.</h2>
+   <div class="lrows">
+    <div><h3>자기결정이론</h3><p class="who">Deci &amp; Ryan</p><p>사람은 어떤 이유로 일하는가. 스스로 원해서 하는 일과 시켜서 하는 일은 다르게 움직입니다.</p><p class="use">→ 일하는 이유 7단계</p></div>
+    <div><h3>2요인 이론</h3><p class="who">Herzberg</p><p>불만이 없는 것과 만족하는 것은 다릅니다. 동기를 키우는 요인과 없으면 불만이 되는 조건을 나눠 봅니다.</p><p class="use">→ 동기요인과 필수 조건</p></div>
+    <div><h3>경쟁가치모형</h3><p class="who">Quinn &amp; Cameron</p><p>좋은 조직은 서로 반대되는 가치를 함께 다룹니다. 네 가지 문화의 균형을 봅니다.</p><p class="use">→ 문화의 현재와 지향</p></div>
+    <div><h3>조직문화 모델</h3><p class="who">Denison</p><p>문화와 성과를 잇는 지표들입니다. 쉽게 합의하는 것이 늘 좋은 것은 아니라 ‘합의’ 지표는 뺐습니다.</p><p class="use">→ 8요인 21지표</p></div>
+    <div><h3>4MAT®</h3><p class="who">McCarthy · About Learning</p><p>사람이 배우고 바뀌는 네 단계입니다. 네 문화와 같은 구조라 진단이 교육과 대화로 이어집니다.</p><p class="use">→ 진단 이후의 설계</p></div>
+   </div>
+   <p class="lexp">여기에 폴앤마크가 삼성, SK 등에서 진행한 조직문화 프로그램과 여러 조직의 진단 경험, 스웨덴 Lovak 파트너의 조직 진단 경험을 더해 문항과 해석을 다듬었습니다.</p>
+  </section>
   <section class="lstats">
    <div><b>4</b><strong>문화 영역</strong><span>관계 · 질서 · 성과 · 혁신</span></div>
    <div><b>8</b><strong>진단 요인</strong><span>행동으로 보는 8가지 요인</span></div>
-   <div><b>3</b><strong>결과물</strong><span>요약판 · 전체판 · 팀 워크숍</span></div>
+   <div><b>3</b><strong>결과물</strong><span>경영진 요약판 · 인사팀 전체판 · 부서별 요약</span></div>
   </section>
   <section class="lcta">
    <h2>지금 우리 조직의 문화를<br>확인해 보세요.</h2>
-   <p>이름은 받지 않으며, 결과는 묶어서만 보입니다.</p>
+   <p>응답은 이름과 연결되지 않으며, 결과는 묶어서만 보입니다.</p>
    <button class="primary lbtn" id="lgo3">진단 시작하기</button>
   </section>
   <footer class="lfoot"><span>© Paul &amp; Mark Co. All rights reserved.</span><span><a href="#" id="lpriv">개인정보 처리 안내</a></span></footer>
@@ -737,8 +761,8 @@ function surveyView(){
   body.innerHTML=`<p class="label">펄스 · 짧은 점검</p><h2>지난 진단 이후, 지금은 어떤가요?</h2><p class="small muted">약 3분. 정식 진단과 같은 문항으로 변화를 봅니다.</p>`+codes.map(c=>c==='R01'?`<div class="q"><p class="qtext">${esc(txt(c))}</p><div><div class="scale" style="grid-template-columns:repeat(11,1fr)" role="radiogroup" aria-label="R01">${[0,1,2,3,4,5,6,7,8,9,10].map(n=>`<div class="opt" role="radio" tabindex="0" data-code="R01" data-v="${n}" aria-checked="${st.r.R01===n}">${n}</div>`).join('')}</div><div class="anchors"><span>0 · 전혀 없다</span><span>10 · 매우 높다</span></div></div></div>`:`<div class="q"><p class="qtext">${esc(txt(c))}</p>${scaleHTML(c,st.r[c],ANCH)}</div>`).join('')+`<div class="q"><label class="qtext" for="o2">지난 진단 이후 가장 달라졌다고 느끼는 것 한 가지는? (선택)</label><textarea id="o2" maxlength="400">${esc(st.o2)}</textarea></div>`;
   body.querySelector('#o2').oninput=e=>st.o2=e.target.value;
  } else if(step==='mot'){
-  body.innerHTML=`<p class="label">1 · 나의 업무 동기</p><h2>나는 지금 하는 일을 이런 이유로 한다</h2>`+CFG.MOT.map(m=>`<div class="q"><p class="qtext">${esc(m.t)}</p>${scaleHTML(m.c,st.r[m.c],ANCH)}</div>`).join('')
-  +`<div class="q"><p class="qtext">${esc(CFG.RES[0].t)}</p><div><div class="scale" style="grid-template-columns:repeat(11,1fr)" role="radiogroup" aria-label="R01">${[0,1,2,3,4,5,6,7,8,9,10].map(n=>`<div class="opt" role="radio" tabindex="0" data-code="R01" data-v="${n}" aria-checked="${st.r.R01===n}">${n}</div>`).join('')}</div><div class="anchors"><span>0 · 전혀 없다</span><span>10 · 매우 높다</span></div></div></div>`
+  body.innerHTML=`<p class="label">1 · 나의 업무 동기</p><h2>나는 지금 하는 일을 이런 이유로 한다</h2><p class="small muted" style="margin:0 0 6px">내가 왜 일하는지 돌아보는 질문입니다. 좋은 답, 나쁜 답은 없습니다. 지금의 나에 가장 가까운 쪽을 골라 주세요.</p><p class="small muted">결과는 개인이 아니라 조직과 부서 단위로만 봅니다. 회사도 누가 어떻게 답했는지 알 수 없습니다.</p>`+CFG.MOT.map(m=>`<div class="q"><p class="qtext">${esc(m.t)}</p>${scaleHTML(m.c,st.r[m.c],ANCH)}</div>`).join('')
+  +`<h3 style="margin:28px 0 4px">마지막으로 두 가지</h3><p class="small muted">이 회사에 대한 지금의 마음을 물어봅니다.</p><div class="q"><p class="qtext">${esc(CFG.RES[0].t)}</p><div><div class="scale" style="grid-template-columns:repeat(11,1fr)" role="radiogroup" aria-label="R01">${[0,1,2,3,4,5,6,7,8,9,10].map(n=>`<div class="opt" role="radio" tabindex="0" data-code="R01" data-v="${n}" aria-checked="${st.r.R01===n}">${n}</div>`).join('')}</div><div class="anchors"><span>0 · 전혀 없다</span><span>10 · 매우 높다</span></div></div></div>`
   +`<div class="q"><p class="qtext">${esc(CFG.RES[1].t)}</p>${scaleHTML('R02',st.r.R02,ANCH)}</div>`;
  } else if(step.startsWith('f')){
   const fi=+step.slice(1); const idxs=CFG.IDX.filter(x=>x.f===fi);
