@@ -793,7 +793,7 @@ function clientsSection(){
   <div style="height:10px"></div><label class="small" for="ctel">연락처</label><input type="text" id="ctel" maxlength="30" value="${v('contact_phone')}" style="${inp};max-width:260px">
   <div style="height:10px"></div><label class="small" for="cmemo">메모 (선택)</label><textarea id="cmemo" maxlength="500" style="${inp};min-height:70px">${v('memo')}</textarea>
   <p class="err" id="cerr"></p><div class="row"><button class="primary" id="csave">${editing?'저장':'등록'}</button><button id="ccancel">취소</button></div></div>`:'';
- const rows=list.map(c=>{const l=linked(c);return `<tr><td><b>${esc(c.name)}</b></td><td>${esc(c.contact_name||'–')}</td><td>${esc(c.contact_phone||'–')}</td><td>${l.length}</td><td>${l.filter(o=>o.open!==false).length}</td><td>${admDate(last(l))}</td><td style="text-align:right"><button data-cedit="${esc(c.id)}">정보 수정</button></td></tr>`}).join('');
+ const rows=list.map(c=>{const l=linked(c);return `<tr><td><b>${esc(c.name)}</b></td><td>${esc(c.contact_name||'–')}</td><td>${esc(c.contact_phone||'–')}</td><td>${l.length}</td><td>${l.filter(o=>o.open!==false).length}</td><td>${admDate(last(l))}</td><td style="text-align:right;white-space:nowrap"><button data-cedit="${esc(c.id)}">정보 수정</button> <button data-cdel="${esc(c.id)}" style="color:var(--red)">삭제</button></td></tr>`}).join('');
  const el=$(`<div><div class="ahead"><h2>고객사 관리</h2>${C.form?'':'<button class="primary" id="cnew">고객사 등록</button>'}</div>
   ${C.msg?`<p class="notice">${esc(C.msg)}</p>`:''}${C.err?`<p class="err">${esc(C.err)}</p>`:''}
   ${form}
@@ -803,6 +803,10 @@ function clientsSection(){
  el.querySelectorAll('[data-cedit]').forEach(b=>b.onclick=()=>{C.form=b.dataset.cedit;C.msg='';C.err='';render()});
  const ccancel=el.querySelector('#ccancel');
  if(ccancel)ccancel.onclick=()=>{C.form=null;render()};
+ el.querySelectorAll('[data-cdel]').forEach(b=>b.onclick=async()=>{const c=list.find(x=>x.id===b.dataset.cdel);if(!c)return;const n=linked(c).length;
+  if(!confirm(`‘${c.name}’ 고객사를 삭제할까요?`+(n?` 이 고객사로 만든 진단 ${n}건은 그대로 남고, 고객사 정보만 지워집니다.`:'')+' 되돌릴 수 없습니다.'))return;
+  try{const {error}=await sb.from('poca_clients').delete().eq('id',c.id);if(error)throw error;if(C.form===c.id)C.form=null;C.msg='삭제했습니다: '+c.name;C.err='';C.list=null;render()}
+  catch(e){C.err='삭제하지 못했습니다. 다시 시도해 주세요.';render()}});
  const csave=el.querySelector('#csave');
  if(csave)csave.onclick=async()=>{
   const g=id=>el.querySelector(id).value.trim();const er=el.querySelector('#cerr');
@@ -1216,14 +1220,17 @@ function ponesView(){
   <label class="small" for="pn">이름</label><input type="text" id="pn" maxlength="60" placeholder="예: 대덕전자 · Atomic Culture" style="${inp}">
   <div style="height:10px"></div><label class="small" for="pm">참여자 명단 (한 줄에 ‘이름, 부서, 전화번호’) · 전화번호는 문자 발송에만 쓰고 응답과 연결하지 않습니다</label><textarea id="pm" placeholder="홍길동, 영업, 010-1234-5678"></textarea>
   <div style="height:10px"></div><label class="small" for="porg">POCA 결과로 질문 순서 정하기 (선택)</label><div class="row"><select id="porg"><option value="">선택 안 함</option>${(st.orgs||[]).filter(o=>o.type!=='pulse').map(o=>`<option value="${esc(o.code)}">${esc(o.name)} (${esc(o.code)})</option>`).join('')}</select><button id="sortb">가장 바라는 문화부터 정렬</button></div>
-  <p class="small" style="margin:12px 0 4px">질문 순서 (위에서부터 · ‘우리 팀’ 평균 7점 이상이거나 3주가 되면 다음 질문 · 체크한 것만 · 문구는 고칠 수 있습니다). 네 문화는 POCA ‘조직의 현재와 미래’와 같습니다.</p>
-  ${Z.order.map((x,i)=>`<div class="row" style="flex-wrap:nowrap;margin:4px 0"><input type="checkbox" data-on="${i}" ${x.on?'checked':''}><span class="small muted" style="min-width:150px">${esc(ONE_CN[x.c])}${x.gap!=null?' · 차이 '+(x.gap>=0?'+':'')+Math.round(x.gap):''}</span><input type="text" data-q="${i}" value="${esc(x.q)}" maxlength="80" style="${inp}"></div>`).join('')}
+  <p class="small" style="margin:12px 0 4px">질문 순서 (위에서부터 · ‘우리 팀’ 평균 7점 이상이거나 3주가 되면 다음 질문 · 체크한 것만 · 문구는 고칠 수 있습니다 · ⋮⋮을 끌어서 순서를 바꿀 수 있습니다). 네 문화는 POCA ‘조직의 현재와 미래’와 같습니다.</p>
+  ${Z.order.map((x,i)=>`<div class="row" data-row="${i}" style="flex-wrap:nowrap;margin:4px 0;align-items:center"><span data-drag="${i}" draggable="true" title="끌어서 순서 바꾸기" style="cursor:grab;user-select:none;color:var(--muted);font-size:16px;letter-spacing:-2px;padding:0 4px">⋮⋮</span><input type="checkbox" data-on="${i}" ${x.on?'checked':''}><span class="small muted" style="min-width:150px">${esc(ONE_CN[x.c])}${x.gap!=null?' · 차이 '+(x.gap>=0?'+':'')+Math.round(x.gap):''}</span><input type="text" data-q="${i}" value="${esc(x.q)}" maxlength="80" style="${inp}"></div>`).join('')}
   <p class="err" id="perr">${esc(Z.err)}</p><div class="row"><button class="primary" id="pmk">만들기</button></div></div>
   <div class="panel"><h2>진행 중</h2>${(Z.list||[]).map(p=>`<div class="act"><h3 style="margin:0">${esc(p.info.name)} <span class="small muted">· 코드 ${esc(p.code)} · 참여자 ${p.members??'–'}명 · ${p.weeks??0}주 진행</span></h3>
    <p class="small" style="margin:6px 0 0">인사팀 링크<input type="text" readonly value="${pageBase()}#ph/${esc(p.code)}/${esc(p.info.hr)}" style="${inp};font-size:13px;background:var(--surface2)" onclick="this.select()"></p>
    <div class="row" style="margin-top:6px">${p.weeks?'':`<button data-start="${esc(p.code)}">지금 첫 질문 보내기</button>`}<button data-pclose="${esc(p.code)}">${p.info.open===false?'다시 열기':'멈추기'}</button></div></div>`).join('')||'<p class="small muted">아직 없습니다.</p>'}</div>
   <div class="row"><button id="back">진단 관리로</button></div></div>`);
  el.querySelector('#back').onclick=()=>{st.adm='diag';openAdmin()};
+ let dragFrom=null;
+ el.querySelectorAll('[data-drag]').forEach(h=>{h.ondragstart=e=>{dragFrom=+h.dataset.drag;e.dataTransfer.effectAllowed='move';try{e.dataTransfer.setData('text/plain',String(dragFrom))}catch(_){}const row=h.closest('[data-row]');if(row)e.dataTransfer.setDragImage(row,20,20)};h.ondragend=()=>{dragFrom=null}});
+ el.querySelectorAll('[data-row]').forEach(r=>{r.ondragover=e=>{if(dragFrom==null)return;e.preventDefault();e.dataTransfer.dropEffect='move'};r.ondrop=e=>{e.preventDefault();if(dragFrom==null)return;const from=dragFrom,to=+r.dataset.row;dragFrom=null;if(from===to)return;const [m]=Z.order.splice(from,1);Z.order.splice(to,0,m);render()}});
  el.querySelectorAll('[data-on]').forEach(c=>c.onchange=()=>{Z.order[+c.dataset.on].on=c.checked});
  el.querySelectorAll('[data-q]').forEach(c=>c.oninput=()=>{Z.order[+c.dataset.q].q=c.value});
  el.querySelector('#sortb').onclick=async()=>{const code=el.querySelector('#porg').value;if(!code)return;

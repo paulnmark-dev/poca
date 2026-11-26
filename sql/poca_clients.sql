@@ -26,4 +26,4 @@ create policy poca_clients_admin on public.poca_clients
   using (public.poca_is_admin()) with check (public.poca_is_admin());
 
 revoke all on public.poca_clients from anon, authenticated;
-grant select, insert, update on public.poca_clients to authenticated;
+grant select, insert, update, delete on public.poca_clients to authenticated;
