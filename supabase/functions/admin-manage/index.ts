@@ -116,10 +116,11 @@ Deno.serve(async (req) => {
         body: JSON.stringify({ from, to: [row.email], subject: mail.subject, text: mail.text, html: mail.html }),
       });
       if (res.ok) {
-        const { error: markErr } = await admin.from('poca_invites').update({ mail_sent: true }).eq('token', row.token);
+        const { error: markErr } = await admin.from('poca_invites').update({ mail_sent: true, mail_failed: false }).eq('token', row.token);
         if (markErr) failed.push(row.token); else sent++;
       } else {
         failed.push(row.token);
+        await admin.from('poca_invites').update({ mail_failed: true }).eq('token', row.token);
       }
       // Resend 요청 속도 제한을 넘지 않도록 잠깐 쉽니다.
       await new Promise((r) => setTimeout(r, 600));
@@ -140,19 +141,21 @@ Deno.serve(async (req) => {
   if (!EMAIL_RE.test(email)) return json({ error: '이메일 형식을 확인해 주세요.' }, 400);
   if (!name) return json({ error: '이름을 적어 주세요.' }, 400);
 
+  const dept = String(body.dept ?? '').trim().slice(0, 40) || null;
+
   if (body.action === 'invite') {
     const { error: inviteErr } = await admin.auth.admin.inviteUserByEmail(email, {
       redirectTo: ADMIN_URL,
       data: { name },
     });
     if (inviteErr) return json({ error: '초대 메일을 보내지 못했습니다: ' + inviteErr.message }, 400);
-    const { error: saveErr } = await admin.from('poca_admins').upsert({ email, name }, { onConflict: 'email' });
+    const { error: saveErr } = await admin.from('poca_admins').upsert({ email, name, dept }, { onConflict: 'email' });
     if (saveErr) return json({ error: '관리자 명단에 저장하지 못했습니다.' }, 500);
     return json({ ok: true });
   }
 
   if (body.action === 'update') {
-    const { error: nameErr } = await admin.from('poca_admins').update({ name }).eq('email', email);
+    const { error: nameErr } = await admin.from('poca_admins').update({ name, dept }).eq('email', email);
     if (nameErr) return json({ error: '이름을 저장하지 못했습니다.' }, 500);
 
     if (body.password) {

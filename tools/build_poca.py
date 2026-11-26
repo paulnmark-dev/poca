@@ -85,7 +85,7 @@ function privacyView(){
   async hrStatus(code,tok){const {data,error}=await sb.rpc('poca_hr_status',{p_code:code,p_token:tok});if(error)throw error;return data||null},
   async hrResponses(code,tok){const {data,error}=await sb.rpc('poca_hr_responses',{p_code:code,p_token:tok});if(error)throw error;return data||[]},
   async addInvites(code,rows){const {error}=await sb.from('poca_invites').insert(rows.map(r=>({org_code:code,name:r.name,dept:r.dept||null,email:r.email||null})));if(error)throw error},
-  async listInvites(code){const {data,error}=await sb.from('poca_invites').select('token,name,dept,done,email,mail_sent').eq('org_code',code).order('name');if(error)throw error;return data||[]},
+  async listInvites(code){const {data,error}=await sb.from('poca_invites').select('token,name,dept,done,email,mail_sent,mail_failed').eq('org_code',code).order('name');if(error)throw error;return data||[]},
   async pulseGet(tok){const {data,error}=await sb.rpc('pulse_get',{p_token:tok});if(error)throw error;return data||null},
   async pulseSubmit(tok,score,team,note){const {data,error}=await sb.rpc('pulse_submit',{p_token:tok,p_key:deviceKey('one_'+tok),p_score:score,p_team:team,p_note:note||null});if(error)throw error;return data===true},
   async pulseHr(code,tok){const {data,error}=await sb.rpc('pulse_hr',{p_code:code,p_hr:tok});if(error)throw error;return data||null},

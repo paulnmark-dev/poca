@@ -656,9 +656,9 @@ function newDiagSection(){
   <div style="height:10px"></div><label class="small" for="hc">대상 인원 (참여율 계산용, 선택)</label><input type="text" id="hc" inputmode="numeric" maxlength="6" style="font:inherit;max-width:160px;padding:10px 12px;border:1px solid var(--line);border-radius:4px;background:var(--surface);color:var(--ink)">
   <div style="height:10px"></div><label class="small" for="mn">익명 기준 (이보다 적은 그룹은 결과를 가림)</label><select id="mn"><option value="3" selected>3명 (기본)</option><option value="5">5명 (더 엄격)</option></select>
   <div style="height:10px"></div><label class="small" for="roster">직원 명단 (선택 · 한 줄에 ‘이름, 부서, 이메일’ · 부서와 이메일은 비워도 됩니다) · 넣으면 사람마다 개인 링크가 생기고, 이메일이 있으면 참여 안내 메일을 보낼 수 있습니다. 부서 목록은 명단에서 자동으로 만듭니다.</label><textarea id="roster" placeholder="홍길동, 영업, hong@company.com&#10;김철수, 생산"></textarea>
-  <div class="row" style="margin-top:8px"><input type="file" id="rfile" accept=".xlsx,.xls,.csv"><span class="small muted" id="rfmsg">엑셀(.xlsx)·CSV 파일을 고르면 명단 칸에 채워집니다 (첫 줄에 ‘이름’ 열이 있으면 열 순서를 읽습니다)</span></div><p class="small muted" id="rsum" style="margin:6px 0 0"></p>
-  <div style="height:10px"></div><label class="chk" style="max-width:520px"><input type="checkbox" id="hrRep"><span><b>인사 담당자에게 결과 보고서 공개</b> (끄면 인사 담당자는 응답 현황만 봅니다. 나중에 바꿀 수 있습니다)</span></label>
-  <div style="height:14px"></div><label class="chk" style="max-width:420px"><input type="checkbox" id="isPilot"><span><b>시범 운영</b> (응답 시간을 기록하고, 헷갈린 문항 의견을 받습니다)</span></label>
+  <div style="margin-top:10px;border:1px dashed var(--line);border-radius:10px;padding:22px;text-align:center;background:var(--surface2)"><p style="margin:0;font-weight:700">파일을 끌어다 놓거나 선택하세요</p><p class="small muted" style="margin:6px 0 12px">CSV, XLSX · 이름, 이메일, 부서 열 포함 · 최대 5,000명</p><label style="display:inline-block;padding:10px 16px;border:1px solid var(--red);border-radius:6px;color:var(--red);cursor:pointer;font-weight:700">파일 선택<input type="file" id="rfile" accept=".xlsx,.xls,.csv" style="display:none"></label><p class="small" id="rfmsg" style="margin:8px 0 0"></p></div><p class="small muted" id="rsum" style="margin:6px 0 0"></p>
+  <div style="height:10px"></div><label class="chk" style="max-width:none;border:1px solid var(--line);border-radius:12px;padding:16px 18px;background:#fff"><input type="checkbox" id="hrRep"><span><b>인사 담당자에게 결과 보고서 공개</b> (끄면 인사 담당자는 응답 현황만 봅니다. 나중에 바꿀 수 있습니다)</span></label>
+  <div style="height:14px"></div><label class="chk" style="max-width:none;border:1px solid var(--line);border-radius:12px;padding:16px 18px;background:#fff"><input type="checkbox" id="isPilot"><span><b>시범 운영</b> (응답 시간을 기록하고, 헷갈린 문항 의견을 받습니다)</span></label>
   <div style="height:10px"></div><label class="small" for="base">비교할 이전 진단 (재진단일 때 선택)</label><select id="base"><option value="">없음</option>${st.orgs.filter(o=>o.type!=='pulse').map(o=>`<option value="${esc(o.code)}">${esc(o.name)} (${esc(o.code)})</option>`).join('')}</select>
   <p class="err" id="aerr"></p><div class="row"><button class="primary" id="mk">만들고 코드 받기</button></div></div>
   </div>`);
@@ -681,7 +681,7 @@ function newDiagSection(){
   const minN=+el.querySelector('#mn').value===5?5:3;const hrReport=el.querySelector('#hrRep').checked;
   const PR=parseRoster(el.querySelector('#roster').value);if(PR.errors.length){el.querySelector('#aerr').textContent='명단을 확인해 주세요: '+PR.errors.slice(0,3).join(' / ');return}const roster=PR.rows;
   if(roster.length&&!(caps.ext&&caps.ext.addInvites)){el.querySelector('#aerr').textContent='직원 명단은 웹사이트(poca 사이트)의 관리 화면에서만 넣을 수 있습니다.';return}
-  const rDepts=[...new Set(roster.map(x=>x.dept).filter(Boolean))];try{await caps.db.doc('poca_orgs/'+code).set({name,clientId:client.id,depts:rDepts.length?rDepts:DEPTS,headcount:hc||(roster.length||null),open:true,at:Date.now(),type:isP?'pulse':'full',base:base||null,extra:isP?extra:[],pilot,minN,hrReport,hr:rnd20(),roster:roster.length>0});
+  const rDepts=[...new Set(roster.map(x=>x.dept).filter(Boolean))];try{await caps.db.doc('poca_orgs/'+code).set({name,clientId:client.id,createdBy:(caps.userEmail||'').toLowerCase(),depts:rDepts.length?rDepts:DEPTS,headcount:hc||(roster.length||null),open:true,at:Date.now(),type:isP?'pulse':'full',base:base||null,extra:isP?extra:[],pilot,minN,hrReport,hr:rnd20(),roster:roster.length>0});
    if(roster.length)await caps.ext.addInvites(code,roster);st.adm='diag';openAdmin()}catch(e){el.querySelector('#aerr').textContent='진단을 만들지 못했습니다.'+(roster.length?' (명단 저장에 필요한 데이터베이스 설정이 아직 안 되어 있을 수 있습니다)':'')}
  };
  return el;
@@ -699,7 +699,7 @@ async function sheetToLines(file,mode){
 function bindRosterFile(el,inputId,msgId,textareaId,mode){
  const f=el.querySelector('#'+inputId);if(!f)return;
  f.onchange=async()=>{const file=f.files[0];if(!file)return;const m=el.querySelector('#'+msgId);m.textContent='파일을 읽는 중…';
-  try{const lines=await sheetToLines(file,mode);if(!lines.length)throw new Error('읽을 수 있는 줄이 없습니다. 첫 열에 이름이 있는지 확인해 주세요.');
+  try{const lines=await sheetToLines(file,mode);if(!lines.length)throw new Error('읽을 수 있는 줄이 없습니다. 첫 열에 이름이 있는지 확인해 주세요.');if(lines.length>5000)throw new Error('한 번에 5,000명까지 올릴 수 있습니다. 나눠서 올려 주세요.');
    const ta=el.querySelector('#'+textareaId);ta.value=(ta.value.trim()?ta.value.trim()+'\n':'')+lines.join('\n');ta.dispatchEvent(new Event('input'));
    m.textContent=lines.length+'명을 명단에 넣었습니다. 내용을 확인한 뒤 만드세요.'}
   catch(e){m.textContent=e.message||'파일을 읽지 못했습니다.'}
@@ -756,10 +756,10 @@ function pwView(){
 }
 function adminView(){
  if(st.needPw)return pwView();
- const sec=st.adm||'dash';
+ const sec=st.adm||'dash';const navSec=sec==='atomic'||sec==='pnew'?'pones':sec;
  const email=caps.userEmail||'';
- const el=$(`<div class="adash${st.admMenu?' open':''}"><header class="atop"><a href="#" class="alink alogo" id="ahome2">POCA <span class="asub">ADMIN</span></a><button class="abtn" id="amenu" aria-expanded="${!!st.admMenu}">${ADM_MENU}<span>메뉴</span></button></header><aside class="anav"><p class="abrand"><a href="#" class="alink alogo" id="ahome">POCA <span class="asub">ADMIN</span></a></p>${ADM_NAV.map(([k,t])=>`<button data-nav="${k}" class="${sec===k?'on':''}"${sec===k?' aria-current="page"':''}>${admIcon(k,sec===k)}<span>${t}</span></button>`).join('')}<div class="aspacer"></div><div class="aprof"><div class="apop" id="apop" hidden><button id="aedit">정보 수정</button><button id="alogout" class="lo">로그아웃</button></div><button class="aprofbtn" id="aprof" aria-expanded="false"><span class="aav">${esc(email?email[0].toUpperCase():'M')}</span><span class="ainfo"><b>${esc(email||'관리자')}</b><small>매니저</small></span>${ADM_CHEV}</button></div></aside><main class="amain"></main></div>`);
- const fn={dash:dashSection,diag:diagSection,new:newDiagSection,clients:clientsSection,pones:ponesSection,managers:managersSection,settings:settingsSection}[sec]||dashSection;
+ const el=$(`<div class="adash${st.admMenu?' open':''}"><header class="atop"><a href="#" class="alink alogo" id="ahome2">POCA <span class="asub">ADMIN</span></a><button class="abtn" id="amenu" aria-expanded="${!!st.admMenu}">${ADM_MENU}<span>메뉴</span></button></header><aside class="anav"><p class="abrand"><a href="#" class="alink alogo" id="ahome">POCA <span class="asub">ADMIN</span></a></p>${ADM_NAV.map(([k,t])=>`<button data-nav="${k}" class="${navSec===k?'on':''}"${navSec===k?' aria-current="page"':''}>${admIcon(k,navSec===k)}<span>${t}</span></button>`).join('')}<div class="aspacer"></div><div class="aprof"><div class="apop" id="apop" hidden><button id="aedit">정보 수정</button><button id="alogout" class="lo">로그아웃</button></div><button class="aprofbtn" id="aprof" aria-expanded="false"><span class="aav">${esc(email?email[0].toUpperCase():'M')}</span><span class="ainfo"><b>${esc(email||'관리자')}</b><small>매니저</small></span>${ADM_CHEV}</button></div></aside><main class="amain"></main></div>`);
+ const fn={dash:dashSection,diag:diagSection,new:newDiagSection,clients:clientsSection,atomic:atomicView,pnew:ponesSection,managers:managersSection,settings:settingsSection}[sec]||dashSection;
  el.querySelector('.amain').append(fn());
  el.querySelectorAll('[data-nav]').forEach(b=>b.onclick=()=>{const k=b.dataset.nav;if(k==='pones'){openPones();return}st.adm=k;st.admMenu=false;render()});
  el.querySelectorAll('#ahome,#ahome2').forEach(a=>a.onclick=e=>{e.preventDefault();st.adm='dash';st.admMenu=false;render()});
@@ -803,24 +803,25 @@ function clientsSection(){
  const editing=C.form&&C.form!=='new'?list.find(x=>x.id===C.form):null;
  const v=k=>esc((editing&&editing[k])||'');
  const linked=c=>orgs.filter(o=>o.clientId?o.clientId===c.id:o.name===c.name);
- const last=l=>Math.max(0,...l.map(o=>o.at||0));
- const form=C.form?`<div class="panel"><h3 style="margin:0 0 12px;font-size:18px">${editing?'고객사 정보 수정':'고객사 등록'}</h3>
-  <label class="small" for="cn">고객사 이름 *</label><input type="text" id="cn" maxlength="60" value="${v('name')}" placeholder="예: 대덕전자" style="${inp}">
-  <div style="height:10px"></div><label class="small" for="cwho">담당자 이름</label><input type="text" id="cwho" maxlength="40" value="${v('contact_name')}" style="${inp}">
-  <div style="height:10px"></div><label class="small" for="cmail">담당자 이메일</label><input type="email" id="cmail" maxlength="120" value="${v('contact_email')}" style="${inp}">
-  <div style="height:10px"></div><label class="small" for="ctel">연락처</label><input type="text" id="ctel" maxlength="30" value="${v('contact_phone')}" style="${inp};max-width:260px">
-  <div style="height:10px"></div><label class="small" for="cmemo">메모 (선택)</label><textarea id="cmemo" maxlength="500" style="${inp};min-height:70px">${v('memo')}</textarea>
-  <p class="err" id="cerr"></p><div class="row"><button class="primary" id="csave">${editing?'저장':'등록'}</button><button id="ccancel">취소</button></div></div>`:'';
- const rows=list.map(c=>{const l=linked(c);return `<tr><td><b>${esc(c.name)}</b></td><td>${esc(c.contact_name||'–')}</td><td>${esc(c.contact_phone||'–')}</td><td>${l.length}</td><td>${l.filter(o=>o.open!==false).length}</td><td>${admDate(last(l))}</td><td style="text-align:right;white-space:nowrap"><button data-cedit="${esc(c.id)}">정보 수정</button> <button data-cdel="${esc(c.id)}" style="color:var(--red)">삭제</button></td></tr>`}).join('');
- const el=$(`<div><div class="ahead"><h2>고객사 관리</h2>${C.form?'':'<button class="primary" id="cnew">고객사 등록</button>'}</div>
+ const modal=C.form?`<div id="cbg" style="position:fixed;inset:0;background:rgba(17,17,17,.35);display:flex;align-items:center;justify-content:center;z-index:50;padding:16px"><div class="panel" style="width:100%;max-width:480px;margin:0"><h3 style="margin:0 0 6px;font-size:18px">${editing?'고객사 정보 수정':'고객사 등록'}</h3>
+  <p class="small muted" style="margin:0 0 14px">진단에 사용할 고객사 정보를 입력하세요. 등록한 고객사는 새 진단 만들기에서 선택할 수 있습니다.</p>
+  <label class="small" for="cn">고객사명 *</label><input type="text" id="cn" maxlength="60" value="${v('name')}" placeholder="예: 예시 고객사 F" style="${inp}">
+  <div style="height:10px"></div><label class="small" for="cwho">담당자 이름</label><input type="text" id="cwho" maxlength="40" value="${v('contact_name')}" placeholder="예: 홍길동" style="${inp}">
+  <div style="height:10px"></div><label class="small" for="cmail">담당자 이메일</label><input type="email" id="cmail" maxlength="120" value="${v('contact_email')}" placeholder="name@example.com" style="${inp}">
+  <div style="height:10px"></div><label class="small" for="ctel">연락처</label><input type="text" id="ctel" maxlength="30" value="${v('contact_phone')}" placeholder="010-0000-0000" style="${inp}">
+  <div style="height:10px"></div><label class="small" for="cmemo">메모 (선택)</label><textarea id="cmemo" maxlength="500" placeholder="고객사 관련 메모" style="${inp};min-height:70px">${v('memo')}</textarea>
+  <p class="err" id="cerr"></p><div class="row" style="justify-content:flex-end"><button id="ccancel">취소</button><button class="primary" id="csave">${editing?'저장':'등록'}</button></div></div></div>`:'';
+ const rows=list.map(c=>{const l=linked(c);return `<tr><td><b>${esc(c.name)}</b></td><td>${esc(c.contact_name||'–')}</td><td>${esc(c.contact_phone||'–')}</td><td>${l.length}</td><td>${admDate(c.created_at)}</td><td style="text-align:right;white-space:nowrap"><button data-cedit="${esc(c.id)}">정보 수정</button> <button data-cdel="${esc(c.id)}" style="color:var(--red)">삭제</button></td></tr>`}).join('');
+ const el=$(`<div><div class="ahead"><h2>고객사 관리</h2><button class="primary" id="cnew">고객사 등록</button></div>
   ${C.msg?`<p class="notice">${esc(C.msg)}</p>`:''}${C.err?`<p class="err">${esc(C.err)}</p>`:''}
-  ${form}
-  <div class="panel">${C.list===null?'<p class="small muted">불러오는 중…</p>':list.length?`<table class="atbl"><thead><tr><th>고객사</th><th>담당자</th><th>연락처</th><th>진단 수</th><th>진행 중</th><th>최근 진단</th><th></th></tr></thead><tbody>${rows}</tbody></table>`:'<p class="small muted">아직 등록된 고객사가 없습니다. 고객사를 등록하면 새 진단을 만들 때 고를 수 있습니다.</p>'}</div></div>`);
+  <div class="panel">${C.list===null?'<p class="small muted">불러오는 중…</p>':list.length?`<table class="atbl"><thead><tr><th>고객사명</th><th>담당자</th><th>연락처</th><th>진단 수</th><th>등록일</th><th></th></tr></thead><tbody>${rows}</tbody></table>`:'<p class="small muted">아직 등록된 고객사가 없습니다. 고객사를 등록하면 새 진단을 만들 때 고를 수 있습니다.</p>'}</div>${modal}</div>`);
  const cnew=el.querySelector('#cnew');
  if(cnew)cnew.onclick=()=>{C.form='new';C.msg='';C.err='';render()};
  el.querySelectorAll('[data-cedit]').forEach(b=>b.onclick=()=>{C.form=b.dataset.cedit;C.msg='';C.err='';render()});
  const ccancel=el.querySelector('#ccancel');
  if(ccancel)ccancel.onclick=()=>{C.form=null;render()};
+ const cbg=el.querySelector('#cbg');
+ if(cbg)cbg.onclick=e=>{if(e.target===cbg){C.form=null;render()}};
  el.querySelectorAll('[data-cdel]').forEach(b=>b.onclick=async()=>{const c=list.find(x=>x.id===b.dataset.cdel);if(!c)return;const n=linked(c).length;
   if(!confirm(`‘${c.name}’ 고객사를 삭제할까요?`+(n?` 이 고객사로 만든 진단 ${n}건은 그대로 남고, 고객사 정보만 지워집니다.`:'')+' 되돌릴 수 없습니다.'))return;
   try{const {error}=await sb.from('poca_clients').delete().eq('id',c.id);if(error)throw error;if(C.form===c.id)C.form=null;C.msg='삭제했습니다: '+c.name;C.err='';C.list=null;render()}
@@ -829,7 +830,7 @@ function clientsSection(){
  if(csave)csave.onclick=async()=>{
   const g=id=>el.querySelector(id).value.trim();const er=el.querySelector('#cerr');
   const name=g('#cn').slice(0,60);const mail=g('#cmail').toLowerCase();
-  if(!name){er.textContent='고객사 이름을 적어 주세요.';return}
+  if(!name){er.textContent='고객사명을 적어 주세요.';return}
   if(mail&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(mail)){er.textContent='담당자 이메일 형식을 확인해 주세요.';return}
   const row={name,contact_name:g('#cwho').slice(0,40)||null,contact_email:mail||null,contact_phone:g('#ctel').slice(0,30)||null,memo:el.querySelector('#cmemo').value.trim().slice(0,500)||null,updated_at:new Date().toISOString()};
   er.textContent='저장하는 중…';
@@ -860,48 +861,61 @@ async function loadManagers(){
 }
 function admLastLogin(ts){return ts?new Date(ts).toLocaleString('ko-KR',{dateStyle:'medium',timeStyle:'short'}):'아직 접속 기록 없음'}
 function managersSection(){
- const M=st.mgr||(st.mgr={list:null,err:'',msg:'',loading:false,inviting:false,editing:null});
+ const M=st.mgr||(st.mgr={list:null,err:'',msg:'',loading:false,inviting:false,editing:null,q:'',page:0});
  if(M.list===null&&!M.loading)loadManagers();
  const list=M.list||[];
- const editing=M.editing?(list.find(x=>x.email===M.editing)||{email:M.editing,name:''}):null;
+ const editing=M.editing?(list.find(x=>x.email===M.editing)||{email:M.editing,name:'',dept:''}):null;
  const inp='font:inherit;width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:4px;background:var(--surface);color:var(--ink)';
  const invForm=`<div class="panel"><h3 style="margin:0 0 6px;font-size:18px">매니저 초대</h3><p class="small muted">입력한 이메일로 초대 메일이 갑니다. 메일의 링크에서 비밀번호를 정하면 관리자 화면에 들어올 수 있습니다.</p>
   <label class="small" for="ie">이메일</label><input type="email" id="ie" maxlength="120" style="${inp}">
   <div style="height:10px"></div><label class="small" for="in">이름</label><input type="text" id="in" maxlength="40" style="${inp}">
+  <div style="height:10px"></div><label class="small" for="id">부서</label><input type="text" id="id" maxlength="40" style="${inp}">
   <p class="err" id="ierr"></p><div class="row"><button class="primary" id="isend">초대 보내기</button><button id="icancel">취소</button></div></div>`;
  const editForm=editing?`<div class="panel"><h3 style="margin:0 0 6px;font-size:18px">정보 수정</h3><p class="small muted">${esc(editing.email)}</p>
   <label class="small" for="en">이름</label><input type="text" id="en" maxlength="40" value="${esc(editing.name||'')}" style="${inp}">
+  <div style="height:10px"></div><label class="small" for="ed">부서</label><input type="text" id="ed" maxlength="40" value="${esc(editing.dept||'')}" style="${inp}">
   <div style="height:10px"></div><label class="small" for="ep">새 비밀번호 (바꿀 때만 입력 · 8자 이상)</label><input type="password" id="ep" autocomplete="new-password" style="${inp}">
   <div style="height:10px"></div><label class="small" for="ep2">새 비밀번호 확인</label><input type="password" id="ep2" autocomplete="new-password" style="${inp}">
   <p class="err" id="eerr"></p><div class="row"><button class="primary" id="esave">저장</button><button id="ecancel">취소</button></div></div>`:'';
- const rows=list.map(x=>`<tr><td><b>${esc(x.name||'–')}</b></td><td>${esc(x.email)}${x.email===(caps.userEmail||'').toLowerCase()?' <span class="small muted">(나)</span>':''}</td><td>${admLastLogin(x.last_sign_in_at)}</td><td style="text-align:right"><button data-edit="${esc(x.email)}">정보 수정</button></td></tr>`).join('');
+ const q=M.q.trim().toLowerCase();
+ const filtered=list.filter(x=>!q||(x.name||'').toLowerCase().includes(q)||(x.email||'').toLowerCase().includes(q));
+ const PER=5;const pages=Math.max(1,Math.ceil(filtered.length/PER));M.page=Math.min(M.page,pages-1);
+ const shown=filtered.slice(M.page*PER,M.page*PER+PER);
+ const orgCount=email=>(st.orgs||[]).filter(o=>(o.createdBy||'').toLowerCase()===email.toLowerCase()).length;
+ const rows=shown.map(x=>{const n=orgCount(x.email);return `<tr><td><b>${esc(x.name||'–')}</b></td><td>${esc(x.email)}${x.email===(caps.userEmail||'').toLowerCase()?' <span class="small muted">(나)</span>':''}</td><td>${esc(x.dept||'–')}</td><td>${n?n+'건':'–'}</td><td>${x.last_sign_in_at?'활성':'초대 중'}</td><td style="text-align:right"><button data-edit="${esc(x.email)}">정보 수정</button></td></tr>`}).join('');
  const el=$(`<div><div class="ahead"><h2>매니저</h2>${M.inviting||editing?'':'<button class="primary" id="minv">매니저 초대</button>'}</div>
   ${M.msg?`<p class="notice">${esc(M.msg)}</p>`:''}${M.err?`<p class="err">${esc(M.err)}</p>`:''}
   ${M.inviting?invForm:''}${editForm}
-  <div class="panel">${M.list===null?'<p class="small muted">불러오는 중…</p>':list.length?`<table class="atbl"><thead><tr><th>이름</th><th>이메일</th><th>최근 접속일</th><th></th></tr></thead><tbody>${rows}</tbody></table>`:'<p class="small muted">등록된 매니저가 없습니다.</p>'}</div></div>`);
+  <div class="row" style="justify-content:space-between;margin:0 0 10px"><input type="search" id="mq" placeholder="이름 또는 이메일로 검색" value="${esc(M.q)}" style="${inp};max-width:320px"><span class="small muted">${list.length?`총 ${filtered.length}명`:''}</span></div>
+  <div class="panel">${M.list===null?'<p class="small muted">불러오는 중…</p>':list.length?(filtered.length?`<table class="atbl"><thead><tr><th>이름</th><th>이메일</th><th>부서</th><th>담당 진단</th><th>상태</th><th></th></tr></thead><tbody>${rows}</tbody></table>
+   <div class="row" style="justify-content:space-between;margin-top:12px"><span class="small muted">${M.page*PER+1}–${M.page*PER+shown.length} / 총 ${filtered.length}명</span><div class="row"><button id="mpprev" ${M.page<=0?'disabled':''}>이전</button><button id="mpnext" ${M.page>=pages-1?'disabled':''}>다음</button></div></div>`:'<p class="small muted">검색 결과가 없습니다.</p>'):'<p class="small muted">등록된 매니저가 없습니다.</p>'}</div></div>`);
  const minv=el.querySelector('#minv');
  if(minv)minv.onclick=()=>{M.inviting=true;M.editing=null;M.msg='';M.err='';render()};
  const icancel=el.querySelector('#icancel');
  if(icancel)icancel.onclick=()=>{M.inviting=false;render()};
  const isend=el.querySelector('#isend');
  if(isend)isend.onclick=async()=>{
-  const em=el.querySelector('#ie').value.trim().toLowerCase(),nm=el.querySelector('#in').value.trim();const er=el.querySelector('#ierr');
+  const em=el.querySelector('#ie').value.trim().toLowerCase(),nm=el.querySelector('#in').value.trim(),dp=el.querySelector('#id').value.trim();const er=el.querySelector('#ierr');
   if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)){er.textContent='이메일 형식을 확인해 주세요.';return}
   if(!nm){er.textContent='이름을 적어 주세요.';return}
   er.textContent='초대 메일을 보내는 중…';
-  try{await adminCall({action:'invite',email:em,name:nm});M.inviting=false;M.err='';M.msg=em+' 주소로 초대 메일을 보냈습니다.';M.list=null;render()}
+  try{await adminCall({action:'invite',email:em,name:nm,dept:dp});M.inviting=false;M.err='';M.msg=em+' 주소로 초대 메일을 보냈습니다.';M.list=null;render()}
   catch(e){er.textContent=e.message}
  };
+ const mq=el.querySelector('#mq');
+ if(mq)mq.oninput=e=>{const pos=e.target.selectionStart;M.q=e.target.value;M.page=0;render();const n=document.getElementById('mq');if(n){n.focus();n.setSelectionRange(pos,pos)}};
+ const pp=el.querySelector('#mpprev');if(pp)pp.onclick=()=>{M.page--;render()};
+ const pn=el.querySelector('#mpnext');if(pn)pn.onclick=()=>{M.page++;render()};
  el.querySelectorAll('[data-edit]').forEach(b=>b.onclick=()=>{M.editing=b.dataset.edit;M.inviting=false;M.msg='';render()});
  const ecancel=el.querySelector('#ecancel');
  if(ecancel)ecancel.onclick=()=>{M.editing=null;render()};
  const esave=el.querySelector('#esave');
  if(esave)esave.onclick=async()=>{
-  const nm=el.querySelector('#en').value.trim(),p1=el.querySelector('#ep').value,p2=el.querySelector('#ep2').value;const er=el.querySelector('#eerr');
+  const nm=el.querySelector('#en').value.trim(),dp=el.querySelector('#ed').value.trim(),p1=el.querySelector('#ep').value,p2=el.querySelector('#ep2').value;const er=el.querySelector('#eerr');
   if(!nm){er.textContent='이름을 적어 주세요.';return}
   if(p1||p2){if(p1.length<8){er.textContent='비밀번호는 8자 이상이어야 합니다.';return}if(p1!==p2){er.textContent='비밀번호가 서로 다릅니다.';return}}
   er.textContent='저장하는 중…';
-  try{await adminCall({action:'update',email:editing.email,name:nm,password:p1||undefined});M.editing=null;M.msg=p1?'정보와 비밀번호를 저장했습니다.':'정보를 저장했습니다.';M.list=null;render()}
+  try{await adminCall({action:'update',email:editing.email,name:nm,dept:dp,password:p1||undefined});M.editing=null;M.msg=p1?'정보와 비밀번호를 저장했습니다.':'정보를 저장했습니다.';M.list=null;render()}
   catch(e){er.textContent=e.message}
  };
  return el;
@@ -1145,14 +1159,16 @@ function invitesView(){
  const pending=rows.filter(x=>x.email&&!x.mail_sent).length;
  const sentN=rows.filter(x=>x.mail_sent).length;
  const cell='font:inherit;font-size:12px;width:100%;padding:4px 6px;border:1px solid var(--line);border-radius:4px;background:var(--surface2)';
- const el=$(`<div><div class="panel"><p class="label">${esc(o.name||'')} · 명단과 개인 링크</p><h2>개인 링크 ${rows.length}개 · 완료 ${rows.filter(x=>x.done).length}</h2>${V.err?`<p class="err">${esc(V.err)}</p>`:''}${V.msg?`<p class="notice">${esc(V.msg)}</p>`:''}
+ const el=$(`<div><div class="row" style="margin:0 0 12px"><select id="isel" style="max-width:420px">${(st.orgs||[]).filter(x=>x.type!=='pulse').map(x=>`<option value="${esc(x.code)}"${x.code===V.code?' selected':''}>${esc(x.name)} (${esc(x.code)})</option>`).join('')}</select></div>
+ <div class="panel"><p class="label">${esc(o.name||'')} · 명단과 개인 링크</p><h2>안내 메일 발송</h2>${V.err?`<p class="err">${esc(V.err)}</p>`:''}${V.msg?`<p class="notice">${esc(V.msg)}</p>`:''}
   <p class="small muted" style="margin:0 0 10px">이메일 ${withMail}명 · 안내 메일 발송 ${sentN}명 · 미발송 ${pending}명</p>
   <div class="row"><button id="mprev">안내 메일 미리보기</button><button class="primary" id="msend" ${pending?'':'disabled'}>미발송 ${pending}명에게 메일 보내기</button><button id="dl">이름·부서·링크 내려받기 (CSV)</button><button id="back">진단 관리로</button></div>
   <p class="small" id="mmsg" style="margin:10px 0 0"></p>
   <div id="mbox"></div>
-  <table style="margin-top:10px"><tr><th>이름</th><th>부서</th><th>이메일</th><th>메일</th><th>상태</th><th>개인 링크</th></tr>${rows.map(x=>`<tr><td>${esc(x.name)}</td><td>${esc(x.dept||'')}</td><td>${esc(x.email||'–')}</td><td>${x.email?(x.mail_sent?'발송':'미발송'):'–'}</td><td>${x.done?'완료':'미완료'}</td><td><input type="text" readonly value="${pageBase()}#i/${esc(x.token)}" style="${cell}" onclick="this.select()"></td></tr>`).join('')}</table></div>
+  <table style="margin-top:10px"><tr><th>이름</th><th>부서</th><th>이메일</th><th>발송 상태</th><th>상태</th><th>개인 링크</th></tr>${rows.map(x=>`<tr><td>${esc(x.name)}</td><td>${esc(x.dept||'')}</td><td>${esc(x.email||'–')}</td><td>${x.email?(x.mail_sent?'발송 완료':x.mail_failed?'발송 실패':'미발송'):'–'}</td><td>${x.done?'완료':'미완료'}</td><td><input type="text" readonly value="${pageBase()}#i/${esc(x.token)}" style="${cell}" onclick="this.select()"></td></tr>`).join('')}</table></div>
   <div class="panel"><h3>명단 추가</h3><p class="small muted">한 줄에 ‘이름, 부서, 이메일’. 부서와 이메일은 비워도 됩니다.</p><textarea id="add" placeholder="홍길동, 영업, hong@company.com"></textarea><div class="row"><button id="addb">추가하고 개인 링크 만들기</button></div><p class="err" id="aerr"></p></div></div>`);
  el.querySelector('#back').onclick=openAdmin;
+ el.querySelector('#isel').onchange=e=>openInvites(e.target.value);
  el.querySelector('#dl').onclick=async()=>{const q=v=>`"${String(v??'').replace(/"/g,'""')}"`;const t='﻿'+[['이름','부서','이메일','개인 링크'],...rows.map(x=>[x.name,x.dept||'',x.email||'',pageBase()+'#i/'+x.token])].map(r=>r.map(q).join(',')).join('\n');try{await caps.downloads.save({filename:`POCA_개인링크_${o.name||V.code}.csv`,data:t})}catch(e){}};
  const mmsg=el.querySelector('#mmsg');
  el.querySelector('#mprev').onclick=async()=>{mmsg.textContent='미리보기를 불러오는 중…';try{const d=await adminCall({action:'mail_preview',code:V.code});el.querySelector('#mbox').innerHTML=`<div class="panel" style="margin-top:10px"><p class="small muted" style="margin:0 0 6px">제목: <b>${esc(d.subject)}</b></p><pre style="white-space:pre-wrap;font:inherit;font-size:14px;margin:0">${esc(d.text)}</pre></div>`;mmsg.textContent=''}catch(e){mmsg.textContent=e.message}};
@@ -1229,24 +1245,70 @@ function poneHrView(){
  el.querySelector('#rf').onclick=()=>{if(H.sample){H.data=sampleAtomic();render();return}H.data=null;render();loadPoneHr()};
  return el;
 }
-async function openPones(){st.pz={list:null,err:'',order:ONE_BANK.map(x=>({...x,on:true}))};st.screen='admin';st.adm='pones';render();
- if(!(caps.ext&&caps.ext.listPrograms)){st.pz.err='Atomic Culture는 웹사이트의 관리 화면에서만 만들 수 있습니다.';st.pz.list=[];render();return}
- try{st.pz.list=await caps.ext.listPrograms()}catch(e){st.pz.err='목록을 불러오지 못했습니다. (데이터베이스 설정 pulse_one_setup.sql이 필요합니다)';st.pz.list=[]}render()}
+function openPones(){st.screen='admin';st.adm='atomic';if(!st.pz||!st.pz.order)st.pz={list:null,listErr:'',err:'',order:ONE_BANK.map(x=>({...x,on:true}))};st.at=st.at||{list:null,loading:false,form:null,err:'',msg:''};render();loadPrograms()}
+async function loadPrograms(){const Z=st.pz;
+ if(!(caps.ext&&caps.ext.listPrograms)){Z.listErr='Atomic Culture는 웹사이트의 관리 화면에서만 만들 수 있습니다.';Z.list=[];render();return}
+ try{Z.list=await caps.ext.listPrograms();Z.listErr=''}catch(e){Z.listErr='목록을 불러오지 못했습니다. (데이터베이스 설정 pulse_one_setup.sql이 필요합니다)';Z.list=[]}render()}
+async function loadAtomic(){const A=st.at;A.loading=true;
+ try{const {data,error}=await sb.from('poca_atomic_items').select('id,name,area,org_code,active,created_at').order('created_at');if(error)throw error;A.list=data||[];A.err=''}
+ catch(e){A.list=A.list||[];A.err='항목을 불러오지 못했습니다. (관리자 설정 SQL poca_admin_pages.sql을 실행했는지 확인해 주세요)'}
+ finally{A.loading=false}
+ render();
+}
+function atomicView(){
+ const A=st.at||(st.at={list:null,loading:false,form:null,err:'',msg:''});
+ const Z=st.pz||(st.pz={list:null,listErr:'',err:'',order:ONE_BANK.map(x=>({...x,on:true}))});
+ if(A.list===null&&!A.loading)loadAtomic();
+ const list=A.list||[];
+ const orgs=(st.orgs||[]).filter(o=>o.type!=='pulse');
+ const inp='font:inherit;width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:4px;background:var(--surface);color:var(--ink)';
+ const editing=A.form&&A.form!=='new'?list.find(x=>x.id===A.form):null;
+ const orgName=code=>{const o=orgs.find(x=>x.code===code);return o?o.name:''};
+ const mStart=(()=>{const d=new Date();return new Date(d.getFullYear(),d.getMonth(),1).getTime()})();
+ const addedMonth=list.filter(x=>new Date(x.created_at).getTime()>=mStart).length;
+ const activeN=list.filter(x=>x.active).length;
+ const unlinkedN=list.filter(x=>!x.org_code).length;
+ const kpis=`<div class="akpis" style="margin-bottom:14px"><div class="akpi"><span>전체 항목</span><b>${list.length}</b><small>이번 달 +${addedMonth}</small></div><div class="akpi"><span>활성 항목</span><b>${activeN}</b><small>진단에 연결됨</small></div><div class="akpi"><span>미연결 항목</span><b>${unlinkedN}</b><small>연결 필요</small></div></div>`;
+ const form=A.form?`<div class="panel"><h3 style="margin:0 0 12px;font-size:18px">${editing?'항목 수정':'항목 추가'}</h3>
+  <label class="small" for="an">항목명</label><input type="text" id="an" maxlength="80" value="${esc(editing?editing.name:'')}" style="${inp}">
+  <div style="height:10px"></div><label class="small" for="aa">영역</label><input type="text" id="aa" maxlength="40" value="${esc((editing&&editing.area)||'')}" style="${inp}">
+  <div style="height:10px"></div><label class="small" for="ao">연결 진단</label><select id="ao" style="${inp}"><option value="">연결된 진단 없음</option>${orgs.map(o=>`<option value="${esc(o.code)}"${editing&&editing.org_code===o.code?' selected':''}>${esc(o.name)} (${esc(o.code)})</option>`).join('')}</select>
+  <div style="height:10px"></div><label class="small" for="as">상태</label><select id="as" style="${inp}"><option value="1"${!editing||editing.active?' selected':''}>활성</option><option value="0"${editing&&!editing.active?' selected':''}>비활성</option></select>
+  <p class="err" id="aerr"></p><div class="row"><button class="primary" id="asave">${editing?'저장':'추가'}</button><button id="acancel">취소</button></div></div>`:'';
+ const rows=list.map(x=>`<tr><td><b>${esc(x.name)}</b></td><td>${esc(x.area||'–')}</td><td>${x.org_code?esc(orgName(x.org_code)||x.org_code):'연결된 진단 없음'}</td><td><span style="display:inline-block;padding:3px 10px;border-radius:999px;font-size:12px;font-weight:700;background:${x.active?'#e7f3ea':'#eee'};color:${x.active?'#1e6b3a':'var(--muted)'}">${x.active?'활성':'비활성'}</span></td><td style="text-align:right"><button data-aedit="${esc(x.id)}">수정</button></td></tr>`).join('');
+ const table=A.list===null?'<p class="small muted">불러오는 중…</p>':list.length?`<table class="atbl"><thead><tr><th>항목명</th><th>영역</th><th>연결 진단</th><th>상태</th><th></th></tr></thead><tbody>${rows}</tbody></table>`:'<p class="small muted">항목이 없습니다.</p>';
+ const P=Z.list||[];
+ const progress=`<div class="panel"><h2>진행 중</h2>${P.map(p=>`<div class="act"><h3 style="margin:0">${esc(p.info.name)} <span class="small muted">· 코드 ${esc(p.code)} · 참여자 ${p.members??'–'}명 · ${p.weeks??0}주 진행</span></h3>
+   <p class="small" style="margin:6px 0 0">인사팀 링크<input type="text" readonly value="${pageBase()}#ph/${esc(p.code)}/${esc(p.info.hr)}" style="${inp};font-size:13px;background:var(--surface2)" onclick="this.select()"></p>
+   <div class="row" style="margin-top:6px">${p.weeks?'':`<button data-start="${esc(p.code)}">지금 첫 질문 보내기</button>`}<button data-pclose="${esc(p.code)}">${p.info.open===false?'다시 열기':'멈추기'}</button></div></div>`).join('')||'<p class="small muted">아직 없습니다.</p>'}</div>`;
+ const el=$(`<div><div class="ahead"><h2>Atomic Culture 관리</h2><div class="row"><button id="anew">항목 추가</button><button class="primary" id="gpnew">새 진단 만들기</button></div></div>
+  ${A.msg?`<p class="notice">${esc(A.msg)}</p>`:''}${A.err?`<p class="err">${esc(A.err)}</p>`:''}${Z.listErr?`<p class="err">${esc(Z.listErr)}</p>`:''}
+  ${kpis}${form}<div class="panel">${table}</div>${progress}</div>`);
+ el.querySelector('#anew').onclick=()=>{A.form='new';A.msg='';A.err='';render()};
+ el.querySelector('#gpnew').onclick=()=>{st.adm='pnew';render()};
+ el.querySelectorAll('[data-aedit]').forEach(b=>b.onclick=()=>{A.form=b.dataset.aedit;A.msg='';A.err='';render()});
+ const acancel=el.querySelector('#acancel');if(acancel)acancel.onclick=()=>{A.form=null;render()};
+ const asave=el.querySelector('#asave');
+ if(asave)asave.onclick=async()=>{const name=el.querySelector('#an').value.trim().slice(0,80);const er=el.querySelector('#aerr');
+  if(!name){er.textContent='항목명을 적어 주세요.';return}
+  const row={name,area:el.querySelector('#aa').value.trim().slice(0,40)||null,org_code:el.querySelector('#ao').value||null,active:el.querySelector('#as').value==='1'};
+  er.textContent='저장하는 중…';
+  try{const {error}=editing?await sb.from('poca_atomic_items').update(row).eq('id',editing.id):await sb.from('poca_atomic_items').insert(row);if(error)throw error;A.form=null;A.msg=(editing?'수정했습니다: ':'추가했습니다: ')+name;A.list=null;render()}
+  catch(e){er.textContent='저장하지 못했습니다. 다시 시도해 주세요.'}};
+ return el;
+}
 function ponesView(){
  const Z=st.pz;const inp='font:inherit;width:100%;padding:8px 10px;border:1px solid var(--line);border-radius:4px;background:var(--surface);color:var(--ink)';
  const el=$(`<div><div class="panel"><p class="label">Atomic Culture · 작은 습관의 변화가 문화를 바꿉니다</p><h2>새로 만들기</h2>
   <label class="small" for="pn">이름</label><input type="text" id="pn" maxlength="60" placeholder="예: 대덕전자 · Atomic Culture" style="${inp}">
   <div style="height:10px"></div><label class="small" for="pm">참여자 명단 (한 줄에 ‘이름, 부서, 전화번호’) · 전화번호는 문자 발송에만 쓰고 응답과 연결하지 않습니다</label><textarea id="pm" placeholder="홍길동, 영업, 010-1234-5678"></textarea>
-  <div class="row" style="margin-top:8px"><input type="file" id="pfile" accept=".xlsx,.xls,.csv"><span class="small muted" id="pfmsg">엑셀(.xlsx)·CSV 파일을 고르면 명단 칸에 채워집니다 (첫 줄에 ‘이름’ 열이 있으면 열 순서를 읽습니다)</span></div>
+  <div style="margin-top:10px;border:1px dashed var(--line);border-radius:10px;padding:22px;text-align:center;background:var(--surface2)"><p style="margin:0;font-weight:700">파일을 끌어다 놓거나 선택하세요</p><p class="small muted" style="margin:6px 0 12px">CSV, XLSX · 이름, 이메일, 부서 열 포함 · 최대 5,000명</p><label style="display:inline-block;padding:10px 16px;border:1px solid var(--red);border-radius:6px;color:var(--red);cursor:pointer;font-weight:700">파일 선택<input type="file" id="pfile" accept=".xlsx,.xls,.csv" style="display:none"></label><p class="small" id="pfmsg" style="margin:8px 0 0"></p></div>
   <div style="height:10px"></div><label class="small" for="porg">POCA 결과로 질문 순서 정하기 (선택)</label><div class="row"><select id="porg"><option value="">선택 안 함</option>${(st.orgs||[]).filter(o=>o.type!=='pulse').map(o=>`<option value="${esc(o.code)}">${esc(o.name)} (${esc(o.code)})</option>`).join('')}</select><button id="sortb">가장 바라는 문화부터 정렬</button></div>
   <p class="small" style="margin:12px 0 4px">질문 순서 (위에서부터 · ‘우리 팀’ 평균 7점 이상이거나 3주가 되면 다음 질문 · 체크한 것만 · 문구는 고칠 수 있습니다 · ⋮⋮을 끌어서 순서를 바꿀 수 있습니다). 네 문화는 POCA ‘조직의 현재와 미래’와 같습니다.</p>
   ${Z.order.map((x,i)=>`<div class="row" data-row="${i}" style="flex-wrap:nowrap;margin:4px 0;align-items:center"><span data-drag="${i}" draggable="true" title="끌어서 순서 바꾸기" style="cursor:grab;user-select:none;color:var(--muted);font-size:16px;letter-spacing:-2px;padding:0 4px">⋮⋮</span><input type="checkbox" data-on="${i}" ${x.on?'checked':''}><span class="small muted" style="min-width:150px">${esc(ONE_CN[x.c])}${x.gap!=null?' · 차이 '+(x.gap>=0?'+':'')+Math.round(x.gap):''}</span><input type="text" data-q="${i}" value="${esc(x.q)}" maxlength="80" style="${inp}"></div>`).join('')}
   <p class="err" id="perr">${esc(Z.err)}</p><div class="row"><button class="primary" id="pmk">만들기</button></div></div>
-  <div class="panel"><h2>진행 중</h2>${(Z.list||[]).map(p=>`<div class="act"><h3 style="margin:0">${esc(p.info.name)} <span class="small muted">· 코드 ${esc(p.code)} · 참여자 ${p.members??'–'}명 · ${p.weeks??0}주 진행</span></h3>
-   <p class="small" style="margin:6px 0 0">인사팀 링크<input type="text" readonly value="${pageBase()}#ph/${esc(p.code)}/${esc(p.info.hr)}" style="${inp};font-size:13px;background:var(--surface2)" onclick="this.select()"></p>
-   <div class="row" style="margin-top:6px">${p.weeks?'':`<button data-start="${esc(p.code)}">지금 첫 질문 보내기</button>`}<button data-pclose="${esc(p.code)}">${p.info.open===false?'다시 열기':'멈추기'}</button></div></div>`).join('')||'<p class="small muted">아직 없습니다.</p>'}</div>
   <div class="row"><button id="back">진단 관리로</button></div></div>`);
- el.querySelector('#back').onclick=()=>{st.adm='diag';openAdmin()};
+ el.querySelector('#back').onclick=()=>{openPones()};
  let dragFrom=null;
  el.querySelectorAll('[data-drag]').forEach(h=>{h.ondragstart=e=>{dragFrom=+h.dataset.drag;e.dataTransfer.effectAllowed='move';try{e.dataTransfer.setData('text/plain',String(dragFrom))}catch(_){}const row=h.closest('[data-row]');if(row)e.dataTransfer.setDragImage(row,20,20)};h.ondragend=()=>{dragFrom=null}});
  el.querySelectorAll('[data-row]').forEach(r=>{r.ondragover=e=>{if(dragFrom==null)return;e.preventDefault();e.dataTransfer.dropEffect='move'};r.ondrop=e=>{e.preventDefault();if(dragFrom==null)return;const from=dragFrom,to=+r.dataset.row;dragFrom=null;if(from===to)return;const [m]=Z.order.splice(from,1);Z.order.splice(to,0,m);render()}});
@@ -1265,8 +1327,6 @@ function ponesView(){
   const A='ACDEFGHJKMNPQRTUVWXY3479';const code='P'+Array.from({length:5},()=>A[Math.floor(Math.random()*A.length)]).join('');
   try{await caps.ext.createProgram(code,{name,items,hr:rnd20(),base:pageBase(),open:true,org_code:el.querySelector('#porg').value||null});await caps.ext.addMembers(code,mem);
    if(noPh)alertLike(el,`${noPh}명은 전화번호가 없어 문자를 받지 못합니다.`);openPones()}catch(e){er.textContent='만들지 못했습니다.'}};
- el.querySelectorAll('[data-start]').forEach(b=>b.onclick=async()=>{b.disabled=true;try{await caps.ext.startNow(b.dataset.start)}catch(e){}openPones()});
- el.querySelectorAll('[data-pclose]').forEach(b=>b.onclick=async()=>{const p=Z.list.find(x=>x.code===b.dataset.pclose);try{await caps.ext.setProgram(p.code,{...p.info,open:p.info.open===false})}catch(e){}openPones()});
  return el;
 }
 function sampleAtomic(){
