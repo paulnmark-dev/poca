@@ -205,6 +205,9 @@ textarea{border-radius:6px;padding:12px 16px}
 .adash{display:grid;grid-template-columns:232px minmax(0,1fr);min-height:100vh;margin:-28px -20px -80px;background:var(--bg)}
 .anav{background:var(--surface);border-right:1px solid var(--line);padding:24px 14px;display:flex;flex-direction:column;gap:4px;position:sticky;top:0;height:100vh}
 .abrand{font-weight:800;font-size:15px;letter-spacing:.5px;margin:0 10px 18px}
+.alink{color:inherit;text-decoration:none}
+.alogo:hover .asub{color:var(--ink)}
+.asub{font-weight:600;font-size:12px;letter-spacing:.8px;color:var(--muted)}
 .anav>button{display:flex;align-items:center;gap:10px;text-align:left;border:none;background:none;padding:9px 12px;border-radius:6px;font-size:15px;color:var(--ink);font-weight:500}
 .anav>button:hover{background:var(--surface2)}
 .anav>button.on{background:var(--brandT);color:var(--brand);font-weight:700}
@@ -699,13 +702,14 @@ function admIcon(k,on){return `<span class="aico" aria-hidden="true"><svg xmlns=
 function adminView(){
  const sec=st.adm||'dash';
  const email=caps.userEmail||'';
- const el=$(`<div class="adash${st.admMenu?' open':''}"><header class="atop"><b>POCA</b><button class="abtn" id="amenu" aria-expanded="${!!st.admMenu}">${ADM_MENU}<span>메뉴</span></button></header><aside class="anav"><p class="abrand">POCA</p>${ADM_NAV.map(([k,t])=>`<button data-nav="${k}" class="${sec===k?'on':''}"${sec===k?' aria-current="page"':''}>${admIcon(k,sec===k)}<span>${t}</span></button>`).join('')}<div class="aspacer"></div><div class="aprof"><div class="apop" id="apop" hidden><button id="aedit">정보 수정</button><button id="alogout" class="lo">로그아웃</button></div><button class="aprofbtn" id="aprof" aria-expanded="false"><span class="aav">${esc(email?email[0].toUpperCase():'M')}</span><span class="ainfo"><b>${esc(email||'관리자')}</b><small>매니저</small></span>${ADM_CHEV}</button></div></aside><main class="amain"></main></div>`);
+ const el=$(`<div class="adash${st.admMenu?' open':''}"><header class="atop"><a href="#" class="alink alogo" id="ahome2">POCA <span class="asub">ADMIN</span></a><button class="abtn" id="amenu" aria-expanded="${!!st.admMenu}">${ADM_MENU}<span>메뉴</span></button></header><aside class="anav"><p class="abrand"><a href="#" class="alink alogo" id="ahome">POCA <span class="asub">ADMIN</span></a></p>${ADM_NAV.map(([k,t])=>`<button data-nav="${k}" class="${sec===k?'on':''}"${sec===k?' aria-current="page"':''}>${admIcon(k,sec===k)}<span>${t}</span></button>`).join('')}<div class="aspacer"></div><div class="aprof"><div class="apop" id="apop" hidden><button id="aedit">정보 수정</button><button id="alogout" class="lo">로그아웃</button></div><button class="aprofbtn" id="aprof" aria-expanded="false"><span class="aav">${esc(email?email[0].toUpperCase():'M')}</span><span class="ainfo"><b>${esc(email||'관리자')}</b><small>매니저</small></span>${ADM_CHEV}</button></div></aside><main class="amain"></main></div>`);
  const fn={dash:dashSection,diag:diagSection,new:newDiagSection,clients:clientsSection,pones:ponesSection,managers:managersSection,settings:settingsSection}[sec]||dashSection;
  el.querySelector('.amain').append(fn());
  el.querySelectorAll('[data-nav]').forEach(b=>b.onclick=()=>{const k=b.dataset.nav;if(k==='pones'){openPones();return}st.adm=k;st.admMenu=false;render()});
+ el.querySelectorAll('#ahome,#ahome2').forEach(a=>a.onclick=e=>{e.preventDefault();st.adm='dash';st.admMenu=false;render()});
  el.querySelector('#amenu').onclick=()=>{st.admMenu=!st.admMenu;render()};
  el.querySelector('#aprof').onclick=()=>{const p=el.querySelector('#apop');p.hidden=!p.hidden;el.querySelector('#aprof').setAttribute('aria-expanded',String(!p.hidden))};
- el.querySelector('#aedit').onclick=()=>{window.alert('정보 수정 화면은 아직 준비 중입니다.')};
+ el.querySelector('#aedit').onclick=()=>{st.mgr=st.mgr||{list:null,err:'',msg:'',loading:false,inviting:false,editing:null};st.mgr.editing=caps.userEmail;st.mgr.inviting=false;st.mgr.msg='';st.adm='managers';st.admMenu=false;render()};
  el.querySelector('#alogout').onclick=async()=>{try{if(sb)await sb.auth.signOut()}catch(e){}caps.canEdit=false;caps.userEmail='';st.admMenu=false;st.screen='landing';render()};
  return el;
 }
@@ -737,8 +741,66 @@ function ponesSection(){
  if(!st.pz)return $(`<div><p class="small muted">불러오는 중…</p></div>`);
  return ponesView();
 }
+async function adminCall(body){
+ const {data,error}=await sb.functions.invoke('admin-manage',{body});
+ if(error){let m='요청을 처리하지 못했습니다.';try{const j=await error.context.json();if(j&&j.error)m=j.error}catch(_){}throw new Error(m)}
+ if(data&&data.error)throw new Error(data.error);
+ return data;
+}
+async function loadManagers(){
+ const M=st.mgr;M.loading=true;
+ try{const {data,error}=await sb.rpc('poca_admin_list');if(error)throw error;M.list=data||[];M.err=''}
+ catch(e){M.list=M.list||[];M.err='관리자 목록을 불러오지 못했습니다. (관리자 설정 SQL을 실행했는지 확인해 주세요)'}
+ finally{M.loading=false}
+ render();
+}
+function admLastLogin(ts){return ts?new Date(ts).toLocaleString('ko-KR',{dateStyle:'medium',timeStyle:'short'}):'아직 접속 기록 없음'}
 function managersSection(){
- return $(`<div><p class="label">매니저</p><h2>관리자 계정</h2><div class="panel"><p>관리자 목록은 Supabase의 <code>poca_admins</code> 표에서 관리합니다. 이 화면에서 추가·삭제하는 기능은 아직 없습니다.</p><p class="small muted">관리자로 등록된 이메일만 이 화면에 들어올 수 있습니다.</p></div></div>`);
+ const M=st.mgr||(st.mgr={list:null,err:'',msg:'',loading:false,inviting:false,editing:null});
+ if(M.list===null&&!M.loading)loadManagers();
+ const list=M.list||[];
+ const editing=M.editing?(list.find(x=>x.email===M.editing)||{email:M.editing,name:''}):null;
+ const inp='font:inherit;width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:4px;background:var(--surface);color:var(--ink)';
+ const invForm=`<div class="panel"><h3 style="margin:0 0 6px;font-size:18px">매니저 초대</h3><p class="small muted">입력한 이메일로 초대 메일이 갑니다. 메일의 링크에서 비밀번호를 정하면 관리자 화면에 들어올 수 있습니다.</p>
+  <label class="small" for="ie">이메일</label><input type="email" id="ie" maxlength="120" style="${inp}">
+  <div style="height:10px"></div><label class="small" for="in">이름</label><input type="text" id="in" maxlength="40" style="${inp}">
+  <p class="err" id="ierr"></p><div class="row"><button class="primary" id="isend">초대 보내기</button><button id="icancel">취소</button></div></div>`;
+ const editForm=editing?`<div class="panel"><h3 style="margin:0 0 6px;font-size:18px">정보 수정</h3><p class="small muted">${esc(editing.email)}</p>
+  <label class="small" for="en">이름</label><input type="text" id="en" maxlength="40" value="${esc(editing.name||'')}" style="${inp}">
+  <div style="height:10px"></div><label class="small" for="ep">새 비밀번호 (바꿀 때만 입력 · 8자 이상)</label><input type="password" id="ep" autocomplete="new-password" style="${inp}">
+  <div style="height:10px"></div><label class="small" for="ep2">새 비밀번호 확인</label><input type="password" id="ep2" autocomplete="new-password" style="${inp}">
+  <p class="err" id="eerr"></p><div class="row"><button class="primary" id="esave">저장</button><button id="ecancel">취소</button></div></div>`:'';
+ const rows=list.map(x=>`<tr><td><b>${esc(x.name||'–')}</b></td><td>${esc(x.email)}${x.email===(caps.userEmail||'').toLowerCase()?' <span class="small muted">(나)</span>':''}</td><td>${admLastLogin(x.last_sign_in_at)}</td><td style="text-align:right"><button data-edit="${esc(x.email)}">정보 수정</button></td></tr>`).join('');
+ const el=$(`<div><div class="ahead"><h2>매니저</h2>${M.inviting||editing?'':'<button class="primary" id="minv">매니저 초대</button>'}</div>
+  ${M.msg?`<p class="notice">${esc(M.msg)}</p>`:''}${M.err?`<p class="err">${esc(M.err)}</p>`:''}
+  ${M.inviting?invForm:''}${editForm}
+  <div class="panel">${M.list===null?'<p class="small muted">불러오는 중…</p>':list.length?`<table class="atbl"><thead><tr><th>이름</th><th>이메일</th><th>최근 접속일</th><th></th></tr></thead><tbody>${rows}</tbody></table>`:'<p class="small muted">등록된 매니저가 없습니다.</p>'}</div></div>`);
+ const minv=el.querySelector('#minv');
+ if(minv)minv.onclick=()=>{M.inviting=true;M.editing=null;M.msg='';M.err='';render()};
+ const icancel=el.querySelector('#icancel');
+ if(icancel)icancel.onclick=()=>{M.inviting=false;render()};
+ const isend=el.querySelector('#isend');
+ if(isend)isend.onclick=async()=>{
+  const em=el.querySelector('#ie').value.trim().toLowerCase(),nm=el.querySelector('#in').value.trim();const er=el.querySelector('#ierr');
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)){er.textContent='이메일 형식을 확인해 주세요.';return}
+  if(!nm){er.textContent='이름을 적어 주세요.';return}
+  er.textContent='초대 메일을 보내는 중…';
+  try{await adminCall({action:'invite',email:em,name:nm});M.inviting=false;M.err='';M.msg=em+' 주소로 초대 메일을 보냈습니다.';M.list=null;render()}
+  catch(e){er.textContent=e.message}
+ };
+ el.querySelectorAll('[data-edit]').forEach(b=>b.onclick=()=>{M.editing=b.dataset.edit;M.inviting=false;M.msg='';render()});
+ const ecancel=el.querySelector('#ecancel');
+ if(ecancel)ecancel.onclick=()=>{M.editing=null;render()};
+ const esave=el.querySelector('#esave');
+ if(esave)esave.onclick=async()=>{
+  const nm=el.querySelector('#en').value.trim(),p1=el.querySelector('#ep').value,p2=el.querySelector('#ep2').value;const er=el.querySelector('#eerr');
+  if(!nm){er.textContent='이름을 적어 주세요.';return}
+  if(p1||p2){if(p1.length<8){er.textContent='비밀번호는 8자 이상이어야 합니다.';return}if(p1!==p2){er.textContent='비밀번호가 서로 다릅니다.';return}}
+  er.textContent='저장하는 중…';
+  try{await adminCall({action:'update',email:editing.email,name:nm,password:p1||undefined});M.editing=null;M.msg=p1?'정보와 비밀번호를 저장했습니다.':'정보를 저장했습니다.';M.list=null;render()}
+  catch(e){er.textContent=e.message}
+ };
+ return el;
 }
 function settingsSection(){
  const el=$(`<div><p class="label">설정</p><h2>관리 설정</h2><div class="panel"><p class="small muted">익명 기준(3명 · 5명)과 인사 담당자 보고서 공개 여부는 진단을 만들 때 정합니다. 전체 설정 화면은 준비 중입니다.</p><div class="row" style="margin-top:12px"><button id="lo">로그아웃</button></div></div></div>`);
