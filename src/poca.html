@@ -1277,12 +1277,6 @@ function openPones(){st.screen='admin';st.adm='atomic';if(!st.pz||!st.pz.order)s
 async function loadPrograms(){const Z=st.pz;
  if(!(caps.ext&&caps.ext.listPrograms)){Z.listErr='Atomic Culture는 웹사이트의 관리 화면에서만 만들 수 있습니다.';Z.list=[];render();return}
  try{Z.list=await caps.ext.listPrograms();Z.listErr=''}catch(e){Z.listErr='목록을 불러오지 못했습니다. (데이터베이스 설정 pulse_one_setup.sql이 필요합니다)';Z.list=[]}render()}
-async function loadAtomic(){const A=st.at;A.loading=true;
- try{const {data,error}=await sb.from('poca_atomic_items').select('id,name,area,org_code,active,created_at').order('created_at');if(error)throw error;A.list=data||[];A.err=''}
- catch(e){A.list=A.list||[];A.err='항목을 불러오지 못했습니다. (관리자 설정 SQL poca_admin_pages.sql을 실행했는지 확인해 주세요)'}
- finally{A.loading=false}
- render();
-}
 function atomicView(){
  const Z=st.pz||(st.pz={list:null,listErr:'',err:'',order:ONE_BANK.map(x=>({...x,on:true}))});
  const P=Z.list||[];
