@@ -660,7 +660,7 @@ function newDiagSection(){
   <div style="height:10px"></div><label class="small" for="hc">대상 인원 (참여율 계산용, 선택)</label><input type="text" id="hc" inputmode="numeric" maxlength="6" style="font:inherit;max-width:160px;padding:10px 12px;border:1px solid var(--line);border-radius:4px;background:var(--surface);color:var(--ink)">
   <div style="height:10px"></div><label class="small" for="mn">익명 기준 (이보다 적은 그룹은 결과를 가림)</label><select id="mn"><option value="3" selected>3명 (기본)</option><option value="5">5명 (더 엄격)</option></select>
   <div style="height:10px"></div><label class="small" for="roster">직원 명단 (선택 · 한 줄에 ‘이름, 부서, 이메일’ · 부서와 이메일은 비워도 됩니다) · 넣으면 사람마다 개인 링크가 생기고, 이메일이 있으면 참여 안내 메일을 보낼 수 있습니다. 부서 목록은 명단에서 자동으로 만듭니다.</label><textarea id="roster" placeholder="홍길동, 영업, hong@company.com&#10;김철수, 생산"></textarea>
-  <div style="margin-top:10px;border:1px dashed var(--line);border-radius:10px;padding:22px;text-align:center;background:var(--surface2)"><p style="margin:0;font-weight:700">파일을 끌어다 놓거나 선택하세요</p><p class="small muted" style="margin:6px 0 12px">CSV, XLSX · 이름, 이메일, 부서 열 포함 · 최대 5,000명</p><label style="display:inline-block;padding:10px 16px;border:1px solid var(--red);border-radius:6px;color:var(--red);cursor:pointer;font-weight:700">파일 선택<input type="file" id="rfile" accept=".xlsx,.xls,.csv" style="display:none"></label><p class="small" id="rfmsg" style="margin:8px 0 0"></p></div><p class="small muted" id="rsum" style="margin:6px 0 0"></p>
+  <div style="margin-top:10px;border:1px dashed #d1d5db;border-radius:12px;padding:32px 24px;text-align:center;background:#fafbfc"><p style="margin:0;font-size:15px;font-weight:500;color:#111">파일을 끌어다 놓거나 선택하세요</p><p style="margin:8px 0 16px;font-size:13px;color:#6b7280">CSV, XLSX · 이름, 이메일, 부서 열 포함 · 최대 5,000명</p><label style="display:inline-block;padding:10px 16px;border:1px solid #c61c2c;border-radius:6px;color:#c61c2c;cursor:pointer;font-size:14px;font-weight:500">파일 선택<input type="file" id="rfile" accept=".xlsx,.xls,.csv" style="display:none"></label><p class="small" id="rfmsg" style="margin:8px 0 0"></p></div><p class="small muted" id="rsum" style="margin:6px 0 0"></p>
   <div style="height:10px"></div><label class="chk" style="max-width:none;border:1px solid var(--line);border-radius:12px;padding:16px 18px;background:#fff"><input type="checkbox" id="hrRep"><span><b>인사 담당자에게 결과 보고서 공개</b> (끄면 인사 담당자는 응답 현황만 봅니다. 나중에 바꿀 수 있습니다)</span></label>
   <div style="height:14px"></div><label class="chk" style="max-width:none;border:1px solid var(--line);border-radius:12px;padding:16px 18px;background:#fff"><input type="checkbox" id="isPilot"><span><b>시범 운영</b> (응답 시간을 기록하고, 헷갈린 문항 의견을 받습니다)</span></label>
   <div style="height:10px"></div><label class="small" for="base">비교할 이전 진단 (재진단일 때 선택)</label><select id="base"><option value="">없음</option>${st.orgs.filter(o=>o.type!=='pulse').map(o=>`<option value="${esc(o.code)}">${esc(o.name)} (${esc(o.code)})</option>`).join('')}</select>
@@ -672,6 +672,7 @@ function newDiagSection(){
   out.textContent=P.rows.length?`${P.rows.length}명 · 부서 ${P.depts.length}개 · 이메일 없음 ${P.noMail}명`+(P.errors.length?` · 확인할 줄 ${P.errors.length}개 (${P.errors[0]})`:''):'';
   out.style.color=P.errors.length?'var(--navy)':'';};
  el.querySelector('#roster').oninput=rsumUpdate;
+ rosterGrid(el,'roster',['이름','부서','이메일']);
  bindRosterFile(el,'rfile','rfmsg','roster','mail');
  el.querySelector('#mk').onclick=async()=>{
   const client=clients.find(c=>c.id===el.querySelector('#cl').value);if(!client){el.querySelector('#aerr').textContent='고객사를 골라 주세요. 없으면 고객사 관리에서 먼저 등록해 주세요.';return}
@@ -700,11 +701,36 @@ async function sheetToLines(file,mode){
   if(f(/이름|성명/)>=0){col.name=f(/이름|성명/);rows=rows.slice(1);col.dept=f(/부서/);col.extra=mode==='mail'?f(/이메일|메일|email/i):f(/전화|연락처|휴대|핸드폰/)}}
  return rows.map(r=>{const parts=[r[col.name]||'',col.dept>=0?r[col.dept]||'':'',col.extra>=0?r[col.extra]||'':''].map(x=>x.replace(/[,\n\t]/g,' ').trim());while(parts.length&&!parts[parts.length-1])parts.pop();return parts.join(', ')}).filter(l=>l&&!/^,/.test(l));
 }
+function rosterGrid(el,taId,cols){
+ const ta=el.querySelector('#'+taId);if(!ta)return;
+ ta.style.display='none';
+ const box=document.createElement('div');box.className='rgrid';ta.parentNode.insertBefore(box,ta.nextSibling);
+ const cell='font:inherit;width:100%;padding:6px 8px;border:0;background:transparent;color:var(--ink);outline:none';
+ const parse=()=>String(ta.value||'').split('\n').map(l=>l.trim()).filter(Boolean).map(l=>{const a=l.split(/[,\t]/).map(x=>x.trim());while(a.length<cols.length)a.push('');return a.slice(0,cols.length)});
+ let rows=parse();
+ const sync=()=>{ta.value=rows.filter(r=>r.some(x=>x)).map(r=>r.join(', ')).join('\n');ta.dispatchEvent(new Event('input'))};
+ const draw=()=>{
+  box.innerHTML=`<div style="border:1px solid var(--line);border-radius:6px;overflow:auto;max-height:340px;background:var(--surface)"><table style="width:100%;border-collapse:collapse;font-size:14px"><thead><tr><th style="width:44px;background:var(--surface2);border-bottom:1px solid var(--line);padding:6px;font-size:12px;color:var(--muted)">#</th>${cols.map(c=>`<th style="text-align:left;background:var(--surface2);border-bottom:1px solid var(--line);border-left:1px solid var(--line);padding:6px 8px;font-size:12px;color:var(--muted)">${esc(c)}</th>`).join('')}<th style="width:44px;background:var(--surface2);border-bottom:1px solid var(--line)"></th></tr></thead><tbody>${rows.map((r,i)=>`<tr><td style="text-align:center;color:var(--muted);font-size:12px;border-bottom:1px solid var(--line);padding:0 6px">${i+1}</td>${r.map((v,j)=>`<td style="border-bottom:1px solid var(--line);border-left:1px solid var(--line);padding:0"><input data-r="${i}" data-c="${j}" value="${esc(v)}" placeholder="${j===0?'이름':''}" style="${cell}"></td>`).join('')}<td style="text-align:center;border-bottom:1px solid var(--line)"><button data-del="${i}" style="border:0;background:none;color:var(--muted);cursor:pointer;padding:4px 8px">×</button></td></tr>`).join('')}</tbody></table></div>
+  <div class="row" style="margin-top:8px;justify-content:space-between"><span class="small muted">${rows.length}행 · 엑셀에서 복사해 칸을 누르고 붙여넣을 수 있습니다</span><button id="rgadd" type="button">행 추가</button></div>`;
+  box.querySelectorAll('input').forEach(inp=>{
+   inp.oninput=()=>{rows[+inp.dataset.r][+inp.dataset.c]=inp.value;sync()};
+   inp.onpaste=e=>{const t=(e.clipboardData||window.clipboardData).getData('text');if(!/[\n\t]/.test(t))return;e.preventDefault();
+    const r0=+inp.dataset.r,c0=+inp.dataset.c;const block=t.replace(/\r/g,'').split('\n').filter(x=>x.length).map(l=>l.split('\t'));
+    block.forEach((cells,dr)=>{const ri=r0+dr;while(rows.length<=ri)rows.push(cols.map(()=>''));cells.forEach((v,dc)=>{if(c0+dc<cols.length)rows[ri][c0+dc]=v.trim()})});
+    sync();draw()};
+  });
+  box.querySelectorAll('[data-del]').forEach(b=>b.onclick=()=>{rows.splice(+b.dataset.del,1);if(!rows.length)rows.push(cols.map(()=>''));sync();draw()});
+  box.querySelector('#rgadd').onclick=()=>{rows.push(cols.map(()=>''));draw()};
+ };
+ ta._reload=()=>{rows=parse();draw()};
+ rows=parse();if(!rows.length)rows.push(cols.map(()=>''));
+ draw();
+}
 function bindRosterFile(el,inputId,msgId,textareaId,mode){
  const f=el.querySelector('#'+inputId);if(!f)return;
  f.onchange=async()=>{const file=f.files[0];if(!file)return;const m=el.querySelector('#'+msgId);m.textContent='파일을 읽는 중…';
   try{const lines=await sheetToLines(file,mode);if(!lines.length)throw new Error('읽을 수 있는 줄이 없습니다. 첫 열에 이름이 있는지 확인해 주세요.');if(lines.length>5000)throw new Error('한 번에 5,000명까지 올릴 수 있습니다. 나눠서 올려 주세요.');
-   const ta=el.querySelector('#'+textareaId);ta.value=(ta.value.trim()?ta.value.trim()+'\n':'')+lines.join('\n');ta.dispatchEvent(new Event('input'));
+   const ta=el.querySelector('#'+textareaId);ta.value=(ta.value.trim()?ta.value.trim()+'\n':'')+lines.join('\n');if(ta._reload)ta._reload();ta.dispatchEvent(new Event('input'));
    m.textContent=lines.length+'명을 명단에 넣었습니다. 내용을 확인한 뒤 만드세요.'}
   catch(e){m.textContent=e.message||'파일을 읽지 못했습니다.'}
   f.value='';};
@@ -738,7 +764,7 @@ function diagSection(){
  el.querySelectorAll('[data-tog]').forEach(b=>b.onclick=async()=>{const o=st.orgs.find(x=>x.code===b.dataset.tog);try{await caps.db.doc('poca_orgs/'+o.code).update({open:o.open===false});openAdmin()}catch(e){}});
  return el;
 }
-const ADM_NAV=[['dash','대시보드'],['diag','진단관리'],['clients','고객사'],['pones','Atomic Culture 관리'],['managers','매니저'],['settings','설정']];
+const ADM_NAV=[['dash','대시보드'],['diag','POCA 관리'],['clients','고객사'],['pones','Atomic Culture 관리'],['managers','매니저'],['settings','설정']];
 const ADM_ICO={dash:'<rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/>',diag:'<rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="M9 12h6M9 16h6"/>',clients:'<path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v8h4M18 9h2a2 2 0 0 1 2 2v11h-4"/><path d="M10 6h4M10 10h4M10 14h4M10 18h4"/>',pones:'<path d="M11 20A7 7 0 0 1 9.8 6.9C15.5 4.9 17 3.5 19 2c1 2 2 4.2 2 8 0 5.5-4.5 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/>',managers:'<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>',settings:'<line x1="21" x2="14" y1="4" y2="4"/><line x1="10" x2="3" y1="4" y2="4"/><line x1="21" x2="12" y1="12" y2="12"/><line x1="8" x2="3" y1="12" y2="12"/><line x1="21" x2="16" y1="20" y2="20"/><line x1="12" x2="3" y1="20" y2="20"/><line x1="14" x2="14" y1="2" y2="6"/><line x1="8" x2="8" y1="10" y2="14"/><line x1="16" x2="16" y1="18" y2="22"/>'};
 const ADM_MENU='<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5B6270" stroke-width="1.75" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg>';
 const ADM_CHEV='<svg class="achev" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#5B6270" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>';
@@ -1266,39 +1292,24 @@ function atomicView(){
  const list=A.list||[];
  const orgs=(st.orgs||[]).filter(o=>o.type!=='pulse');
  const inp='font:inherit;width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:4px;background:var(--surface);color:var(--ink)';
- const editing=A.form&&A.form!=='new'?list.find(x=>x.id===A.form):null;
  const orgName=code=>{const o=orgs.find(x=>x.code===code);return o?o.name:''};
  const mStart=(()=>{const d=new Date();return new Date(d.getFullYear(),d.getMonth(),1).getTime()})();
  const addedMonth=list.filter(x=>new Date(x.created_at).getTime()>=mStart).length;
  const activeN=list.filter(x=>x.active).length;
  const unlinkedN=list.filter(x=>!x.org_code).length;
  const kpis=`<div class="akpis" style="margin-bottom:14px"><div class="akpi"><span>전체 항목</span><b>${list.length}</b><small>이번 달 +${addedMonth}</small></div><div class="akpi"><span>활성 항목</span><b>${activeN}</b><small>진단에 연결됨</small></div><div class="akpi"><span>미연결 항목</span><b>${unlinkedN}</b><small>연결 필요</small></div></div>`;
- const form=A.form?`<div class="panel"><h3 style="margin:0 0 12px;font-size:18px">${editing?'항목 수정':'항목 추가'}</h3>
-  <label class="small" for="an">항목명</label><input type="text" id="an" maxlength="80" value="${esc(editing?editing.name:'')}" style="${inp}">
-  <div style="height:10px"></div><label class="small" for="aa">영역</label><input type="text" id="aa" maxlength="40" value="${esc((editing&&editing.area)||'')}" style="${inp}">
-  <div style="height:10px"></div><label class="small" for="ao">연결 진단</label><select id="ao" style="${inp}"><option value="">연결된 진단 없음</option>${orgs.map(o=>`<option value="${esc(o.code)}"${editing&&editing.org_code===o.code?' selected':''}>${esc(o.name)} (${esc(o.code)})</option>`).join('')}</select>
-  <div style="height:10px"></div><label class="small" for="as">상태</label><select id="as" style="${inp}"><option value="1"${!editing||editing.active?' selected':''}>활성</option><option value="0"${editing&&!editing.active?' selected':''}>비활성</option></select>
-  <p class="err" id="aerr"></p><div class="row"><button class="primary" id="asave">${editing?'저장':'추가'}</button><button id="acancel">취소</button></div></div>`:'';
- const rows=list.map(x=>`<tr><td><b>${esc(x.name)}</b></td><td>${esc(x.area||'–')}</td><td>${x.org_code?esc(orgName(x.org_code)||x.org_code):'연결된 진단 없음'}</td><td><span style="display:inline-block;padding:3px 10px;border-radius:999px;font-size:12px;font-weight:700;background:${x.active?'#e7f3ea':'#eee'};color:${x.active?'#1e6b3a':'var(--muted)'}">${x.active?'활성':'비활성'}</span></td><td style="text-align:right"><button data-aedit="${esc(x.id)}">수정</button></td></tr>`).join('');
+ const rows=list.map(x=>`<tr><td><b>${esc(x.name)}</b></td><td>${esc(x.area||'–')}</td><td>${x.org_code?esc(orgName(x.org_code)||x.org_code):'연결된 진단 없음'}</td><td><span style="display:inline-block;padding:3px 10px;border-radius:999px;font-size:12px;font-weight:700;background:${x.active?'#e7f3ea':'#eee'};color:${x.active?'#1e6b3a':'var(--muted)'}">${x.active?'활성':'비활성'}</span></td><td></td></tr>`).join('');
  const table=A.list===null?'<p class="small muted">불러오는 중…</p>':list.length?`<table class="atbl"><thead><tr><th>항목명</th><th>영역</th><th>연결 진단</th><th>상태</th><th></th></tr></thead><tbody>${rows}</tbody></table>`:'<p class="small muted">항목이 없습니다.</p>';
  const P=Z.list||[];
  const progress=`<div class="panel"><h2>진행 중</h2>${P.map(p=>`<div class="act"><h3 style="margin:0">${esc(p.info.name)} <span class="small muted">· 코드 ${esc(p.code)} · 참여자 ${p.members??'–'}명 · ${p.weeks??0}주 진행</span></h3>
    <p class="small" style="margin:6px 0 0">인사팀 링크<input type="text" readonly value="${pageBase()}#ph/${esc(p.code)}/${esc(p.info.hr)}" style="${inp};font-size:13px;background:var(--surface2)" onclick="this.select()"></p>
    <div class="row" style="margin-top:6px">${p.weeks?'':`<button data-start="${esc(p.code)}">지금 첫 질문 보내기</button>`}<button data-pclose="${esc(p.code)}">${p.info.open===false?'다시 열기':'멈추기'}</button></div></div>`).join('')||'<p class="small muted">아직 없습니다.</p>'}</div>`;
- const el=$(`<div><div class="ahead"><h2>Atomic Culture 관리</h2><div class="row"><button id="anew">항목 추가</button><button class="primary" id="gpnew">새 진단 만들기</button></div></div>
+ const el=$(`<div><div class="ahead"><h2>Atomic Culture 관리</h2><div class="row"><button class="primary" id="gpnew">새 진단 만들기</button></div></div>
   ${A.msg?`<p class="notice">${esc(A.msg)}</p>`:''}${A.err?`<p class="err">${esc(A.err)}</p>`:''}${Z.listErr?`<p class="err">${esc(Z.listErr)}</p>`:''}
-  ${kpis}${form}<div class="panel">${table}</div>${progress}</div>`);
- el.querySelector('#anew').onclick=()=>{A.form='new';A.msg='';A.err='';render()};
+  ${kpis}<div class="panel">${table}</div>${progress}</div>`);
  el.querySelector('#gpnew').onclick=()=>{st.adm='pnew';render()};
- el.querySelectorAll('[data-aedit]').forEach(b=>b.onclick=()=>{A.form=b.dataset.aedit;A.msg='';A.err='';render()});
- const acancel=el.querySelector('#acancel');if(acancel)acancel.onclick=()=>{A.form=null;render()};
- const asave=el.querySelector('#asave');
- if(asave)asave.onclick=async()=>{const name=el.querySelector('#an').value.trim().slice(0,80);const er=el.querySelector('#aerr');
-  if(!name){er.textContent='항목명을 적어 주세요.';return}
-  const row={name,area:el.querySelector('#aa').value.trim().slice(0,40)||null,org_code:el.querySelector('#ao').value||null,active:el.querySelector('#as').value==='1'};
-  er.textContent='저장하는 중…';
-  try{const {error}=editing?await sb.from('poca_atomic_items').update(row).eq('id',editing.id):await sb.from('poca_atomic_items').insert(row);if(error)throw error;A.form=null;A.msg=(editing?'수정했습니다: ':'추가했습니다: ')+name;A.list=null;render()}
-  catch(e){er.textContent='저장하지 못했습니다. 다시 시도해 주세요.'}};
+ el.querySelectorAll('[data-start]').forEach(b=>b.onclick=async()=>{b.disabled=true;try{await caps.ext.startNow(b.dataset.start)}catch(e){}loadPrograms()});
+ el.querySelectorAll('[data-pclose]').forEach(b=>b.onclick=async()=>{const p=P.find(x=>x.code===b.dataset.pclose);try{await caps.ext.setProgram(p.code,{...p.info,open:p.info.open===false})}catch(e){}loadPrograms()});
  return el;
 }
 function ponesView(){
@@ -1306,7 +1317,7 @@ function ponesView(){
  const el=$(`<div><div class="panel"><p class="label">Atomic Culture · 작은 습관의 변화가 문화를 바꿉니다</p><h2>새로 만들기</h2>
   <label class="small" for="pn">이름</label><input type="text" id="pn" maxlength="60" placeholder="예: 대덕전자 · Atomic Culture" style="${inp}">
   <div style="height:10px"></div><label class="small" for="pm">참여자 명단 (한 줄에 ‘이름, 부서, 전화번호’) · 전화번호는 문자 발송에만 쓰고 응답과 연결하지 않습니다</label><textarea id="pm" placeholder="홍길동, 영업, 010-1234-5678"></textarea>
-  <div style="margin-top:10px;border:1px dashed var(--line);border-radius:10px;padding:22px;text-align:center;background:var(--surface2)"><p style="margin:0;font-weight:700">파일을 끌어다 놓거나 선택하세요</p><p class="small muted" style="margin:6px 0 12px">CSV, XLSX · 이름, 이메일, 부서 열 포함 · 최대 5,000명</p><label style="display:inline-block;padding:10px 16px;border:1px solid var(--red);border-radius:6px;color:var(--red);cursor:pointer;font-weight:700">파일 선택<input type="file" id="pfile" accept=".xlsx,.xls,.csv" style="display:none"></label><p class="small" id="pfmsg" style="margin:8px 0 0"></p></div>
+  <div style="margin-top:10px;border:1px dashed #d1d5db;border-radius:12px;padding:32px 24px;text-align:center;background:#fafbfc"><p style="margin:0;font-size:15px;font-weight:500;color:#111">파일을 끌어다 놓거나 선택하세요</p><p style="margin:8px 0 16px;font-size:13px;color:#6b7280">CSV, XLSX · 이름, 이메일, 부서 열 포함 · 최대 5,000명</p><label style="display:inline-block;padding:10px 16px;border:1px solid #c61c2c;border-radius:6px;color:#c61c2c;cursor:pointer;font-size:14px;font-weight:500">파일 선택<input type="file" id="pfile" accept=".xlsx,.xls,.csv" style="display:none"></label><p class="small" id="pfmsg" style="margin:8px 0 0"></p></div>
   <div style="height:10px"></div><label class="small" for="porg">POCA 결과로 질문 순서 정하기 (선택)</label><div class="row"><select id="porg"><option value="">선택 안 함</option>${(st.orgs||[]).filter(o=>o.type!=='pulse').map(o=>`<option value="${esc(o.code)}">${esc(o.name)} (${esc(o.code)})</option>`).join('')}</select><button id="sortb">가장 바라는 문화부터 정렬</button></div>
   <p class="small" style="margin:12px 0 4px">질문 순서 (위에서부터 · ‘우리 팀’ 평균 7점 이상이거나 3주가 되면 다음 질문 · 체크한 것만 · 문구는 고칠 수 있습니다 · ⋮⋮을 끌어서 순서를 바꿀 수 있습니다). 네 문화는 POCA ‘조직의 현재와 미래’와 같습니다.</p>
   ${Z.order.map((x,i)=>`<div class="row" data-row="${i}" style="flex-wrap:nowrap;margin:4px 0;align-items:center"><span data-drag="${i}" draggable="true" title="끌어서 순서 바꾸기" style="cursor:grab;user-select:none;color:var(--muted);font-size:16px;letter-spacing:-2px;padding:0 4px">⋮⋮</span><input type="checkbox" data-on="${i}" ${x.on?'checked':''}><span class="small muted" style="min-width:150px">${esc(ONE_CN[x.c])}${x.gap!=null?' · 차이 '+(x.gap>=0?'+':'')+Math.round(x.gap):''}</span><input type="text" data-q="${i}" value="${esc(x.q)}" maxlength="80" style="${inp}"></div>`).join('')}
@@ -1318,6 +1329,7 @@ function ponesView(){
  el.querySelectorAll('[data-row]').forEach(r=>{r.ondragover=e=>{if(dragFrom==null)return;e.preventDefault();e.dataTransfer.dropEffect='move'};r.ondrop=e=>{e.preventDefault();if(dragFrom==null)return;const from=dragFrom,to=+r.dataset.row;dragFrom=null;if(from===to)return;const [m]=Z.order.splice(from,1);Z.order.splice(to,0,m);render()}});
  el.querySelectorAll('[data-on]').forEach(c=>c.onchange=()=>{Z.order[+c.dataset.on].on=c.checked});
  el.querySelectorAll('[data-q]').forEach(c=>c.oninput=()=>{Z.order[+c.dataset.q].q=c.value});
+ rosterGrid(el,'pm',['이름','부서','전화번호']);
  bindRosterFile(el,'pfile','pfmsg','pm','phone');
  el.querySelector('#sortb').onclick=async()=>{const code=el.querySelector('#porg').value;if(!code)return;
   try{const snap=await caps.db.collection('poca_resp').limit(1000).get();const rows=snap.docs.map(d=>d.data()).filter(Boolean).filter(x=>x[code]).map(x=>x[code]);if(rows.length<1)throw 0;const A=aggregate(rows);
