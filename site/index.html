@@ -1288,27 +1288,13 @@ async function loadAtomic(){const A=st.at;A.loading=true;
  render();
 }
 function atomicView(){
- const A=st.at||(st.at={list:null,loading:false,form:null,err:'',msg:''});
  const Z=st.pz||(st.pz={list:null,listErr:'',err:'',order:ONE_BANK.map(x=>({...x,on:true}))});
- if(A.list===null&&!A.loading)loadAtomic();
- const list=A.list||[];
- const orgs=(st.orgs||[]).filter(o=>o.type!=='pulse');
- const inp='font:inherit;width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:4px;background:var(--surface);color:var(--ink)';
- const orgName=code=>{const o=orgs.find(x=>x.code===code);return o?o.name:''};
- const mStart=(()=>{const d=new Date();return new Date(d.getFullYear(),d.getMonth(),1).getTime()})();
- const addedMonth=list.filter(x=>new Date(x.created_at).getTime()>=mStart).length;
- const activeN=list.filter(x=>x.active).length;
- const unlinkedN=list.filter(x=>!x.org_code).length;
- const kpis=`<div class="akpis" style="margin-bottom:14px"><div class="akpi"><span>전체 항목</span><b>${list.length}</b><small>이번 달 +${addedMonth}</small></div><div class="akpi"><span>활성 항목</span><b>${activeN}</b><small>진단에 연결됨</small></div><div class="akpi"><span>미연결 항목</span><b>${unlinkedN}</b><small>연결 필요</small></div></div>`;
- const rows=list.map(x=>`<tr><td><b>${esc(x.name)}</b></td><td>${esc(x.area||'–')}</td><td>${x.org_code?esc(orgName(x.org_code)||x.org_code):'연결된 진단 없음'}</td><td><span style="display:inline-block;padding:3px 10px;border-radius:999px;font-size:12px;font-weight:700;background:${x.active?'#e7f3ea':'#eee'};color:${x.active?'#1e6b3a':'var(--muted)'}">${x.active?'활성':'비활성'}</span></td><td></td></tr>`).join('');
- const table=A.list===null?'<p class="small muted">불러오는 중…</p>':list.length?`<table class="atbl"><thead><tr><th>항목명</th><th>영역</th><th>연결 진단</th><th>상태</th><th></th></tr></thead><tbody>${rows}</tbody></table>`:'<p class="small muted">항목이 없습니다.</p>';
  const P=Z.list||[];
- const progress=`<div class="panel"><h2>진행 중</h2>${P.map(p=>`<div class="act"><h3 style="margin:0">${esc(p.info.name)} <span class="small muted">· 코드 ${esc(p.code)} · 참여자 ${p.members??'–'}명 · ${p.weeks??0}주 진행</span></h3>
-   <p class="small" style="margin:6px 0 0">인사팀 링크<input type="text" readonly value="${pageBase()}#ph/${esc(p.code)}/${esc(p.info.hr)}" style="${inp};font-size:13px;background:var(--surface2)" onclick="this.select()"></p>
-   <div class="row" style="margin-top:6px">${p.weeks?'':`<button data-start="${esc(p.code)}">지금 첫 질문 보내기</button>`}<button data-pclose="${esc(p.code)}">${p.info.open===false?'다시 열기':'멈추기'}</button></div></div>`).join('')||'<p class="small muted">아직 없습니다.</p>'}</div>`;
- const el=$(`<div><div class="ahead"><h2>Atomic Culture 관리</h2><div class="row"><button class="primary" id="gpnew">새 진단 만들기</button></div></div>
-  ${A.msg?`<p class="notice">${esc(A.msg)}</p>`:''}${A.err?`<p class="err">${esc(A.err)}</p>`:''}${Z.listErr?`<p class="err">${esc(Z.listErr)}</p>`:''}
-  ${kpis}<div class="panel">${table}</div>${progress}</div>`);
+ const live=P.filter(p=>p.info.open!==false);
+ const rowHTML=p=>`<tr><td><b>${esc(p.info.name)}</b><div class="small muted">코드 ${esc(p.code)}</div><input type="text" readonly value="${pageBase()}#ph/${esc(p.code)}/${esc(p.info.hr)}" style="font:inherit;font-size:12px;width:100%;max-width:420px;padding:4px 6px;border:1px solid var(--line);border-radius:4px;background:var(--surface2);margin-top:4px" onclick="this.select()"></td><td><span class="b-s">${p.info.open===false?'마감':'진행 중'}</span></td><td>${p.members??'–'}명</td><td>${p.weeks??0}주</td><td style="text-align:right;white-space:nowrap">${p.weeks?'':`<button data-start="${esc(p.code)}">지금 첫 질문 보내기</button> `}<button data-pclose="${esc(p.code)}">${p.info.open===false?'다시 열기':'멈추기'}</button></td></tr>`;
+ const el=$(`<div><div class="ahead"><h2>Atomic Culture 관리</h2><button class="primary" id="gpnew">새 진단 만들기</button></div>
+  ${Z.listErr?`<p class="err">${esc(Z.listErr)}</p>`:''}
+  <div class="panel"><div class="ahead2"><h3>진행 중인 진단</h3><span class="small muted">진행 중 ${live.length}건</span></div>${P.length?`<table class="atbl"><thead><tr><th>진단</th><th>상태</th><th>참여자</th><th>진행</th><th></th></tr></thead><tbody>${P.map(rowHTML).join('')}</tbody></table>`:'<p class="small muted">아직 없습니다.</p>'}</div></div>`);
  el.querySelector('#gpnew').onclick=()=>{st.adm='pnew';render()};
  el.querySelectorAll('[data-start]').forEach(b=>b.onclick=async()=>{b.disabled=true;try{await caps.ext.startNow(b.dataset.start)}catch(e){}loadPrograms()});
  el.querySelectorAll('[data-pclose]').forEach(b=>b.onclick=async()=>{const p=P.find(x=>x.code===b.dataset.pclose);try{await caps.ext.setProgram(p.code,{...p.info,open:p.info.open===false})}catch(e){}loadPrograms()});
