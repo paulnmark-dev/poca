@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
 <style>
-:root{--bg:#F6F7F9;--surface:#FFFFFF;--surface2:#EEF0F3;--ink:#111111;--muted:#6B7280;--line:#E6E8EC;--navy:#c61c2c;--navy2:#e36b75;--amber:#B45309;--red:#c61c2c;--accent-ink:#FFFFFF;--tA:#FBEAEC;--tR:#FBEAEC;color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+:root{--bg:#F6F7F9;--surface:#FFFFFF;--surface2:#EEF0F3;--ink:#111111;--muted:#6B7280;--line:#E6E8EC;--navy:#1F4E79;--navy2:#8FA9CF;--amber:#C98A1E;--red:#B8572A;--accent-ink:#FFFFFF;--tA:#E8EEF6;--tR:#FBF0E6;--brand:#c61c2c;--brandT:#FBEAEC;color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 *,*::before,*::after{box-sizing:border-box}
 html{scroll-padding-top:env(safe-area-inset-top,0px)}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:'Pretendard','Apple SD Gothic Neo','Malgun Gothic',sans-serif;font-size:16px;line-height:1.65}
@@ -25,16 +25,16 @@ p{margin:0 0 10px}
 button{font:inherit;cursor:pointer;border-radius:6px;border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:11px 18px}
 button.primary{background:#c61c2c;color:#FFFFFF;border-color:#c61c2c;font-weight:700}
 button:disabled{opacity:.45;cursor:not-allowed}
-button:focus-visible,select:focus-visible,textarea:focus-visible,.opt:focus-visible,.chk input:focus-visible{outline:3px solid var(--navy);outline-offset:2px}
+button:focus-visible,select:focus-visible,textarea:focus-visible,.opt:focus-visible,.chk input:focus-visible{outline:3px solid var(--brand);outline-offset:2px}
 select,textarea{font:inherit;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:10px 12px;width:100%}
 textarea{min-height:80px;resize:vertical}
 .progress{height:4px;background:var(--surface2);overflow:hidden;margin:0 0 20px}
-.progress>i{display:block;height:100%;background:var(--red);transition:width .25s}
+.progress>i{display:block;height:100%;background:var(--brand);transition:width .25s}
 .q{padding:15px 0;border-top:1px solid var(--line)} .q:first-of-type{border-top:none}
 .qtext{margin:0 0 9px;font-weight:500}
 .scale{display:grid;grid-template-columns:repeat(10,1fr);gap:4px}
 .opt{border:1px solid var(--line);border-radius:6px;text-align:center;padding:9px 0;cursor:pointer;background:var(--surface);user-select:none;font-weight:500}
-.opt[aria-checked="true"]{background:var(--navy);color:var(--accent-ink);border-color:var(--navy)}
+.opt[aria-checked="true"]{background:var(--brand);color:var(--accent-ink);border-color:var(--brand)}
 .anchors{display:flex;justify-content:space-between;font-size:12.5px;color:var(--muted);margin-top:4px}
 .pair{display:grid;grid-template-columns:96px 1fr;gap:10px;align-items:center;margin:6px 0}
 .pair .lab{font-size:14px;color:var(--muted)}
@@ -43,7 +43,7 @@ textarea{min-height:80px;resize:vertical}
 .chk input:checked{background:#c61c2c;border-color:#c61c2c}
 .chk input:checked::after{content:"";width:9px;height:5px;border-left:2px solid #fff;border-bottom:2px solid #fff;transform:rotate(-45deg) translate(1px,-1px)}
 .chk input:focus-visible{outline:3px solid #c61c2c;outline-offset:2px}
-.err{color:var(--red);font-size:14px;margin:8px 0 0}
+.err{color:var(--brand);font-size:14px;margin:8px 0 0}
 .bar{display:grid;grid-template-columns:170px 1fr 52px;gap:10px;align-items:center;margin:7px 0}
 .bar .t{height:12px;background:var(--surface2);overflow:hidden}
 .bar .t>i{display:block;height:100%}
@@ -206,7 +206,7 @@ textarea{border-radius:6px;padding:12px 16px}
 .abrand{font-weight:800;font-size:15px;letter-spacing:.5px;margin:0 10px 18px}
 .anav>button{display:flex;align-items:center;gap:10px;text-align:left;border:none;background:none;padding:9px 12px;border-radius:6px;font-size:15px;color:var(--ink);font-weight:500}
 .anav>button:hover{background:var(--surface2)}
-.anav>button.on{background:var(--tR);color:var(--navy);font-weight:700}
+.anav>button.on{background:var(--brandT);color:var(--brand);font-weight:700}
 .aico{display:inline-flex;width:18px;height:18px;flex:none}
 .aico svg{display:block}
 .aspacer{flex:1}
@@ -260,10 +260,10 @@ const DEPTS = ['경영진·임원','기획·경영지원','영업·마케팅','�
 const ROLES = ['사원·주임·대리','과장·차장','부장 이상','임원'];
 const TENURE = ['1년 미만','1~3년','3~5년','5~10년','10년 이상'];
 const GROUPS = ['좋아서 일하는 사람','해야 해서 일하는 사람','이유가 흔들리는 사람','책임감으로 일하는 사람'];
-const GCOL = ['var(--navy)','var(--amber)','var(--red)','#6F8FC0'];
+const GCOL = ['#1F6B5A','#D49A2A','#9A938C','#5B8DD6'];
 const GORD=[0,3,1,2];
 const LV={0:6,1:7,2:5,3:4,4:2,5:3,6:1};const STATE={0:'일할 맛 난다',1:'내 일이다',2:'일할만하다',3:'할 일은 한다',4:'먹고살려고 한다',5:'시키면 한다',6:'의욕이 없다'}; const LORD=[1,0,2,3,5,4,6];
-const KCOL=k=>k<=1?'var(--navy)':k<=3?'#6F8FC0':k<=5?'var(--amber)':'var(--red)';
+const KCOL=k=>k<=1?GCOL[0]:k<=3?GCOL[3]:k<=5?GCOL[1]:GCOL[2];
 function stages(A){const m=a=>{const v=a.map(n=>A.idx[n]).filter(x=>!isNaN(x));return v.length?avg(v):NaN};
  const five=[{k:'하고 싶다',en:'Vill',d:'의미와 하고 싶은 마음',src:'나의 업무 동기 (좋아서)',v:A.like},{k:'안다',en:'Vet',d:'방향과 정보',src:'회사의 방향과 소통 · 일 정보에 관한 소통 · 내 성공의 기준',v:m([5,6,7])},{k:'할 수 있다',en:'Kan',d:'역량과 성장',src:'능력개발지원 · 능력개발기회',v:m([3,4])},{k:'해도 된다',en:'Får',d:'권한과 여지',src:'권한부여 및 자율성',v:m([1])},{k:'해야 한다',en:'Bör',d:'책임과 주인의식',src:'책임',v:m([2])}];
  const okf=five.filter(f=>!isNaN(f.v));
