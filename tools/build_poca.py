@@ -68,12 +68,12 @@ function loginView(){
 function privacyView(){
  const el=$(`<div class="panel" style="max-width:760px;margin:24px auto"><p class="label">개인정보 처리 안내</p><h2>POCA 조직문화 진단은 이렇게 응답을 다룹니다</h2>
   <p><b>받는 것</b> · 부서 · 직급 · 근속 구간, 문항 응답, 열린 질문의 답. 시범 운영일 때는 응답에 걸린 시간과 문항 의견도 받습니다. 이름 · 이메일 · 사번 · 연락처는 응답과 함께 받지 않습니다.</p>
-  <p><b>개인 링크로 진행할 때</b> · 회사가 개인 링크 방식을 고른 경우, 회사가 준 이름(과 부서)을 명단에 보관하고 ‘완료 여부’만 표시합니다. 명단과 응답은 서로 다른 곳에 저장되고 둘을 잇는 기록을 남기지 않습니다. 그래서 누가 무엇이라고 답했는지는 회사도 폴앤마크도 알 수 없습니다.</p>
+  <p><b>개인 링크로 진행할 때</b> · 회사가 개인 링크 방식을 고른 경우, 회사가 준 이름(과 부서, 이메일)을 명단에 보관하고 ‘완료 여부’만 표시합니다. 이메일은 참여 안내 메일을 보낼 때만 씁니다. 메일 발송은 메일 서비스(Resend)를 통해 이뤄집니다. 명단과 응답은 서로 다른 곳에 저장되고 둘을 잇는 기록을 남기지 않습니다. 그래서 누가 무엇이라고 답했는지는 회사도 폴앤마크도 알 수 없습니다.</p>
   <p><b>쓰는 곳</b> · 회사 단위의 조직문화 진단 리포트를 만드는 데만 씁니다. 개인별 응답은 회사에 넘기지 않습니다.</p>
   <p><b>보이는 방식</b> · 결과는 묶어서만 보입니다. 응답이 ${MIN_N}명 미만인 부서 · 직급 · 근속 그룹은 리포트에 나오지 않습니다. 열린 질문의 답은 누가 썼는지 알 수 없게 다룹니다.</p>
   <p><b>참여</b> · 참여는 자유입니다. 참여하지 않거나 중간에 그만두어도 불이익이 없습니다.</p>
   <p><b>다시 고치기</b> · 같은 기기에서는 진단이 마감되기 전까지 자기 응답을 다시 낼 수 있습니다. 이를 위해 기기에 무작위 번호를 남기며, 이 번호는 사람과 연결되지 않습니다.</p>
-  <p><b>보관과 파기</b> · 응답과 명단은 폴앤마크가 이용하는 클라우드 데이터베이스(Supabase)에 저장되며, 진단을 의뢰한 회사와 정한 기간이 지나면 지웁니다.</p>
+  <p><b>보관과 파기</b> · 응답과 명단은 폴앤마크가 이용하는 클라우드 데이터베이스(Supabase)에 저장됩니다. 응답은 진단을 의뢰한 회사와 정한 기간이 지나면 지웁니다. 명단(이름·이메일)은 삭제를 요청할 때까지 보관하며, 삭제 요청은 info@paulnmark.com으로 해 주세요.</p>
   <p><b>문의</b> · 폴앤마크 (Paul &amp; Mark Co., Ltd.)</p>
   <div class="row"><button id="back">처음으로</button></div></div>`);
  el.querySelector('#back').onclick=()=>{st.screen='landing';render()};return el;
@@ -84,8 +84,8 @@ function privacyView(){
   async getInvite(tok){const {data,error}=await sb.rpc('poca_get_invite',{p_token:tok});if(error)throw error;return data||null},
   async hrStatus(code,tok){const {data,error}=await sb.rpc('poca_hr_status',{p_code:code,p_token:tok});if(error)throw error;return data||null},
   async hrResponses(code,tok){const {data,error}=await sb.rpc('poca_hr_responses',{p_code:code,p_token:tok});if(error)throw error;return data||[]},
-  async addInvites(code,rows){const {error}=await sb.from('poca_invites').insert(rows.map(r=>({org_code:code,name:r.name,dept:r.dept||null})));if(error)throw error},
-  async listInvites(code){const {data,error}=await sb.from('poca_invites').select('token,name,dept,done').eq('org_code',code).order('name');if(error)throw error;return data||[]},
+  async addInvites(code,rows){const {error}=await sb.from('poca_invites').insert(rows.map(r=>({org_code:code,name:r.name,dept:r.dept||null,email:r.email||null})));if(error)throw error},
+  async listInvites(code){const {data,error}=await sb.from('poca_invites').select('token,name,dept,done,email,mail_sent').eq('org_code',code).order('name');if(error)throw error;return data||[]},
   async pulseGet(tok){const {data,error}=await sb.rpc('pulse_get',{p_token:tok});if(error)throw error;return data||null},
   async pulseSubmit(tok,score,team,note){const {data,error}=await sb.rpc('pulse_submit',{p_token:tok,p_key:deviceKey('one_'+tok),p_score:score,p_team:team,p_note:note||null});if(error)throw error;return data===true},
   async pulseHr(code,tok){const {data,error}=await sb.rpc('pulse_hr',{p_code:code,p_hr:tok});if(error)throw error;return data||null},
