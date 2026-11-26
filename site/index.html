@@ -289,7 +289,7 @@ const PULSE_BASE=['M01','M13','M17','R01','R02','C01','C08','C17','C28','C33','C
 const isPulse=()=>!!(st.org&&st.org.type==='pulse');
 const pulseCodes=(org)=>{const ex=((org&&org.extra)||[]).map(n=>IDXN[n]&&IDXN[n].codes[0]).filter(c=>c&&!PULSE_BASE.includes(c));return [...PULSE_BASE,...ex]};
 const STEPS=new Proxy([],{get:(t,k)=>{const a=isPulse()?['info','pulse']:FULL_STEPS;const v=a[k];return typeof v==='function'?v.bind(a):v}});
-const PAGE_URL='https://claude.ai/artifact/3fxnc6Aa3itsJ2KcsugAzn';
+const PAGE_URL='https://poca.paulnmark.com/';
 let st = {org:null,orgs:[],orgErr:'',screen:'landing',step:0,r:{},dept:'',role:'',ten:'',u:[],o1:'',o2:'',err:'',mine:null,saved:null,R:null,src:''};
 let caps = {db:null,user:null,downloads:null,sample:null,canEdit:false,ext:null};
 
