@@ -717,7 +717,23 @@ const ADM_ICO={dash:'<rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14"
 const ADM_MENU='<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5B6270" stroke-width="1.75" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg>';
 const ADM_CHEV='<svg class="achev" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#5B6270" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>';
 function admIcon(k,on){return `<span class="aico" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="${on?'#c61c2c':'#5B6270'}" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">${ADM_ICO[k]}</svg></span>`}
+function pwView(){
+ const inp='font:inherit;width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:4px;background:var(--surface);color:var(--ink)';
+ const el=$(`<div style="max-width:460px;margin:40px auto"><div class="panel"><p class="label">POCA ADMIN</p><h2>비밀번호를 정해 주세요</h2><p class="small muted">${esc(caps.userEmail||'')} 계정으로 관리자 화면을 쓰려면 비밀번호가 필요합니다. 8자 이상으로 정해 주세요.</p>
+  <label class="small" for="pw1">새 비밀번호</label><input type="password" id="pw1" autocomplete="new-password" style="${inp}">
+  <div style="height:10px"></div><label class="small" for="pw2">새 비밀번호 확인</label><input type="password" id="pw2" autocomplete="new-password" style="${inp}">
+  <p class="err" id="pwerr"></p><div class="row"><button class="primary" id="pwsave">저장하고 시작하기</button></div></div></div>`);
+ el.querySelector('#pwsave').onclick=async()=>{const a=el.querySelector('#pw1').value,b=el.querySelector('#pw2').value;const er=el.querySelector('#pwerr');
+  if(a.length<8){er.textContent='비밀번호는 8자 이상이어야 합니다.';return}
+  if(a!==b){er.textContent='비밀번호가 서로 다릅니다.';return}
+  er.textContent='저장하는 중…';
+  try{const {error}=await sb.auth.updateUser({password:a});if(error)throw error;st.needPw=false;history.replaceState(null,'',location.pathname);openAdmin()}
+  catch(e){er.textContent='저장하지 못했습니다. 초대 메일의 링크를 다시 열어 주세요.'}
+ };
+ return el;
+}
 function adminView(){
+ if(st.needPw)return pwView();
  const sec=st.adm||'dash';
  const email=caps.userEmail||'';
  const el=$(`<div class="adash${st.admMenu?' open':''}"><header class="atop"><a href="#" class="alink alogo" id="ahome2">POCA <span class="asub">ADMIN</span></a><button class="abtn" id="amenu" aria-expanded="${!!st.admMenu}">${ADM_MENU}<span>메뉴</span></button></header><aside class="anav"><p class="abrand"><a href="#" class="alink alogo" id="ahome">POCA <span class="asub">ADMIN</span></a></p>${ADM_NAV.map(([k,t])=>`<button data-nav="${k}" class="${sec===k?'on':''}"${sec===k?' aria-current="page"':''}>${admIcon(k,sec===k)}<span>${t}</span></button>`).join('')}<div class="aspacer"></div><div class="aprof"><div class="apop" id="apop" hidden><button id="aedit">정보 수정</button><button id="alogout" class="lo">로그아웃</button></div><button class="aprofbtn" id="aprof" aria-expanded="false"><span class="aav">${esc(email?email[0].toUpperCase():'M')}</span><span class="ainfo"><b>${esc(email||'관리자')}</b><small>매니저</small></span>${ADM_CHEV}</button></div></aside><main class="amain"></main></div>`);
@@ -998,6 +1014,7 @@ function reportView(){
  return el;
 }
 async function route(){
+ if(/type=(invite|recovery)/.test(location.hash)){st.needPw=true;if(caps.canEdit){st.screen='admin';render();return}}
  if(/\/admin\/?$/.test(location.pathname)){if(caps.canEdit){openAdmin()}else{st.screen='login';render()}return}
  const qp=new URLSearchParams(location.search).get('p');  /* 카카오 알림톡 버튼: ?p=<토큰> */
  const raw=qp&&/^[0-9a-fA-F-]{36}$/.test(qp)?'p/'+qp:(location.hash||'').replace('#','').trim();
