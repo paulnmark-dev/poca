@@ -540,7 +540,11 @@ function scatter(points,opt){
 }
 
 /* ---------- screens ---------- */
-function render(){const app=document.getElementById('app');app.innerHTML='';app.className=st.screen==='admin'?'wrap wide':'wrap';const v={landing:landingView,survey:surveyView,result:resultView,report:reportView,admin:adminView,pulse:pulseView,hr:hrView,invites:invitesView,pone:poneView,poneHr:poneHrView,pones:ponesView}[st.screen];app.append(v());window.scrollTo({top:0})}
+function render(){const app=document.getElementById('app');app.innerHTML='';app.className=st.screen==='admin'?'wrap wide':'wrap';const v={landing:landingView,survey:surveyView,result:resultView,report:reportView,admin:adminView,pulse:pulseView,hr:hrView,invites:invitesView,pone:poneView,poneHr:poneHrView,pones:ponesView}[st.screen];app.append(v());window.scrollTo({top:0});
+if(st.screen==='admin'||st.screen==='invites'){const key=st.screen+':'+(st.adm||'');if(!(history.state&&history.state.k===key))history.pushState({k:key,screen:st.screen,adm:st.adm||''},'',location.href)}}
+window.addEventListener('popstate',e=>{const h=e.state;
+ if(h&&(h.screen==='admin'||h.screen==='invites')){st.screen=h.screen;st.adm=h.adm;render()}
+ else if(st.screen==='admin'||st.screen==='invites'){st.screen='landing';render()}});
 function openCodeModal(opt){
  opt=opt||{};
  document.querySelectorAll('.lmodal-bg').forEach(n=>n.remove());
