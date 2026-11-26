@@ -901,12 +901,12 @@ function managersSection(){
   <div style="height:10px"></div><label class="small" for="in">이름</label><input type="text" id="in" maxlength="40" style="${inp}">
   <div style="height:10px"></div><label class="small" for="id">부서</label><input type="text" id="id" maxlength="40" style="${inp}">
   <p class="err" id="ierr"></p><div class="row"><button class="primary" id="isend">초대 보내기</button><button id="icancel">취소</button></div></div>`;
- const editForm=editing?`<div class="panel"><h3 style="margin:0 0 6px;font-size:18px">정보 수정</h3><p class="small muted">${esc(editing.email)}</p>
+ const editForm=editing?`<div id="ebg" style="position:fixed;inset:0;background:rgba(17,17,17,.35);display:flex;align-items:center;justify-content:center;z-index:50;padding:16px"><div class="panel" style="width:100%;max-width:560px;margin:0"><h3 style="margin:0 0 6px;font-size:18px">정보 수정</h3><p class="small muted">${esc(editing.email)}</p>
   <label class="small" for="en">이름</label><input type="text" id="en" maxlength="40" value="${esc(editing.name||'')}" style="${inp}">
   <div style="height:10px"></div><label class="small" for="ed">부서</label><input type="text" id="ed" maxlength="40" value="${esc(editing.dept||'')}" style="${inp}">
   <div style="height:10px"></div><label class="small" for="ep">새 비밀번호 (바꿀 때만 입력 · 8자 이상)</label><input type="password" id="ep" autocomplete="new-password" style="${inp}">
   <div style="height:10px"></div><label class="small" for="ep2">새 비밀번호 확인</label><input type="password" id="ep2" autocomplete="new-password" style="${inp}">
-  <p class="err" id="eerr"></p><div class="row"><button class="primary" id="esave">저장</button><button id="ecancel">취소</button></div></div>`:'';
+  <p class="err" id="eerr"></p><div class="row"><button class="primary" id="esave">저장</button><button id="ecancel">취소</button></div></div></div>`:'';
  const q=M.q.trim().toLowerCase();
  const filtered=list.filter(x=>!q||(x.name||'').toLowerCase().includes(q)||(x.email||'').toLowerCase().includes(q));
  const PER=5;const pages=Math.max(1,Math.ceil(filtered.length/PER));M.page=Math.min(M.page,pages-1);
@@ -939,6 +939,8 @@ function managersSection(){
  el.querySelectorAll('[data-edit]').forEach(b=>b.onclick=()=>{M.editing=b.dataset.edit;M.inviting=false;M.msg='';render()});
  const ecancel=el.querySelector('#ecancel');
  if(ecancel)ecancel.onclick=()=>{M.editing=null;render()};
+ const ebg=el.querySelector('#ebg');
+ if(ebg)ebg.onclick=e=>{if(e.target===ebg){M.editing=null;render()}};
  const esave=el.querySelector('#esave');
  if(esave)esave.onclick=async()=>{
   const nm=el.querySelector('#en').value.trim(),dp=el.querySelector('#ed').value.trim(),p1=el.querySelector('#ep').value,p2=el.querySelector('#ep2').value;const er=el.querySelector('#eerr');
