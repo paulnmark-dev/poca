@@ -245,6 +245,8 @@ textarea{border-radius:6px;padding:12px 16px}
 .atbl th{font-size:12.5px;color:var(--muted);font-weight:600;text-align:left;padding:8px 10px;border-bottom:1px solid var(--line)}
 .atbl td{padding:12px 10px;border-bottom:1px solid var(--line);vertical-align:middle}
 .atbl .b-s{display:inline-block;padding:3px 9px;border-radius:999px;font-size:12.5px;font-weight:600}
+/* 목록 안 버튼: 기존 크기의 70% */
+.act button,.atbl button,.pgbtn{font-size:10.5px !important;padding:8.4px 15.4px !important}
 @media (max-width:760px){.adash{grid-template-columns:1fr;margin:-28px -20px -80px}.atop{display:flex;justify-content:space-between;align-items:center;padding:12px 20px;background:var(--surface);border-bottom:1px solid var(--line)}.abtn{display:inline-flex;align-items:center;gap:6px;padding:6px 8px;border:none;background:none;font-size:14px;font-weight:500}.anav{display:none;position:fixed;top:0;left:0;bottom:0;width:260px;z-index:50;height:auto;box-shadow:4px 0 16px rgba(0,0,0,.12)}.adash.open .anav{display:flex}.amain{padding:20px}.akpis{grid-template-columns:1fr 1fr}.ahead h2{font-size:22px}}
 </style>
 </head>
@@ -918,7 +920,7 @@ function managersSection(){
   ${M.inviting?invForm:''}${editForm}
   <div class="row" style="justify-content:space-between;margin:0 0 10px"><input type="search" id="mq" placeholder="이름 또는 이메일로 검색" value="${esc(M.q)}" style="${inp};max-width:320px"><span class="small muted">${list.length?`총 ${filtered.length}명`:''}</span></div>
   <div class="panel">${M.list===null?'<p class="small muted">불러오는 중…</p>':list.length?(filtered.length?`<table class="atbl"><thead><tr><th>이름</th><th>이메일</th><th>부서</th><th>담당 진단</th><th>상태</th><th></th></tr></thead><tbody>${rows}</tbody></table>
-   <div class="row" style="justify-content:space-between;margin-top:12px"><span class="small muted">${M.page*PER+1}–${M.page*PER+shown.length} / 총 ${filtered.length}명</span><div class="row"><button id="mpprev" ${M.page<=0?'disabled':''}>이전</button><button id="mpnext" ${M.page>=pages-1?'disabled':''}>다음</button></div></div>`:'<p class="small muted">검색 결과가 없습니다.</p>'):'<p class="small muted">등록된 매니저가 없습니다.</p>'}</div></div>`);
+   <div class="row" style="justify-content:space-between;margin-top:12px"><span class="small muted">${M.page*PER+1}–${M.page*PER+shown.length} / 총 ${filtered.length}명</span><div class="row"><button class="pgbtn" id="mpprev" ${M.page<=0?'disabled':''}>이전</button><button class="pgbtn" id="mpnext" ${M.page>=pages-1?'disabled':''}>다음</button></div></div>`:'<p class="small muted">검색 결과가 없습니다.</p>'):'<p class="small muted">등록된 매니저가 없습니다.</p>'}</div></div>`);
  const minv=el.querySelector('#minv');
  if(minv)minv.onclick=()=>{M.inviting=true;M.editing=null;M.msg='';M.err='';render()};
  const icancel=el.querySelector('#icancel');
