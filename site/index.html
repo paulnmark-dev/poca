@@ -652,8 +652,10 @@ async function openAdmin(){
  catch(e){st.orgs=[];st.adminErr='진단 목록을 불러오지 못했습니다.';render()}
 }
 function newDiagSection(){
+ const CL=st.cl||(st.cl={list:null,loading:false,form:null,err:'',msg:''});if(CL.list===null&&!CL.loading)loadClients();const clients=CL.list||[];
  const el=$(`<div><div class="ahead"><h2>새 진단 만들기</h2><button id="gback">진단관리로</button></div><div class="panel" id="sec-new"><h3 style="margin:0 0 12px;font-size:18px">새 진단 만들기</h3>
-  <label class="small" for="nm">회사(조직) 이름</label><input type="text" id="nm" maxlength="60" placeholder="예: 대덕전자" style="font:inherit;width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:4px;background:var(--surface);color:var(--ink)">
+  <label class="small" for="cl">고객사 (등록된 고객사에서 고르세요)</label><select id="cl" style="font:inherit;width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:4px;background:var(--surface);color:var(--ink)"><option value="">${clients.length?'고객사를 고르세요':'등록된 고객사가 없습니다'}</option>${clients.map(c=>`<option value="${esc(c.id)}">${esc(c.name)}</option>`).join('')}</select>
+  <p class="small" style="margin:6px 0 0">찾는 고객사가 없으면 <a href="#" id="gclients">고객사 관리에서 먼저 등록</a>해 주세요.</p>
   <div style="height:10px"></div><label class="small" for="hc">대상 인원 (참여율 계산용, 선택)</label><input type="text" id="hc" inputmode="numeric" maxlength="6" style="font:inherit;max-width:160px;padding:10px 12px;border:1px solid var(--line);border-radius:4px;background:var(--surface);color:var(--ink)">
   <div style="height:10px"></div><label class="small" for="mn">익명 기준 (이보다 적은 그룹은 결과를 가림)</label><select id="mn"><option value="3" selected>3명 (기본)</option><option value="5">5명 (더 엄격)</option></select>
   <div style="height:10px"></div><label class="small" for="roster">직원 명단 (선택 · 한 줄에 ‘이름, 부서, 이메일’ · 부서와 이메일은 비워도 됩니다) · 넣으면 사람마다 개인 링크가 생기고, 이메일이 있으면 참여 안내 메일을 보낼 수 있습니다. 부서 목록은 명단에서 자동으로 만듭니다.</label><textarea id="roster" placeholder="홍길동, 영업, hong@company.com&#10;김철수, 생산"></textarea><p class="small muted" id="rsum" style="margin:6px 0 0"></p>
@@ -663,12 +665,14 @@ function newDiagSection(){
   <p class="err" id="aerr"></p><div class="row"><button class="primary" id="mk">만들고 코드 받기</button></div></div>
   </div>`);
  el.querySelector('#gback').onclick=()=>{st.adm='diag';render()};
+ el.querySelector('#gclients').onclick=e=>{e.preventDefault();st.adm='clients';render()};
  const rsumUpdate=()=>{const P=parseRoster(el.querySelector('#roster').value);const out=el.querySelector('#rsum');
   out.textContent=P.rows.length?`${P.rows.length}명 · 부서 ${P.depts.length}개 · 이메일 없음 ${P.noMail}명`+(P.errors.length?` · 확인할 줄 ${P.errors.length}개 (${P.errors[0]})`:''):'';
   out.style.color=P.errors.length?'var(--navy)':'';};
  el.querySelector('#roster').oninput=rsumUpdate;
  el.querySelector('#mk').onclick=async()=>{
-  const name=el.querySelector('#nm').value.trim().slice(0,60);if(!name){el.querySelector('#aerr').textContent='회사 이름을 적어 주세요.';return}
+  const client=clients.find(c=>c.id===el.querySelector('#cl').value);if(!client){el.querySelector('#aerr').textContent='고객사를 골라 주세요. 없으면 고객사 관리에서 먼저 등록해 주세요.';return}
+  const name=client.name;
   
   const hc=parseInt(el.querySelector('#hc').value,10)||null;
   const isP=false;const pilot=el.querySelector('#isPilot').checked;const base=el.querySelector('#base').value;const extra=[];
@@ -678,7 +682,7 @@ function newDiagSection(){
   const minN=+el.querySelector('#mn').value===5?5:3;const hrReport=el.querySelector('#hrRep').checked;
   const PR=parseRoster(el.querySelector('#roster').value);if(PR.errors.length){el.querySelector('#aerr').textContent='명단을 확인해 주세요: '+PR.errors.slice(0,3).join(' / ');return}const roster=PR.rows;
   if(roster.length&&!(caps.ext&&caps.ext.addInvites)){el.querySelector('#aerr').textContent='직원 명단은 웹사이트(poca 사이트)의 관리 화면에서만 넣을 수 있습니다.';return}
-  const rDepts=[...new Set(roster.map(x=>x.dept).filter(Boolean))];try{await caps.db.doc('poca_orgs/'+code).set({name,depts:rDepts.length?rDepts:DEPTS,headcount:hc||(roster.length||null),open:true,at:Date.now(),type:isP?'pulse':'full',base:base||null,extra:isP?extra:[],pilot,minN,hrReport,hr:rnd20(),roster:roster.length>0});
+  const rDepts=[...new Set(roster.map(x=>x.dept).filter(Boolean))];try{await caps.db.doc('poca_orgs/'+code).set({name,clientId:client.id,depts:rDepts.length?rDepts:DEPTS,headcount:hc||(roster.length||null),open:true,at:Date.now(),type:isP?'pulse':'full',base:base||null,extra:isP?extra:[],pilot,minN,hrReport,hr:rnd20(),roster:roster.length>0});
    if(roster.length)await caps.ext.addInvites(code,roster);st.adm='diag';openAdmin()}catch(e){el.querySelector('#aerr').textContent='진단을 만들지 못했습니다.'+(roster.length?' (명단 저장에 필요한 데이터베이스 설정이 아직 안 되어 있을 수 있습니다)':'')}
  };
  return el;
@@ -765,11 +769,55 @@ function dashSection(){
  d.querySelector('[data-goto]').onclick=()=>{st.adm='new';render()};
  return d;
 }
+async function loadClients(){
+ const C=st.cl;C.loading=true;
+ try{const {data,error}=await sb.from('poca_clients').select('id,name,contact_name,contact_email,contact_phone,memo,created_at').order('name');if(error)throw error;C.list=data||[];C.err=''}
+ catch(e){C.list=C.list||[];C.err='고객사 목록을 불러오지 못했습니다. (고객사 설정 SQL을 실행했는지 확인해 주세요)'}
+ finally{C.loading=false}
+ render();
+}
 function clientsSection(){
- const map={};(st.orgs||[]).forEach(o=>{const k=o.name||'(이름 없음)';(map[k]=map[k]||[]).push(o)});
+ const C=st.cl||(st.cl={list:null,loading:false,form:null,err:'',msg:''});
+ if(C.list===null&&!C.loading)loadClients();
+ const list=C.list||[];
+ const orgs=st.orgs||[];
+ const inp='font:inherit;width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:4px;background:var(--surface);color:var(--ink)';
+ const editing=C.form&&C.form!=='new'?list.find(x=>x.id===C.form):null;
+ const v=k=>esc((editing&&editing[k])||'');
+ const linked=c=>orgs.filter(o=>o.clientId?o.clientId===c.id:o.name===c.name);
  const last=l=>Math.max(0,...l.map(o=>o.at||0));
- const rows=Object.entries(map).sort((a,b)=>last(b[1])-last(a[1]));
- return $(`<div><p class="label">고객사</p><h2>회사별 진단</h2><div class="panel">${rows.length?`<table class="atbl"><thead><tr><th>회사</th><th>진단 수</th><th>진행 중</th><th>응답 합계</th><th>최근 진단</th></tr></thead><tbody>${rows.map(([n,l])=>`<tr><td><b>${esc(n)}</b></td><td>${l.length}</td><td>${l.filter(o=>o.open!==false).length}</td><td>${l.reduce((a,o)=>a+(o.n||0),0)}</td><td>${admDate(last(l))}</td></tr>`).join('')}</tbody></table>`:'<p class="small muted">아직 고객사가 없습니다. 진단관리에서 진단을 만들면 여기에 나타납니다.</p>'}</div></div>`);
+ const form=C.form?`<div class="panel"><h3 style="margin:0 0 12px;font-size:18px">${editing?'고객사 정보 수정':'고객사 등록'}</h3>
+  <label class="small" for="cn">고객사 이름 *</label><input type="text" id="cn" maxlength="60" value="${v('name')}" placeholder="예: 대덕전자" style="${inp}">
+  <div style="height:10px"></div><label class="small" for="cwho">담당자 이름</label><input type="text" id="cwho" maxlength="40" value="${v('contact_name')}" style="${inp}">
+  <div style="height:10px"></div><label class="small" for="cmail">담당자 이메일</label><input type="email" id="cmail" maxlength="120" value="${v('contact_email')}" style="${inp}">
+  <div style="height:10px"></div><label class="small" for="ctel">연락처</label><input type="text" id="ctel" maxlength="30" value="${v('contact_phone')}" style="${inp};max-width:260px">
+  <div style="height:10px"></div><label class="small" for="cmemo">메모 (선택)</label><textarea id="cmemo" maxlength="500" style="${inp};min-height:70px">${v('memo')}</textarea>
+  <p class="err" id="cerr"></p><div class="row"><button class="primary" id="csave">${editing?'저장':'등록'}</button><button id="ccancel">취소</button></div></div>`:'';
+ const rows=list.map(c=>{const l=linked(c);return `<tr><td><b>${esc(c.name)}</b></td><td>${esc(c.contact_name||'–')}</td><td>${esc(c.contact_phone||'–')}</td><td>${l.length}</td><td>${l.filter(o=>o.open!==false).length}</td><td>${admDate(last(l))}</td><td style="text-align:right"><button data-cedit="${esc(c.id)}">정보 수정</button></td></tr>`}).join('');
+ const el=$(`<div><div class="ahead"><h2>고객사 관리</h2>${C.form?'':'<button class="primary" id="cnew">고객사 등록</button>'}</div>
+  ${C.msg?`<p class="notice">${esc(C.msg)}</p>`:''}${C.err?`<p class="err">${esc(C.err)}</p>`:''}
+  ${form}
+  <div class="panel">${C.list===null?'<p class="small muted">불러오는 중…</p>':list.length?`<table class="atbl"><thead><tr><th>고객사</th><th>담당자</th><th>연락처</th><th>진단 수</th><th>진행 중</th><th>최근 진단</th><th></th></tr></thead><tbody>${rows}</tbody></table>`:'<p class="small muted">아직 등록된 고객사가 없습니다. 고객사를 등록하면 새 진단을 만들 때 고를 수 있습니다.</p>'}</div></div>`);
+ const cnew=el.querySelector('#cnew');
+ if(cnew)cnew.onclick=()=>{C.form='new';C.msg='';C.err='';render()};
+ el.querySelectorAll('[data-cedit]').forEach(b=>b.onclick=()=>{C.form=b.dataset.cedit;C.msg='';C.err='';render()});
+ const ccancel=el.querySelector('#ccancel');
+ if(ccancel)ccancel.onclick=()=>{C.form=null;render()};
+ const csave=el.querySelector('#csave');
+ if(csave)csave.onclick=async()=>{
+  const g=id=>el.querySelector(id).value.trim();const er=el.querySelector('#cerr');
+  const name=g('#cn').slice(0,60);const mail=g('#cmail').toLowerCase();
+  if(!name){er.textContent='고객사 이름을 적어 주세요.';return}
+  if(mail&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(mail)){er.textContent='담당자 이메일 형식을 확인해 주세요.';return}
+  const row={name,contact_name:g('#cwho').slice(0,40)||null,contact_email:mail||null,contact_phone:g('#ctel').slice(0,30)||null,memo:el.querySelector('#cmemo').value.trim().slice(0,500)||null,updated_at:new Date().toISOString()};
+  er.textContent='저장하는 중…';
+  try{
+   const {error}=editing?await sb.from('poca_clients').update(row).eq('id',editing.id):await sb.from('poca_clients').insert(row);
+   if(error)throw error;
+   C.msg=(editing?'수정했습니다: ':'등록했습니다: ')+name;C.form=null;C.list=null;render();
+  }catch(e){er.textContent=e.code==='23505'?'같은 이름의 고객사가 이미 있습니다.':'저장하지 못했습니다. 다시 시도해 주세요.'}
+ };
+ return el;
 }
 function ponesSection(){
  if(!st.pz)return $(`<div><p class="small muted">불러오는 중…</p></div>`);
