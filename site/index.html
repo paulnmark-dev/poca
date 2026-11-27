@@ -1204,18 +1204,31 @@ function invitesView(){
  const pending=rows.filter(x=>x.email&&!x.mail_sent).length;
  const sentN=rows.filter(x=>x.mail_sent).length;
  const cell='font:inherit;font-size:12px;width:100%;padding:4px 6px;border:1px solid var(--line);border-radius:4px;background:var(--surface2)';
- const el=$(`<div><div class="row" style="margin:0 0 12px"><select id="isel" style="max-width:420px">${(st.orgs||[]).filter(x=>x.type!=='pulse').map(x=>`<option value="${esc(x.code)}"${x.code===V.code?' selected':''}>${esc(x.name)} (${esc(x.code)})</option>`).join('')}</select></div>
- <div class="panel"><p class="label">${esc(o.name||'')} · 명단과 개인 링크</p><h2>안내 메일 발송</h2>${V.err?`<p class="err">${esc(V.err)}</p>`:''}${V.msg?`<p class="notice">${esc(V.msg)}</p>`:''}
+ const inp='font:inherit;padding:10px 12px;border:1px solid var(--line);border-radius:4px;background:var(--surface);color:var(--ink)';
+ const fmt=t=>t?new Date(t).toLocaleString('ko-KR',{year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'}):'';
+ const stat=x=>!x.email?'–':x.mail_sent?`발송 완료 · ${fmt(x.mail_sent_at)}`:x.mail_failed?'발송 실패':'미발송';
+ const el=$(`<div>
+  <div class="row" style="justify-content:space-between;margin:0 0 12px"><select id="isel" style="max-width:420px">${(st.orgs||[]).filter(x=>x.type!=='pulse').map(x=>`<option value="${esc(x.code)}"${x.code===V.code?' selected':''}>${esc(x.name)} (${esc(x.code)})</option>`).join('')}</select><button id="back">진단 관리로</button></div>
+  <div class="panel"><p class="label">${esc(o.name||'')} · 명단과 개인 링크</p><h2>POCA 진단 상세</h2>
+  <div class="row" style="margin:6px 0 10px"><button id="addtog" title="명단 추가" aria-label="명단 추가" style="font-size:20px;line-height:1;padding:4px 14px">+</button></div>
+  <div id="addbox" hidden class="row" style="margin:0 0 12px"><input type="text" id="an" maxlength="40" placeholder="이름" style="${inp}"><input type="text" id="ad" maxlength="40" placeholder="부서" style="${inp}"><input type="email" id="ae" maxlength="120" placeholder="이메일" style="${inp}"><button class="primary" id="addb">추가</button><span class="err" id="aerr"></span></div>
+  ${V.err?`<p class="err">${esc(V.err)}</p>`:''}${V.msg?`<p class="notice">${esc(V.msg)}</p>`:''}
   <p class="small muted" style="margin:0 0 10px">이메일 ${withMail}명 · 안내 메일 발송 ${sentN}명 · 미발송 ${pending}명</p>
-  <div class="row"><button id="mprev">안내 메일 미리보기</button><button class="primary" id="msend" ${pending?'':'disabled'}>미발송 ${pending}명에게 메일 보내기</button><button id="dl">이름·부서·링크 내려받기 (CSV)</button><button id="back">진단 관리로</button></div>
+  <div class="row"><button id="mprev">안내 메일 미리보기</button><button class="primary" id="msend" ${pending?'':'disabled'}>미발송 ${pending}명에게 메일 보내기</button><button id="dl">이름·부서·링크 내려받기 (CSV)</button></div>
   <p class="small" id="mmsg" style="margin:10px 0 0"></p>
   <div id="mbox"></div>
-  <table style="margin-top:10px"><tr><th>이름</th><th>부서</th><th>이메일</th><th>발송 상태</th><th>상태</th><th>개인 링크</th></tr>${rows.map(x=>`<tr><td>${esc(x.name)}</td><td>${esc(x.dept||'')}</td><td>${esc(x.email||'–')}</td><td>${x.email?(x.mail_sent?'발송 완료':x.mail_failed?'발송 실패':'미발송'):'–'}</td><td>${x.done?'완료':'미완료'}</td><td>${lnk(`${pageBase()}#i/${esc(x.token)}`,`${cell}`)}</td></tr>`).join('')}</table></div>
-  <div class="panel"><h3>명단 추가</h3><p class="small muted">한 줄에 ‘이름, 부서, 이메일’. 부서와 이메일은 비워도 됩니다.</p><textarea id="add" placeholder="홍길동, 영업, hong@company.com"></textarea><div class="row"><button id="addb">추가하고 개인 링크 만들기</button></div><p class="err" id="aerr"></p></div></div>`);
+  <table style="margin-top:10px"><tr><th>이름</th><th>부서</th><th>이메일</th><th>발송 상태</th><th>상태</th><th>개인 링크</th></tr>${rows.map(x=>`<tr><td>${esc(x.name)}</td><td>${esc(x.dept||'')}</td><td>${esc(x.email||'–')}</td><td>${esc(stat(x))}</td><td>${x.done?'완료':'미완료'}</td><td><span style="display:flex;align-items:center;gap:8px">${lnk(`${pageBase()}#i/${x.token}`,cell)}${x.email?`<button class="sendone" data-tok="${esc(x.token)}" style="flex:0 0 auto;white-space:nowrap">안내 메일 발송</button>`:''}</span></td></tr>`).join('')}</table></div></div>`);
+ const mmsg=el.querySelector('#mmsg');
  el.querySelector('#back').onclick=openAdmin;
  el.querySelector('#isel').onchange=e=>openInvites(e.target.value);
- el.querySelector('#dl').onclick=async()=>{const q=v=>`"${String(v??'').replace(/"/g,'""')}"`;const t='﻿'+[['이름','부서','이메일','개인 링크'],...rows.map(x=>[x.name,x.dept||'',x.email||'',pageBase()+'#i/'+x.token])].map(r=>r.map(q).join(',')).join('\n');try{await caps.downloads.save({filename:`POCA_개인링크_${o.name||V.code}.csv`,data:t})}catch(e){}};
- const mmsg=el.querySelector('#mmsg');
+ el.querySelector('#addtog').onclick=()=>{const b=el.querySelector('#addbox');b.hidden=!b.hidden};
+ el.querySelector('#addb').onclick=async()=>{
+  const nm=el.querySelector('#an').value.trim().slice(0,40),dp=el.querySelector('#ad').value.trim().slice(0,40),em=el.querySelector('#ae').value.trim().toLowerCase();const er=el.querySelector('#aerr');
+  if(!nm){er.textContent='이름을 적어 주세요.';return}
+  if(em&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)){er.textContent='이메일 형식을 확인해 주세요.';return}
+  try{await caps.ext.addInvites(V.code,[{name:nm,dept:dp||null,email:em||null}]);if(!o.roster)await caps.db.doc('poca_orgs/'+V.code).update({roster:true});openInvites(V.code)}
+  catch(e){er.textContent='추가하지 못했습니다.'}
+ };
  el.querySelector('#mprev').onclick=async()=>{mmsg.textContent='미리보기를 불러오는 중…';try{const d=await adminCall({action:'mail_preview',code:V.code});el.querySelector('#mbox').innerHTML=`<div class="panel" style="margin-top:10px"><p class="small muted" style="margin:0 0 6px">제목: <b>${esc(d.subject)}</b></p><pre style="white-space:pre-wrap;font:inherit;font-size:14px;margin:0">${esc(d.text)}</pre></div>`;mmsg.textContent=''}catch(e){mmsg.textContent=e.message}};
  el.querySelector('#msend').onclick=async()=>{
   if(!window.confirm(`미발송 ${pending}명에게 참여 안내 메일을 보냅니다. 계속할까요?`))return;
@@ -1225,8 +1238,10 @@ function invitesView(){
    await openInvites(V.code);st.inv.msg=msg;render();
   }catch(e){mmsg.textContent=e.message+(total?` (${total}명까지 발송 완료)`:'');btn.disabled=false}
  };
- el.querySelector('#addb').onclick=async()=>{const P=parseRoster(el.querySelector('#add').value);if(P.errors.length){el.querySelector('#aerr').textContent=P.errors.slice(0,3).join(' / ');return}if(!P.rows.length)return;
-  try{await caps.ext.addInvites(V.code,P.rows);if(!o.roster)await caps.db.doc('poca_orgs/'+V.code).update({roster:true});openInvites(V.code)}catch(e){el.querySelector('#aerr').textContent='추가하지 못했습니다.'}};
+ el.querySelectorAll('.sendone').forEach(b=>b.onclick=async()=>{b.disabled=true;mmsg.textContent='발송하는 중…';
+  try{await adminCall({action:'mail_one',code:V.code,token:b.dataset.tok});await openInvites(V.code);st.inv.msg='안내 메일을 보냈습니다.';render()}
+  catch(e){mmsg.textContent=e.message;b.disabled=false}});
+ el.querySelector('#dl').onclick=async()=>{const q=v=>`"${String(v??'').replace(/"/g,'""')}"`;const t='﻿'+[['이름','부서','이메일','개인 링크'],...rows.map(x=>[x.name,x.dept||'',x.email||'',pageBase()+'#i/'+x.token])].map(r=>r.map(q).join(',')).join('\n');try{await caps.downloads.save({filename:`POCA_개인링크_${o.name||V.code}.csv`,data:t})}catch(e){}};
  return el;
 }
 /* ---------- Atomic Culture: 작은 습관의 변화가 문화를 바꿉니다 ---------- */
@@ -1511,7 +1526,7 @@ function privacyView(){
   async hrStatus(code,tok){const {data,error}=await sb.rpc('poca_hr_status',{p_code:code,p_token:tok});if(error)throw error;return data||null},
   async hrResponses(code,tok){const {data,error}=await sb.rpc('poca_hr_responses',{p_code:code,p_token:tok});if(error)throw error;return data||[]},
   async addInvites(code,rows){const {error}=await sb.from('poca_invites').insert(rows.map(r=>({org_code:code,name:r.name,dept:r.dept||null,email:r.email||null})));if(error)throw error},
-  async listInvites(code){const {data,error}=await sb.from('poca_invites').select('token,name,dept,done,email,mail_sent,mail_failed').eq('org_code',code).order('name');if(error)throw error;return data||[]},
+  async listInvites(code){const {data,error}=await sb.from('poca_invites').select('token,name,dept,done,email,mail_sent,mail_failed,mail_sent_at').eq('org_code',code).order('name');if(error)throw error;return data||[]},
   async pulseGet(tok){const {data,error}=await sb.rpc('pulse_get',{p_token:tok});if(error)throw error;return data||null},
   async pulseSubmit(tok,score,team,note){const {data,error}=await sb.rpc('pulse_submit',{p_token:tok,p_key:deviceKey('one_'+tok),p_score:score,p_team:team,p_note:note||null});if(error)throw error;return data===true},
   async pulseHr(code,tok){const {data,error}=await sb.rpc('pulse_hr',{p_code:code,p_hr:tok});if(error)throw error;return data||null},

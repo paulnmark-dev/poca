@@ -81,12 +81,38 @@ Deno.serve(async (req) => {
   if (!body || typeof body !== 'object') return json({ error: '잘못된 요청입니다.' }, 400);
 
   // ---- 메일 발송 ----
-  if (body.action === 'mail_preview' || body.action === 'mail_send') {
+  if (body.action === 'mail_preview' || body.action === 'mail_send' || body.action === 'mail_one') {
     const code = String(body.code ?? '').trim().toUpperCase();
     if (!/^[A-Z0-9]{4,8}$/.test(code)) return json({ error: '진단 코드가 올바르지 않습니다.' }, 400);
     const { data: org, error: orgErr } = await admin.from('poca_orgs').select('info').eq('code', code).maybeSingle();
     if (orgErr || !org) return json({ error: '진단을 찾지 못했습니다.' }, 404);
     const orgName = String(org.info?.name ?? code);
+
+    if (body.action === 'mail_one') {
+      const token = String(body.token ?? '').trim();
+      const { data: row, error: rowErr } = await admin
+        .from('poca_invites').select('token,name,email').eq('token', token).eq('org_code', code).maybeSingle();
+      if (rowErr || !row) return json({ error: '참여자를 찾지 못했습니다.' }, 404);
+      if (!row.email) return json({ error: '이메일이 없는 참여자입니다.' }, 400);
+      const apiKey = Deno.env.get('RESEND_API_KEY');
+      const from = Deno.env.get('POCA_MAIL_FROM') ?? 'POCA <info@paulnmark.com>';
+      if (!apiKey) return json({ error: '메일 발송 키가 설정되어 있지 않습니다. 관리자에게 문의해 주세요.' }, 500);
+      const mail = buildMail(orgName, row.name, row.token);
+      const res = await fetch('https://api.resend.com/emails', {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ from, to: [row.email], subject: mail.subject, text: mail.text, html: mail.html }),
+      });
+      if (!res.ok) {
+        await admin.from('poca_invites').update({ mail_failed: true }).eq('token', row.token);
+        return json({ error: '메일을 보내지 못했습니다. 잠시 뒤 다시 시도해 주세요.' }, 502);
+      }
+      const sentAt = new Date().toISOString();
+      const { error: markErr } = await admin
+        .from('poca_invites').update({ mail_sent: true, mail_failed: false, mail_sent_at: sentAt }).eq('token', row.token);
+      if (markErr) return json({ error: '발송은 되었지만 기록하지 못했습니다.' }, 500);
+      return json({ ok: true, sent_at: sentAt });
+    }
 
     if (body.action === 'mail_preview') {
       const sample = buildMail(orgName, '홍길동', '00000000-0000-0000-0000-000000000000');
@@ -116,7 +142,7 @@ Deno.serve(async (req) => {
         body: JSON.stringify({ from, to: [row.email], subject: mail.subject, text: mail.text, html: mail.html }),
       });
       if (res.ok) {
-        const { error: markErr } = await admin.from('poca_invites').update({ mail_sent: true, mail_failed: false }).eq('token', row.token);
+        const { error: markErr } = await admin.from('poca_invites').update({ mail_sent: true, mail_failed: false, mail_sent_at: new Date().toISOString() }).eq('token', row.token);
         if (markErr) failed.push(row.token); else sent++;
       } else {
         failed.push(row.token);
