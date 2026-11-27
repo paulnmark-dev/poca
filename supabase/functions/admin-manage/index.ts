@@ -45,13 +45,27 @@ function buildMail(orgName: string, name: string, token: string) {
     '문의: info@paulnmark.com',
     '폴앤마크 (Paul & Mark)',
   ].join('\n');
-  const html = `<div style="font-family:'Apple SD Gothic Neo','Malgun Gothic',sans-serif;font-size:15px;line-height:1.7;color:#111">
-  <p>안녕하세요, ${esc(name)}님.</p>
-  <p>${esc(orgName)}에서 조직문화 진단 POCA에 참여를 요청드립니다.</p>
-  <ul><li>약 11분, 80문항입니다.</li><li>이름은 받지 않으며, 결과는 묶어서만 보입니다.</li><li>참여는 자유이며, 중간에 그만두셔도 불이익이 없습니다.</li><li>같은 기기에서는 마감 전까지 다시 응답할 수 있습니다.</li></ul>
-  <p><a href="${link}" style="display:inline-block;padding:12px 20px;background:#c61c2c;color:#fff;text-decoration:none;border-radius:6px;font-weight:700">진단 시작하기</a></p>
-  <p style="font-size:13px;color:#6B7280">버튼이 안 열리면 이 주소를 붙여넣으세요: ${link}</p>
-  <p style="font-size:13px;color:#6B7280">문의: info@paulnmark.com<br>폴앤마크 (Paul &amp; Mark)</p></div>`;
+  const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"></head>
+<body style="margin:0;padding:0;background-color:#f4f4f4;font-family:'Helvetica Neue',Helvetica,Arial,'Apple SD Gothic Neo','Malgun Gothic',sans-serif;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#f4f4f4;"><tr><td align="center" style="padding:40px 0;">
+<table role="presentation" width="600" cellpadding="0" cellspacing="0" style="background-color:#ffffff;border-radius:8px;overflow:hidden;max-width:600px;">
+<tr><td style="background-color:#1a1a2e;padding:30px 40px;text-align:center;"><h1 style="color:#ffffff;margin:0;font-size:28px;font-weight:700;">POCA</h1></td></tr>
+<tr><td style="padding:40px;">
+<p style="color:#555555;font-size:16px;line-height:24px;margin:0 0 10px;">안녕하세요, ${esc(name)}님.</p>
+<p style="color:#555555;font-size:16px;line-height:24px;margin:0 0 30px;">${esc(orgName)}에서 조직문화 진단 POCA에 참여를 요청드립니다.</p>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#fafafa;border-radius:6px;"><tr><td style="padding:20px 24px;">
+<ul style="margin:0;padding-left:18px;color:#666666;font-size:14px;line-height:22px;">
+<li>약 11분, 80문항입니다.</li><li>이름은 받지 않으며, 결과는 묶어서만 보입니다.</li><li>참여는 자유이며, 중간에 그만두셔도 불이익이 없습니다.</li><li>같은 기기에서는 마감 전까지 다시 응답할 수 있습니다.</li>
+</ul></td></tr></table>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:30px 0;"><tr><td align="center">
+<a href="${link}" target="_blank" style="display:inline-block;background-color:#4a6cf7;color:#ffffff;text-decoration:none;padding:14px 36px;border-radius:6px;font-size:16px;font-weight:600;">진단 시작하기</a>
+</td></tr></table>
+<p style="color:#888888;font-size:13px;line-height:20px;margin:0;">버튼이 안 열리면 이 주소를 붙여넣으세요: ${link}</p>
+</td></tr>
+<tr><td style="background-color:#f9f9f9;padding:24px 40px;border-top:1px solid #eeeeee;">
+<p style="color:#999999;font-size:12px;line-height:18px;margin:0;text-align:center;">문의: <a href="mailto:info@paulnmark.com" style="color:#4a6cf7;">info@paulnmark.com</a><br/>폴앤마크 (Paul &amp; Mark)</p>
+</td></tr>
+</table></td></tr></table></body></html>`;
   return { subject, text, html, link };
 }
 

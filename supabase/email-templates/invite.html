@@ -1,65 +1,56 @@
+<!DOCTYPE html>
 <html>
-  <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-  </head>
-  <body style="margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f9f9f9">
-    <table cellspacing="0" cellpadding="0" style="width: 800px; margin: 0 auto; border-collapse: collapse">
-      <tbody>
-        <!-- S: header -->
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body style="margin:0;padding:0;background-color:#f4f4f4;font-family:'Helvetica Neue',Helvetica,Arial,'Apple SD Gothic Neo','Malgun Gothic',sans-serif;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#f4f4f4;">
+  <tr>
+    <td align="center" style="padding:40px 0;">
+      <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="background-color:#ffffff;border-radius:8px;overflow:hidden;max-width:600px;">
         <tr>
-          <td width="195" height="100">
-            <h1 style="margin: 0; padding: 0">
-              <img src="https://public.checkdino.com/images/logo_dino.gif" alt="Dino" />
-            </h1>
+          <td style="background-color:#1a1a2e;padding:30px 40px;text-align:center;">
+            <h1 style="color:#ffffff;margin:0;font-size:28px;font-weight:700;">POCA</h1>
           </td>
         </tr>
-        <!-- E: header -->
-      </tbody>
-    </table>
-    <table cellspacing="0" cellpadding="0" style="width: 800px; margin: 0 auto; border-collapse: collapse">
-      <tbody>
-        <!-- S: contents -->
         <tr>
-          <td
-            valign="top"
-            style="padding: 50px 30px 50px 30px; background-color: white; font-size: 16px; color: #333; letter-spacing: -1px; text-align: left; line-height: 32px;"
-          >
-            <h1 style="margin: 0 0 20px 0; font-size: 22px; color: #222;">POCA 관리자로 초대되었습니다</h1>
-            <p>
-              회원님은 <strong>{{ .Email }}</strong> 계정으로 POCA 관리자 초대를 받으셨습니다. 아래 링크를 눌러 비밀번호를 설정하여 주십시오. <br />
+          <td style="padding:40px;">
+            <h2 style="color:#333333;margin:0 0 20px;font-size:22px;">POCA 관리자로 초대되었습니다</h2>
+            <p style="color:#555555;font-size:16px;line-height:24px;margin:0 0 10px;">
+              회원님은 <strong>{{ .Email }}</strong> 계정으로 POCA 관리자 초대를 받으셨습니다. 아래 버튼을 눌러 비밀번호를 설정하여 주십시오.
+            </p>
+            <p style="color:#555555;font-size:16px;line-height:24px;margin:0 0 30px;">
               URL은 24시간만 유효하며, 유효기간이 지났다면 관리자에게 다시 초대를 요청해 주시기 바랍니다.
             </p>
-            <p>
-              <a href="{{ .ConfirmationURL }}">{{ .ConfirmationURL }}</a>
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 30px;">
+              <tr>
+                <td align="center">
+                  <a href="{{ .ConfirmationURL }}" target="_blank" style="display:inline-block;background-color:#4a6cf7;color:#ffffff;text-decoration:none;padding:14px 36px;border-radius:6px;font-size:16px;font-weight:600;">비밀번호 설정하기</a>
+                </td>
+              </tr>
+            </table>
+            <p style="color:#888888;font-size:13px;line-height:20px;margin:0 0 20px;">
+              버튼이 안 열리면 이 주소를 붙여넣으세요: {{ .ConfirmationURL }}
             </p>
-            <p>
-              본 메일은 발신전용이므로 회신 할 수 없습니다.<br />
-              문의사항이 있으신 경우,
-              <a href="mailto:info@paulnmark.com">info@paulnmark.com</a> 으로 문의주세요.
+            <p style="color:#555555;font-size:14px;line-height:22px;margin:0;">
+              본 메일은 발신전용이므로 회신할 수 없습니다.<br/>
+              문의사항이 있으신 경우, <a href="mailto:info@paulnmark.com" style="color:#4a6cf7;">info@paulnmark.com</a> 으로 문의주세요.
             </p>
-            <p>감사합니다.</p>
+            <p style="color:#555555;font-size:14px;margin:20px 0 0;">감사합니다.</p>
           </td>
         </tr>
-        <!-- E: contents -->
-      </tbody>
-    </table>
-    <table cellspacing="0" cellpadding="0" style="width: 800px; margin: 0 auto; border-collapse: collapse">
-      <tbody>
-        <!-- S: footer -->
         <tr>
-          <td width="305" height="140" valign="middle" style="border-top: 1px solid #ddd; background-color: #f9f9f9; text-align: center;">
-            <img src="https://public.checkdino.com/images/logo_paulnmark.gif" alt="Paul & Mark" />
-          </td>
-          <td valign="top" style="padding: 20px 20px 10px 20px; border-top: 1px solid #ddd; background-color: #f9f9f9;">
-            <p style="font-size: 11px; color: #888; text-align: left; line-height: 16px; padding: 20px 0 0 0; margin: 0;">
-              <strong style="color: #222222">주식회사 폴앤마크</strong> | 대표이사 : 최재웅 | TEL : <strong style="color: #222222">031-718-0199</strong> | FAX : 031-718-0190<br />
-              서현스튜디오 : [13591] 경기도 성남시 분당구 황새울로 360번길 21, 902호 (서현동, 신영팰리스타워)<br />
-              판교오피스: [13474] 경기도 성남시 분당구 판교로 190-4, 3층
+          <td style="background-color:#f9f9f9;padding:24px 40px;border-top:1px solid #eeeeee;">
+            <p style="color:#999999;font-size:12px;line-height:18px;margin:0;text-align:center;">
+              폴앤마크 (Paul &amp; Mark)<br/>
+              서현스튜디오: 경기도 성남시 분당구 황새울로 360번길 21, 902호 (서현동, 신영팰리스타워)
             </p>
           </td>
         </tr>
-        <!-- E: footer -->
-      </tbody>
-    </table>
-  </body>
+      </table>
+    </td>
+  </tr>
+</table>
+</body>
 </html>
