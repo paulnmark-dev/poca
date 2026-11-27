@@ -544,12 +544,12 @@ function scatter(points,opt){
 
 /* ---------- screens ---------- */
 function cpyBtn(text){return `<button type="button" class="cpy" data-copy="${esc(text)}" title="복사" aria-label="복사" style="position:absolute;left:8px;top:50%;transform:translateY(-50%);padding:3px;border:0;background:none;cursor:pointer;line-height:0;color:var(--muted);border-radius:3px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button>`}
-function lnk(url,style){return `<span style="position:relative;display:flex;min-width:0;flex:1"><input type="text" readonly value="${esc(url)}" style="${style};width:100%;padding-left:36px" onclick="this.select()">${cpyBtn(url)}</span>`}
+function lnk(url,style){return `<span style="position:relative;display:flex;min-width:0;flex:1"><input type="text" readonly value="${esc(url)}" style="${style};width:100%;padding-left:36px !important" onclick="this.select()">${cpyBtn(url)}</span>`}
 document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-copy]');if(!b)return;e.preventDefault();const t=b.dataset.copy;
  const done=()=>{b.title='복사됨';b.style.color='#c61c2c';setTimeout(()=>{b.title='복사';b.style.color=''},1200)};
  const fallback=()=>{const ta=document.createElement('textarea');ta.value=t;document.body.appendChild(ta);ta.select();try{document.execCommand('copy')}catch(_){}ta.remove();done()};
  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(done,fallback)}else fallback()});
-function render(){const app=document.getElementById('app');app.innerHTML='';app.className=['admin','invites','report','hr','poneHr'].includes(st.screen)?'wrap wide':'wrap';const v={landing:landingView,survey:surveyView,result:resultView,report:reportView,admin:adminView,pulse:pulseView,hr:hrView,invites:invitesView,pone:poneView,poneHr:poneHrView,pones:ponesView}[st.screen];app.append(v());window.scrollTo({top:0});
+function render(){const app=document.getElementById('app');app.innerHTML='';app.className=['admin','invites','report','hr','poneHr'].includes(st.screen)?'wrap wide':'wrap';const v={landing:landingView,survey:surveyView,result:resultView,report:()=>adminView(reportView()),admin:adminView,pulse:pulseView,hr:hrView,invites:()=>adminView(invitesView()),pone:poneView,poneHr:poneHrView,pones:ponesView}[st.screen];app.append(v());window.scrollTo({top:0});
 if(st.screen==='admin'||st.screen==='invites'){const key=st.screen+':'+(st.adm||'');if(!(history.state&&history.state.k===key))history.pushState({k:key,screen:st.screen,adm:st.adm||''},'',location.href)}}
 window.addEventListener('popstate',e=>{const h=e.state;
  if(h&&(h.screen==='admin'||h.screen==='invites')){st.screen=h.screen;st.adm=h.adm;render()}
@@ -793,15 +793,15 @@ function pwView(){
  };
  return el;
 }
-function adminView(){
+function adminView(content){
  if(st.needPw)return pwView();
  const sec=st.adm||'dash';const navSec=sec==='atomic'||sec==='pnew'?'pones':sec;
  const email=caps.userEmail||'';
  const el=$(`<div class="adash${st.admMenu?' open':''}"><header class="atop"><a href="#" class="alink alogo" id="ahome2">POCA <span class="asub">ADMIN</span></a><button class="abtn" id="amenu" aria-expanded="${!!st.admMenu}">${ADM_MENU}<span>메뉴</span></button></header><aside class="anav"><p class="abrand"><a href="#" class="alink alogo" id="ahome">POCA <span class="asub">ADMIN</span></a></p>${ADM_NAV.map(([k,t])=>`<button data-nav="${k}" class="${navSec===k?'on':''}"${navSec===k?' aria-current="page"':''}>${admIcon(k,navSec===k)}<span>${t}</span></button>`).join('')}<div class="aspacer"></div><div class="aprof"><div class="apop" id="apop" hidden><button id="aedit">정보 수정</button><button id="alogout" class="lo">로그아웃</button></div><button class="aprofbtn" id="aprof" aria-expanded="false"><span class="aav">${esc(email?email[0].toUpperCase():'M')}</span><span class="ainfo"><b>${esc(email||'관리자')}</b><small>매니저</small></span>${ADM_CHEV}</button></div></aside><main class="amain"></main></div>`);
  const fn={dash:dashSection,diag:diagSection,new:newDiagSection,clients:clientsSection,atomic:atomicView,pnew:ponesSection,managers:managersSection,settings:settingsSection}[sec]||dashSection;
- el.querySelector('.amain').append(fn());
- el.querySelectorAll('[data-nav]').forEach(b=>b.onclick=()=>{const k=b.dataset.nav;if(k==='pones'){openPones();return}st.adm=k;st.admMenu=false;render()});
- el.querySelectorAll('#ahome,#ahome2').forEach(a=>a.onclick=e=>{e.preventDefault();st.adm='dash';st.admMenu=false;render()});
+ el.querySelector('.amain').append(content||fn());
+ el.querySelectorAll('[data-nav]').forEach(b=>b.onclick=()=>{const k=b.dataset.nav;if(k==='pones'){openPones();return}st.screen='admin';st.adm=k;st.admMenu=false;render()});
+ el.querySelectorAll('#ahome,#ahome2').forEach(a=>a.onclick=e=>{e.preventDefault();st.screen='admin';st.adm='dash';st.admMenu=false;render()});
  el.querySelector('#amenu').onclick=()=>{st.admMenu=!st.admMenu;render()};
  el.querySelector('#aprof').onclick=()=>{const p=el.querySelector('#apop');p.hidden=!p.hidden;el.querySelector('#aprof').setAttribute('aria-expanded',String(!p.hidden))};
  el.querySelector('#aedit').onclick=()=>{st.mgr=st.mgr||{list:null,err:'',msg:'',loading:false,inviting:false,editing:null};st.mgr.editing=caps.userEmail;st.mgr.inviting=false;st.mgr.msg='';st.adm='managers';st.admMenu=false;render()};
