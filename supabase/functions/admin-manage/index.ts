@@ -1,6 +1,5 @@
 // POCA 관리자 Edge Function
 // - invite / update: 매니저 초대, 이름·비밀번호 수정
-// - mail_preview: 참여 안내 메일 미리보기 (실제 발송 없음)
 // - mail_send: 아직 안 보낸 명단에 참여 안내 메일 발송 (한 번에 최대 40명)
 // 호출자는 로그인한 관리자여야 합니다 (poca_is_admin). service_role 키는 이 함수 안에서만 씁니다.
 import { createClient } from 'npm:@supabase/supabase-js@2';
@@ -95,7 +94,7 @@ Deno.serve(async (req) => {
   if (!body || typeof body !== 'object') return json({ error: '잘못된 요청입니다.' }, 400);
 
   // ---- 메일 발송 ----
-  if (body.action === 'mail_preview' || body.action === 'mail_send' || body.action === 'mail_one') {
+  if (body.action === 'mail_send' || body.action === 'mail_one') {
     const code = String(body.code ?? '').trim().toUpperCase();
     if (!/^[A-Z0-9]{4,8}$/.test(code)) return json({ error: '진단 코드가 올바르지 않습니다.' }, 400);
     const { data: org, error: orgErr } = await admin.from('poca_orgs').select('info').eq('code', code).maybeSingle();
@@ -128,10 +127,6 @@ Deno.serve(async (req) => {
       return json({ ok: true, sent_at: sentAt });
     }
 
-    if (body.action === 'mail_preview') {
-      const sample = buildMail(orgName, '홍길동', '00000000-0000-0000-0000-000000000000');
-      return json({ subject: sample.subject, text: sample.text, html: sample.html });
-    }
 
     const apiKey = Deno.env.get('RESEND_API_KEY');
     const from = Deno.env.get('POCA_MAIL_FROM') ?? 'POCA <info@paulnmark.com>';
