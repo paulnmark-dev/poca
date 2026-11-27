@@ -85,7 +85,7 @@ Deno.serve(async (req) => {
     const code = String(body.code ?? '').trim().toUpperCase();
     if (!/^[A-Z0-9]{4,8}$/.test(code)) return json({ error: '진단 코드가 올바르지 않습니다.' }, 400);
     const { data: org, error: orgErr } = await admin.from('poca_orgs').select('info').eq('code', code).maybeSingle();
-    if (orgErr || !org) return json({ error: '진단을 찾지 못했습니다.' }, 404);
+    if (orgErr || !org) return json({ error: `진단을 찾지 못했습니다. (코드 ${code}${orgErr ? ': ' + orgErr.message : ''})` }, 404);
     const orgName = String(org.info?.name ?? code);
 
     if (body.action === 'mail_one') {
