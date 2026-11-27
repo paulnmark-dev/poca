@@ -1328,8 +1328,7 @@ function ponesView(){
   <p class="small" style="margin:12px 0 4px">질문 순서 (위에서부터 · ‘우리 팀’ 평균 7점 이상이거나 3주가 되면 다음 질문 · 체크한 것만 · 문구는 고칠 수 있습니다 · ⋮⋮을 끌어서 순서를 바꿀 수 있습니다). 네 문화는 POCA ‘조직의 현재와 미래’와 같습니다.</p>
   ${Z.order.map((x,i)=>`<div class="row" data-row="${i}" style="flex-wrap:nowrap;margin:4px 0;align-items:center"><span data-drag="${i}" draggable="true" title="끌어서 순서 바꾸기" style="cursor:grab;user-select:none;color:var(--muted);font-size:16px;letter-spacing:-2px;padding:0 4px">⋮⋮</span><input type="checkbox" data-on="${i}" ${x.on?'checked':''}><span class="small muted" style="min-width:150px">${esc(ONE_CN[x.c])}${x.gap!=null?' · 차이 '+(x.gap>=0?'+':'')+Math.round(x.gap):''}</span><input type="text" data-q="${i}" value="${esc(x.q)}" maxlength="80" style="${inp}"></div>`).join('')}
   <p class="err" id="perr">${esc(Z.err)}</p><div class="row"><button class="primary" id="pmk">만들기</button></div></div>
-  <div class="row"><button id="back">진단 관리로</button></div></div>`);
- el.querySelector('#back').onclick=()=>{openPones()};
+  </div>`);
  let dragFrom=null;
  el.querySelectorAll('[data-drag]').forEach(h=>{h.ondragstart=e=>{dragFrom=+h.dataset.drag;e.dataTransfer.effectAllowed='move';try{e.dataTransfer.setData('text/plain',String(dragFrom))}catch(_){}const row=h.closest('[data-row]');if(row)e.dataTransfer.setDragImage(row,20,20)};h.ondragend=()=>{dragFrom=null}});
  el.querySelectorAll('[data-row]').forEach(r=>{r.ondragover=e=>{if(dragFrom==null)return;e.preventDefault();e.dataTransfer.dropEffect='move'};r.ondrop=e=>{e.preventDefault();if(dragFrom==null)return;const from=dragFrom,to=+r.dataset.row;dragFrom=null;if(from===to)return;const [m]=Z.order.splice(from,1);Z.order.splice(to,0,m);render()}});
