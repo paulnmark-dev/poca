@@ -1213,7 +1213,6 @@ function invitesView(){
   <div class="row" style="justify-content:space-between;margin:0 0 12px"><select id="isel" style="max-width:420px">${(st.orgs||[]).filter(x=>x.type!=='pulse').map(x=>`<option value="${esc(x.code)}"${x.code===V.code?' selected':''}>${esc(x.name)} (${esc(x.code)})</option>`).join('')}</select><button id="back">진단 관리로</button></div>
   <div class="panel"><p class="label">${esc(o.name||'')} · 명단과 개인 링크</p><h2>POCA 진단 상세</h2>
   ${V.err?`<p class="err">${esc(V.err)}</p>`:''}${V.msg?`<p class="notice">${esc(V.msg)}</p>`:''}
-  <p class="small muted" style="margin:0 0 10px">이메일 ${withMail}명 · 안내 메일 발송 ${sentN}명 · 미발송 ${pending}명</p>
   <div class="row"><button id="mprev">안내 메일 미리보기</button><button id="dl">이름·부서·링크 내려받기 (CSV)</button></div>
   <p class="small" id="mmsg" style="margin:10px 0 0"></p>
   <div id="mbox"></div>
