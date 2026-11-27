@@ -543,8 +543,8 @@ function scatter(points,opt){
 }
 
 /* ---------- screens ---------- */
-function cpyBtn(text){return `<button type="button" class="cpy" data-copy="${esc(text)}" title="복사" aria-label="복사" style="flex:0 0 auto;padding:6px;border:1px solid var(--line);border-radius:4px;background:var(--surface);cursor:pointer;line-height:0;color:var(--muted)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button>`}
-function lnk(url,style){return `<span style="display:flex;align-items:center;gap:6px;min-width:0"><input type="text" readonly value="${esc(url)}" style="${style};flex:1;min-width:0" onclick="this.select()">${cpyBtn(url)}</span>`}
+function cpyBtn(text){return `<button type="button" class="cpy" data-copy="${esc(text)}" title="복사" aria-label="복사" style="position:absolute;left:8px;top:50%;transform:translateY(-50%);padding:3px;border:0;background:none;cursor:pointer;line-height:0;color:var(--muted);border-radius:3px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button>`}
+function lnk(url,style){return `<span style="position:relative;display:flex;min-width:0;flex:1"><input type="text" readonly value="${esc(url)}" style="${style};width:100%;padding-left:36px" onclick="this.select()">${cpyBtn(url)}</span>`}
 document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-copy]');if(!b)return;e.preventDefault();const t=b.dataset.copy;
  const done=()=>{b.title='복사됨';b.style.color='#c61c2c';setTimeout(()=>{b.title='복사';b.style.color=''},1200)};
  const fallback=()=>{const ta=document.createElement('textarea');ta.value=t;document.body.appendChild(ta);ta.select();try{document.execCommand('copy')}catch(_){}ta.remove();done()};
