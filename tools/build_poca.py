@@ -26,8 +26,6 @@ rep("'이 화면에서는 응답이 저장되지 않았습니다. 결과는 아�
     "'응답을 저장하지 못했습니다. 인터넷 연결을 확인한 뒤 같은 기기에서 다시 제출해 주세요. 진단이 마감된 경우에도 저장되지 않습니다.'")
 
 # admin list: share link
-rep('<p class="small muted" style="margin:2px 0 0">응답 ${o.n}명',
-    '<p class="small" style="margin:2px 0 0">링크: ${lnk(location.origin+location.pathname+\'#\'+o.code,\'font:inherit;font-size:12px;width:100%;padding:4px 8px;border:1px solid var(--line);border-radius:4px;background:var(--surface2)\')}</p><p class="small muted" style="margin:2px 0 0">응답 ${o.n}명')
 
 # boot replacement
 a=s.find("(async()=>{\n if(!window.claude||!window.claude.use)return;")
