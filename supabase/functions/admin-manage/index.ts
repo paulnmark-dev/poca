@@ -58,7 +58,7 @@ function buildMail(orgName: string, name: string, token: string) {
 <li>약 11분, 80문항입니다.</li><li>이름은 받지 않으며, 결과는 묶어서만 보입니다.</li><li>참여는 자유이며, 중간에 그만두셔도 불이익이 없습니다.</li><li>같은 기기에서는 마감 전까지 다시 응답할 수 있습니다.</li>
 </ul></td></tr></table>
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:30px 0;"><tr><td align="center">
-<a href="${link}" target="_blank" style="display:inline-block;background-color:#4a6cf7;color:#ffffff;text-decoration:none;padding:14px 36px;border-radius:6px;font-size:16px;font-weight:600;">진단 시작하기</a>
+<a href="${link}" target="_blank" style="display:inline-block;background-color:#c61c2c;color:#ffffff;text-decoration:none;padding:14px 36px;border-radius:6px;font-size:16px;font-weight:600;">진단 시작하기</a>
 </td></tr></table>
 <p style="color:#888888;font-size:13px;line-height:20px;margin:0;">버튼이 안 열리면 이 주소를 붙여넣으세요: ${link}</p>
 </td></tr>
