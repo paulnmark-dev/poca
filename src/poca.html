@@ -1218,7 +1218,7 @@ function invitesView(){
  el.querySelector('#isel').onchange=e=>openInvites(e.target.value);
  el.querySelector('#addtog').onclick=()=>{V.adding=true;render()};
  el.querySelector('#addx')&&(el.querySelector('#addx').onclick=()=>{V.adding=false;render()});
- el.querySelector('#addb').onclick=async()=>{
+ const addbBtn=el.querySelector('#addb');if(addbBtn)addbBtn.onclick=async()=>{
   const nm=el.querySelector('#an').value.trim().slice(0,40),dp=el.querySelector('#ad').value.trim().slice(0,40),em=el.querySelector('#ae').value.trim().toLowerCase();const er=el.querySelector('#aerr');
   if(!nm){er.textContent='이름을 적어 주세요.';return}
   if(em&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)){er.textContent='이메일 형식을 확인해 주세요.';return}
